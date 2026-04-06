@@ -112,14 +112,14 @@ export default function AcademyPage() {
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-2xl">
-            <div className="mb-8 rounded-3xl bg-white p-6 text-slate-950 shadow-sm">
+            <div className="mb-8 rounded-3xl bg-black p-6 text-white shadow-sm">
               <h2 className="text-2xl font-semibold">Apply for the Academy</h2>
               <p className="mt-2 text-sm text-slate-600">Complete the form below and submit your details.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm font-semibold text-slate-800">
+                <label className="space-y-2 text-sm font-semibold text-white">
                   First Name
                   <input
                     value={firstName}
@@ -129,7 +129,7 @@ export default function AcademyPage() {
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
-                <label className="space-y-2 text-sm font-semibold text-slate-800">
+                <label className="space-y-2 text-sm font-semibold text-white">
                   Last Name
                   <input
                     value={lastName}
@@ -142,7 +142,7 @@ export default function AcademyPage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm font-semibold text-slate-800">
+                <label className="space-y-2 text-sm font-semibold text-white">
                   Email Address
                   <input
                     value={email}
@@ -152,7 +152,7 @@ export default function AcademyPage() {
                     className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </label>
-                <label className="space-y-2 text-sm font-semibold text-slate-800">
+                <label className="space-y-2 text-sm font-semibold text-white">
                   Phone Number
                   <input
                     value={phone}
@@ -164,7 +164,7 @@ export default function AcademyPage() {
                 </label>
               </div>
 
-              <label className="space-y-2 text-sm font-semibold text-slate-800">
+              <label className="space-y-2 text-sm font-semibold text-white">
                 Learning Path
                 <select
                   value={learningPath}
@@ -183,7 +183,7 @@ export default function AcademyPage() {
                 <h3 className="mb-4 text-base font-semibold uppercase tracking-[0.24em] text-slate-700">Basic Questions</h3>
                 <div className="space-y-5">
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-800">Are you a software developer?</p>
+                    <p className="text-sm font-medium text-white">Are you a software developer?</p>
                     <div className="flex flex-wrap gap-3">
                       {[
                         { value: "yes", label: "Yes" },
@@ -206,7 +206,7 @@ export default function AcademyPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-800">What languages are you familiar with?</p>
+                    <p className="text-sm font-medium text-white">What languages are you familiar with?</p>
                     <div className="grid grid-cols-2 gap-3">
                       {languageOptions.map((language) => (
                         <button
@@ -227,7 +227,7 @@ export default function AcademyPage() {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-3">
-                      <p className="text-sm font-medium text-slate-800">Have you ever rolled out a full project?</p>
+                      <p className="text-sm font-medium text-white">Have you ever rolled out a full project?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
@@ -249,7 +249,7 @@ export default function AcademyPage() {
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <p className="text-sm font-medium text-slate-800">Do you know Unity 3D?</p>
+                      <p className="text-sm font-medium text-white">Do you know Unity 3D?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
@@ -271,7 +271,7 @@ export default function AcademyPage() {
                       </div>
                     </div>
                     <div className="space-y-3 sm:col-span-2">
-                      <p className="text-sm font-medium text-slate-800">Do you know Unreal?</p>
+                      <p className="text-sm font-medium text-white">Do you know Unreal?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
