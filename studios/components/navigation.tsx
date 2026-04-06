@@ -18,7 +18,7 @@ export default function Navigation() {
     { name: "Newsletters", href: "/newsletters" },
     { name: "Entertainment", href: "/entertainment" },
     { name: "Engineering", href: "/engineering" },
-    { name: "Education", href: "/education" },
+    { name: "Academy", href: "/academy" },
     { name: "Esports", href: "/esports" },
     { name: "Support", href: "/support" },
   ]
