@@ -24,7 +24,7 @@ export default function Footer() {
       ],
     },
     {
-      title: "Education",
+      title: "Academy",
       links: [
         { name: "Students", href: "#" },
         { name: "Educators", href: "#" },
