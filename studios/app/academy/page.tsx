@@ -183,7 +183,7 @@ export default function AcademyPage() {
                 <h3 className="mb-4 text-base font-semibold uppercase tracking-[0.24em] text-slate-700">Basic Questions</h3>
                 <div className="space-y-5">
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-white">Are you a software developer?</p>
+                    <p className="text-sm font-medium text-slate-900">Are you a software developer?</p>
                     <div className="flex flex-wrap gap-3">
                       {[
                         { value: "yes", label: "Yes" },
@@ -206,7 +206,7 @@ export default function AcademyPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-white">What languages are you familiar with?</p>
+                    <p className="text-sm font-medium text-slate-900">What languages are you familiar with?</p>
                     <div className="grid grid-cols-2 gap-3">
                       {languageOptions.map((language) => (
                         <button
@@ -227,7 +227,7 @@ export default function AcademyPage() {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-3">
-                      <p className="text-sm font-medium text-white">Have you ever rolled out a full project?</p>
+                      <p className="text-sm font-medium text-slate-900">Have you ever rolled out a full project?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
@@ -249,7 +249,7 @@ export default function AcademyPage() {
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <p className="text-sm font-medium text-white">Do you know Unity 3D?</p>
+                      <p className="text-sm font-medium text-slate-900">Do you know Unity 3D?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
@@ -271,7 +271,7 @@ export default function AcademyPage() {
                       </div>
                     </div>
                     <div className="space-y-3 sm:col-span-2">
-                      <p className="text-sm font-medium text-white">Do you know Unreal?</p>
+                      <p className="text-sm font-medium text-slate-900">Do you know Unreal?</p>
                       <div className="flex flex-wrap gap-3">
                         {[
                           { value: "yes", label: "Yes" },
