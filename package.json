@@ -1,0 +1,21 @@
+{
+  "name": "geco-games-studios",
+  "version": "1.0.0",
+  "description": "First upload",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geco-games-studios/geco-games-studios.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/geco-games-studios/geco-games-studios/issues"
+  },
+  "homepage": "https://github.com/geco-games-studios/geco-games-studios#readme"
+}

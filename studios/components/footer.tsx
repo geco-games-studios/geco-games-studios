@@ -1,47 +1,44 @@
-import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
+import Link from "next/link"
+import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import NewsletterSubscription from "./newsletter-subscription"
 
 export default function Footer() {
   const footerSections = [
     {
-      title: "Studio",
+      title: "Services",
       links: [
-        { name: "Products", href: "#" },
-        { name: "Geco Ads", href: "#" },
-        { name: "Subscription", href: "#" },
-        { name: "Resellers", href: "#" },
+        { name: "Game Development", href: "/services" },
+        { name: "Art & Animation", href: "/services" },
+        { name: "Strategy & Growth", href: "/services" },
+        { name: "Esports Production", href: "/services" },
       ],
     },
     {
-      title: "Engineering",
+      title: "Company",
       links: [
-        { name: "Web Hosting", href: "#" },
-        { name: "Domain Registration", href: "#" },
-        { name: "Web Development", href: "#" },
-        { name: "Application Development", href: "#" },
-        { name: "UI/UX Design", href: "#" },
+        { name: "Studio", href: "/" },
+        { name: "Portfolio", href: "/portfolio" },
+        { name: "Academy", href: "/academy" },
+        { name: "Careers", href: "/support" },
       ],
     },
     {
-      title: "Academy",
+      title: "Support",
       links: [
-        { name: "Students", href: "#" },
-        { name: "Educators", href: "#" },
-        { name: "Institutions", href: "#" },
-        { name: "Certifications", href: "#" },
-        { name: "Learn", href: "#" },
-        { name: "Center of Excellence", href: "#" },
+        { name: "Contact", href: "#contact" },
+        { name: "FAQ", href: "/support" },
+        { name: "Privacy", href: "/support" },
+        { name: "Terms", href: "/support" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { name: "Learn Platform", href: "#" },
-        { name: "Community", href: "#" },
-        { name: "Documentation", href: "#" },
-        { name: "Case Studies", href: "#" },
-        { name: "Geco QA", href: "#" },
+        { name: "News", href: "/newsletters" },
+        { name: "Blog", href: "/newsletters" },
+        { name: "Careers", href: "/support" },
+        { name: "Press", href: "/support" },
       ],
     },
   ]
@@ -54,36 +51,50 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-black dark:bg-gray-900 py-12 text-white border-t border-gray-800 dark:border-gray-700">
-      <div className="container mx-auto px-4">
-        {/* Logo Section */}
-        <div className="text-center mb-12">
-          <Link href="/" className="inline-flex items-center space-x-4 group">
-            <Image
-              src="/logo-dark.png"
-              alt="Geco Games Studios"
-              width={60}
-              height={60}
-              className="group-hover:scale-110 transition-transform duration-300"
-            />
-            <div>
-              <h3 className="text-2xl font-bold gradient-text">Geco Games Studios</h3>
-              <p className="text-gray-400 text-sm">Creating Amazing Gaming Experiences</p>
+    <footer className="border-t border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+      <div className="container mx-auto px-6 py-16 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-3xl bg-white shadow-sm">
+                <Image src="/logo-dark.png" alt="Geco Games Studios logo" width={48} height={48} className="object-contain" />
+              </div>
+              <div>
+                <p className="text-lg font-semibold">Geco Games Studios</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">A creative partner for ambitious digital experiences.</p>
+              </div>
             </div>
-          </Link>
-        </div>
+            <p className="mt-8 max-w-md text-sm leading-7 text-slate-600 dark:text-slate-400">
+              We specialize in mobile game and app development, creating immersive experiences with premium execution, clear strategy, and measurable impact.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {socialLinks.map((social) => {
+                const IconComponent = social.icon
+                return (
+                  <Link
+                    key={social.name}
+                    href={social.href}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800"
+                    aria-label={social.name}
+                  >
+                    <IconComponent className="h-5 w-5" />
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-          {footerSections.map((section, index) => (
-            <div key={section.title} className="slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
-              <h3 className="font-semibold text-lg mb-4 gradient-text">{section.title}</h3>
-              <ul className="space-y-2">
+          <div>
+            <NewsletterSubscription variant="compact" />
+          </div>
+
+          {footerSections.map((section) => (
+            <div key={section.title}>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{section.title}</p>
+              <ul className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="hover:text-yellow-400 transition-colors duration-300 hover:translate-x-1 inline-block"
-                    >
+                    <Link href={link.href} className="transition hover:text-slate-950 dark:hover:text-white">
                       {link.name}
                     </Link>
                   </li>
@@ -93,31 +104,11 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Currency and Social Section */}
-        <div className="mt-12 border-t border-gray-700 dark:border-gray-600 pt-6 text-center">
-          <p className="mb-4 text-lg">
-            Currency: <span className="font-semibold text-yellow-400">ZMK</span>
-          </p>
-          <div className="flex justify-center space-x-6">
-            {socialLinks.map((social) => {
-              const IconComponent = social.icon
-              return (
-                <Link
-                  key={social.name}
-                  href={social.href}
-                  className="hover:text-yellow-400 transition-all duration-300 hover:scale-125 p-2 rounded-full hover:bg-gray-800 dark:hover:bg-gray-700"
-                  aria-label={social.name}
-                >
-                  <IconComponent className="h-6 w-6" />
-                </Link>
-              )
-            })}
+        <div className="mt-16 border-t border-slate-200 pt-8 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 Geco Games Studios. All rights reserved.</p>
+            <p>hello@gecogamesstudios.com · +260 978516926</p>
           </div>
-        </div>
-
-        {/* Copyright */}
-        <div className="mt-8 pt-6 border-t border-gray-700 dark:border-gray-600 text-center text-sm text-gray-400">
-          <p>&copy; 2025 Geco Games Studios. All rights reserved.</p>
         </div>
       </div>
     </footer>

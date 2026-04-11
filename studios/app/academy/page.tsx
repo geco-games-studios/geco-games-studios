@@ -1,361 +1,268 @@
-﻿"use client"
-
-import { useState, type FormEvent } from "react"
-
-const learningPathOptions = [
-  "Complete Game Developer",
-  "Game Artist Specialist",
-  "Indie Game Creator",
-  "Custom Track",
-]
-
-const languageOptions = ["Javascript", "C++", "Java", "CSharp", "C"]
+import Link from "next/link"
+import NewsletterSubscription from "../../components/newsletter-subscription"
 
 export default function AcademyPage() {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [learningPath, setLearningPath] = useState(learningPathOptions[0])
-  const [isDeveloper, setIsDeveloper] = useState("yes")
-  const [languages, setLanguages] = useState<string[]>([])
-  const [rolledOutProject, setRolledOutProject] = useState("no")
-  const [unity, setUnity] = useState("no")
-  const [unreal, setUnreal] = useState("no")
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
-  const [message, setMessage] = useState("")
-
-  const toggleLanguage = (language: string) => {
-    setLanguages((current) =>
-      current.includes(language) ? current.filter((item) => item !== language) : [...current, language]
-    )
-  }
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setStatus("sending")
-    setMessage("")
-
-    const payload = {
-      firstName,
-      lastName,
-      email,
-      phone,
-      learningPath,
-      isDeveloper,
-      languages,
-      rolledOutProject,
-      unity,
-      unreal,
-    }
-
-    try {
-      const response = await fetch("/api/academy-apply", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error?.message ?? "Unable to submit application")
-      }
-
-      setStatus("success")
-      setMessage("Your application has been sent successfully. We will contact you shortly.")
-      setFirstName("")
-      setLastName("")
-      setEmail("")
-      setPhone("")
-      setLearningPath(learningPathOptions[0])
-      setIsDeveloper("yes")
-      setLanguages([])
-      setRolledOutProject("no")
-      setUnity("no")
-      setUnreal("no")
-    } catch (error) {
-      setStatus("error")
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while sending your application. Please try again later."
-      )
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      <section className="bg-blue-950 text-white py-20 px-6 sm:px-10">
-        <div className="container mx-auto grid gap-12 lg:grid-cols-[1.4fr_1fr] items-center">
-          <div>
-            <span className="inline-block rounded-full bg-green-500/20 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-green-200">
-              Academy Application
-            </span>
-            <h1 className="mt-6 text-5xl font-bold tracking-tight sm:text-6xl">
-              Join the Game Dev Academy
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
-              Apply today for the academy program and get matched with an immersive learning path built for games, interactive experiences, and real-world production skills.
-            </p>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl bg-white/10 p-6">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-300">Program type</p>
-                <p className="mt-3 text-2xl font-semibold">Practical game development</p>
-              </div>
-              <div className="rounded-3xl bg-white/10 p-6">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-300">Support</p>
-                <p className="mt-3 text-2xl font-semibold">Mentorship + project reviews</p>
+    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <section className="bg-slate-950 text-white py-20 px-6 lg:px-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <span className="inline-flex rounded-full bg-sky-500/20 px-4 py-2 text-sm font-semibold text-sky-200 uppercase tracking-[0.24em]">
+                Academy & Education
+              </span>
+              <h1 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
+                Master game development with expert-led courses.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+                Our comprehensive academy offers specialized courses covering game development, programming, and web development skills taught by industry professionals.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link href="#programs" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                  Explore courses
+                </Link>
+                <Link href="#bootcamp" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                  2026 Boot Camp
+                </Link>
               </div>
             </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-2xl">
-            <div className="mb-8 rounded-3xl bg-black p-6 text-white shadow-sm">
-              <h2 className="text-2xl font-semibold">Apply for the Academy</h2>
-              <p className="mt-2 text-sm text-slate-600">Complete the form below and submit your details.</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm font-semibold text-white">
-                  First Name
-                  <input
-                    value={firstName}
-                    onChange={(event) => setFirstName(event.target.value)}
-                    type="text"
-                    required
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </label>
-                <label className="space-y-2 text-sm font-semibold text-white">
-                  Last Name
-                  <input
-                    value={lastName}
-                    onChange={(event) => setLastName(event.target.value)}
-                    type="text"
-                    required
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm font-semibold text-white">
-                  Email Address
-                  <input
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    type="email"
-                    required
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </label>
-                <label className="space-y-2 text-sm font-semibold text-white">
-                  Phone Number
-                  <input
-                    value={phone}
-                    onChange={(event) => setPhone(event.target.value)}
-                    type="tel"
-                    required
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </label>
-              </div>
-
-              <label className="space-y-2 text-sm font-semibold text-white">
-                Learning Path
-                <select
-                  value={learningPath}
-                  onChange={(event) => setLearningPath(event.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  {learningPathOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <h3 className="mb-4 text-base font-semibold uppercase tracking-[0.24em] text-slate-700">Basic Questions</h3>
-                <div className="space-y-5">
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-900">Are you a software developer?</p>
-                    <div className="flex flex-wrap gap-3">
-                      {[
-                        { value: "yes", label: "Yes" },
-                        { value: "no", label: "No" },
-                      ].map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => setIsDeveloper(option.value)}
-                          className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                            isDeveloper === option.value
-                              ? "border-blue-500 bg-blue-500 text-white"
-                              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                          }`}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
-                    </div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-10 shadow-2xl backdrop-blur-xl">
+              <div className="space-y-6">
+                <div className="rounded-3xl bg-slate-900 p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-sky-300">Next cohort</p>
+                  <p className="mt-3 text-3xl font-semibold">June 2026</p>
+                </div>
+                <div className="grid gap-4">
+                  <div className="rounded-3xl bg-slate-900 p-6">
+                    <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Duration</p>
+                    <p className="mt-2 text-xl font-semibold">12 weeks</p>
                   </div>
-
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-slate-900">What languages are you familiar with?</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {languageOptions.map((language) => (
-                        <button
-                          key={language}
-                          type="button"
-                          onClick={() => toggleLanguage(language)}
-                          className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                            languages.includes(language)
-                              ? "border-green-500 bg-green-500 text-white"
-                              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                          }`}
-                        >
-                          {language}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-slate-900">Have you ever rolled out a full project?</p>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          { value: "yes", label: "Yes" },
-                          { value: "no", label: "No" },
-                        ].map((option) => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => setRolledOutProject(option.value)}
-                            className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                              rolledOutProject === option.value
-                                ? "border-blue-500 bg-blue-500 text-white"
-                                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                            }`}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-slate-900">Do you know Unity 3D?</p>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          { value: "yes", label: "Yes" },
-                          { value: "no", label: "No" },
-                        ].map((option) => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => setUnity(option.value)}
-                            className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                              unity === option.value
-                                ? "border-blue-500 bg-blue-500 text-white"
-                                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                            }`}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-3 sm:col-span-2">
-                      <p className="text-sm font-medium text-slate-900">Do you know Unreal?</p>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          { value: "yes", label: "Yes" },
-                          { value: "no", label: "No" },
-                        ].map((option) => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => setUnreal(option.value)}
-                            className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                              unreal === option.value
-                                ? "border-blue-500 bg-blue-500 text-white"
-                                : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                            }`}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                  <div className="rounded-3xl bg-slate-900 p-6">
+                    <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Outcome</p>
+                    <p className="mt-2 text-xl font-semibold">Portfolio-ready projects</p>
                   </div>
                 </div>
               </div>
-
-              {status !== "idle" && (
-                <div className={`rounded-2xl p-4 text-sm ${status === "success" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"}`}>
-                  {message}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === "sending"}
-                className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {status === "sending" ? "Sending application..." : "Submit Application"}
-              </button>
-            </form>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-6 sm:px-10">
-        <div className="container mx-auto grid gap-8 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl">
-            <h2 className="text-3xl font-bold text-slate-950">Why the Academy?</h2>
-            <p className="mt-4 text-slate-600 leading-7">
-              Our academy puts real-world game development skills first. You'll learn through project-based training, expert mentorship, and team workflows used by studios.
+      <section id="programs" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Academy Courses</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Comprehensive game development curriculum.</h2>
+            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+              From fundamentals to advanced techniques, our courses cover every aspect of game development and programming.
             </p>
-            <ul className="mt-8 space-y-4 text-slate-700">
-              <li className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-                <strong>Hands-on Projects</strong> - Ship playable game experiences while you learn.
-              </li>
-              <li className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-                <strong>Live Feedback</strong> - Get critique from developers and designers.
-              </li>
-              <li className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-                <strong>Career Focus</strong> - Build a portfolio-ready project list.
-              </li>
-            </ul>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl">
-            <h3 className="text-xl font-semibold text-slate-950">Paths to choose from</h3>
-            <div className="mt-6 space-y-5">
-              {learningPathOptions.slice(0, 3).map((path) => (
-                <div key={path} className="rounded-3xl bg-slate-50 p-5">
-                  <h4 className="font-semibold text-slate-900">{path}</h4>
-                  <p className="mt-2 text-sm text-slate-600">A selective track to build your game development skills and portfolio.</p>
+          <div className="grid gap-8 lg:grid-cols-3">
+            {[
+              {
+                title: "Game Design & Development",
+                description: "Master the fundamentals of game design and development, from concept to implementation using industry-standard tools and workflows.",
+                duration: "16 weeks",
+                level: "Beginner to Intermediate",
+                lessons: [
+                  "Game Design Principles & Theory",
+                  "Level Design & World Building",
+                  "Game Mechanics & Systems",
+                  "Player Experience & Psychology",
+                  "Prototyping & Iteration",
+                  "Unity Game Development Basics",
+                  "Unreal Engine Introduction",
+                  "Game Production Pipelines",
+                  "Version Control & Team Collaboration",
+                  "Project Management for Games",
+                  "Quality Assurance & Testing",
+                  "Portfolio Development"
+                ]
+              },
+              {
+                title: "C# Programming for Games",
+                description: "Comprehensive C# programming course specifically tailored for game development, covering Unity scripting and general programming concepts.",
+                duration: "12 weeks",
+                level: "Beginner to Advanced",
+                lessons: [
+                  "C# Fundamentals & Syntax",
+                  "Object-Oriented Programming",
+                  "Unity Scripting Essentials",
+                  "Game Object Manipulation",
+                  "Physics & Collision Detection",
+                  "Input Systems & Controls",
+                  "UI Programming & Events",
+                  "Data Structures & Algorithms",
+                  "Performance Optimization",
+                  "Debugging & Error Handling",
+                  "Scriptable Objects & Architecture",
+                  "Advanced C# Patterns"
+                ]
+              },
+              {
+                title: "Web Development for Games",
+                description: "Learn modern web development technologies to create game-related websites, tools, and web-based games using HTML, CSS, and JavaScript.",
+                duration: "10 weeks",
+                level: "Beginner to Intermediate",
+                lessons: [
+                  "HTML5 & Semantic Markup",
+                  "CSS3 & Responsive Design",
+                  "JavaScript Fundamentals",
+                  "DOM Manipulation & Events",
+                  "Web APIs & Browser Features",
+                  "Canvas & WebGL for Games",
+                  "Frontend Frameworks (React)",
+                  "Backend Development (Node.js)",
+                  "Database Integration",
+                  "Authentication & Security",
+                  "Deployment & Hosting",
+                  "Web Game Optimization"
+                ]
+              }
+            ].map((program) => (
+              <div key={program.title} className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-2xl font-semibold">{program.title}</h3>
+                  <span className="inline-flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                    {program.level}
+                  </span>
                 </div>
-              ))}
+                <p className="text-slate-600 dark:text-slate-400 mb-4">{program.description}</p>
+                <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-6">
+                  <span>📅 {program.duration}</span>
+                  <span>📚 {program.lessons.length} lessons</span>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">What you'll learn:</p>
+                  <ul className="space-y-1">
+                    {program.lessons.slice(0, 4).map((lesson, index) => (
+                      <li key={index} className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-500 flex-shrink-0"></span>
+                        {lesson}
+                      </li>
+                    ))}
+                    {program.lessons.length > 4 && (
+                      <li className="text-sm text-slate-500 dark:text-slate-500">
+                        +{program.lessons.length - 4} more lessons...
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12 bg-violet-50 dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-600 dark:text-violet-400">Stay Connected</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Join our learning community</h2>
+            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Subscribe to our newsletter for exclusive content, course updates, industry insights, and early access to new programs.
+            </p>
+          </div>
+          <div className="max-w-md mx-auto">
+            <NewsletterSubscription variant="default" />
+          </div>
+        </div>
+      </section>
+
+      <section id="bootcamp" className="py-20 px-6 lg:px-12 bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900 text-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white">
+              2026 Boot Camp
+            </span>
+            <h2 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
+              Transform your career in 12 weeks.
+            </h2>
+            <p className="mt-6 max-w-3xl mx-auto text-lg leading-8 text-white/80">
+              Join our intensive 2026 Game Development Boot Camp and master the skills you need to build professional games. Learn online through Microsoft Teams with live instruction, hands-on projects, and career support.
+            </p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-3 mb-12">
+            <div className="text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">12</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Weeks of Intensive Training</h3>
+              <p className="text-white/80">Full-time immersive learning experience with daily live sessions</p>
+            </div>
+            <div className="text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">🎓</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Industry-Ready Skills</h3>
+              <p className="text-white/80">Master Game Design, C#, and Web Development for games</p>
+            </div>
+            <div className="text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">💼</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Career Support</h3>
+              <p className="text-white/80">Portfolio development, job placement assistance, and networking</p>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl">
-            <h3 className="text-xl font-semibold text-slate-950">What we ask</h3>
-            <ul className="mt-6 space-y-4 text-slate-700">
-              <li>First name, last name, phone and email</li>
-              <li>Preferred learning path</li>
-              <li>Software development experience</li>
-              <li>Languages you know and project history</li>
-              <li>Unity 3D and Unreal familiarity</li>
-            </ul>
+          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 mb-12">
+            <h3 className="text-2xl font-semibold mb-6 text-center">What You'll Learn</h3>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="text-center">
+                <h4 className="text-lg font-semibold mb-3">Game Design & Development</h4>
+                <ul className="text-sm text-white/80 space-y-2">
+                  <li>• Game design principles</li>
+                  <li>• Level design & mechanics</li>
+                  <li>• Unity & Unreal Engine</li>
+                  <li>• Production workflows</li>
+                </ul>
+              </div>
+              <div className="text-center">
+                <h4 className="text-lg font-semibold mb-3">C# Programming</h4>
+                <ul className="text-sm text-white/80 space-y-2">
+                  <li>• C# fundamentals</li>
+                  <li>• Unity scripting</li>
+                  <li>• Object-oriented programming</li>
+                  <li>• Game logic implementation</li>
+                </ul>
+              </div>
+              <div className="text-center">
+                <h4 className="text-lg font-semibold mb-3">Web Development</h4>
+                <ul className="text-sm text-white/80 space-y-2">
+                  <li>• HTML5 & CSS3</li>
+                  <li>• JavaScript & frameworks</li>
+                  <li>• Web APIs for games</li>
+                  <li>• Deployment & hosting</li>
+                </ul>
+              </div>
+            </div>
           </div>
+
+          <div className="text-center">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-md mx-auto">
+              <h3 className="text-xl font-semibold mb-4">Register for 2026 Boot Camp</h3>
+              <p className="text-white/80 mb-6">Limited spots available. Early registration recommended.</p>
+              <Link href="#contact" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 w-full">
+                Apply Now
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="py-20 px-6 lg:px-12 bg-slate-950 text-white">
+        <div className="container mx-auto max-w-6xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-300">Get in touch</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tight">Ready to join the academy?</h2>
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-300">
+            Email our academy team and secure your spot in the next cohort.
+          </p>
+          <Link href="mailto:hello@gecogamesstudios.com" className="mt-10 inline-flex items-center justify-center rounded-full bg-sky-500 px-8 py-3 text-sm font-semibold text-white transition hover:bg-sky-400">
+            Email admissions
+          </Link>
         </div>
       </section>
     </div>

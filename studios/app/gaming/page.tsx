@@ -1,307 +1,139 @@
-"use client"
-
-import { useState } from "react"
-import GameCard from "@/components/game-card"
-import AnimatedCounter from "@/components/animated-counter"
-import { Gamepad2, Trophy, Users, Star, Search, Grid, List } from "lucide-react"
+import Link from "next/link"
 
 export default function GamingPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchTerm, setSearchTerm] = useState("")
-
   const games = [
     {
       title: "Fruit Valley",
-      description:
-        "Dive into the colorful world of Fruit Valley Adventures, the ultimate match-3 game that's perfect for puzzle lovers!",
-      image: "/games/fruit-valley.png",
-      downloadUrl: "https://play.google.com/store/apps/details?id=com.GECOGamesStudios.FruitValley",
-      rating: 4.8,
-      downloads: "50K+",
-      achievements: 25,
-      category: "puzzle",
-      genre: "Match-3",
-      releaseDate: "2023",
+      category: "Puzzle",
+      description: "A polished match-3 experience designed for wide audience appeal.",
     },
     {
       title: "Block Cat Fill",
-      description:
-        "Relax your brain solving puzzle with cute cats! Fill the blocks to solve the puzzle and rescue the cats.",
-      image: "/games/block-cat-fill.png",
-      downloadUrl: "https://play.google.com/store/apps/details?id=com.GECOGamesStudios.BlockCatFill",
-      rating: 4.6,
-      downloads: "30K+",
-      achievements: 20,
-      category: "puzzle",
-      genre: "Logic Puzzle",
-      releaseDate: "2023",
+      category: "Puzzle",
+      description: "A strategic logic game with charming visuals and clean progression.",
     },
     {
       title: "Become A Chef",
-      description: "In Being A Chef, you'll start from humble beginnings and build a thriving restaurant empire!",
-      image: "/games/become-a-chef.png",
-      downloadUrl: "https://play.google.com/store/apps/details?id=com.GECOGamesLTD.BeingAChef",
-      rating: 4.7,
-      downloads: "75K+",
-      achievements: 30,
-      category: "simulation",
-      genre: "Restaurant Sim",
-      releaseDate: "2022",
-    },
-    {
-      title: "Atomic Crush",
-      description: "Master the art of precision in this addictive physics-based puzzle game with atomic elements!",
-      image: "/games/atomic-crush.png",
-      downloadUrl: "#",
-      rating: 4.9,
-      downloads: "100K+",
-      achievements: 45,
-      category: "puzzle",
-      genre: "Physics Puzzle",
-      releaseDate: "2025",
-    },
-    {
-      title: "Our Last Prayer: Arena",
-      description: "Epic battle arena game set in beautiful African landscapes with strategic combat!",
-      image: "/games/our-last-prayer-arena.png",
-      downloadUrl: "#",
-      rating: 4.5,
-      downloads: "80K+",
-      achievements: 35,
-      category: "action",
-      genre: "Battle Arena",
-      releaseDate: "2023",
-    },
-    {
-      title: "Clear Skies 3D",
-      description: "Immersive 3D puzzle experience with stunning castle environments and challenging ball physics!",
-      image: "/games/clear-skies-3d.png",
-      downloadUrl: "#",
-      rating: 4.4,
-      downloads: "40K+",
-      achievements: 28,
-      category: "puzzle",
-      genre: "3D Puzzle",
-      releaseDate: "2025",
-    },
-    {
-      title: "Letter Loop",
-      description: "Challenge your vocabulary in this beautiful word puzzle adventure set in exotic locations!",
-      image: "/games/letter-loop.png",
-      downloadUrl: "#",
-      rating: 4.3,
-      downloads: "25K+",
-      achievements: 22,
-      category: "word",
-      genre: "Word Puzzle",
-      releaseDate: "2025",
-    },
-    {
-      title: "Inshimu Two",
-      description: "Join the bee adventure in this colorful platformer with exciting challenges and sweet rewards!",
-      image: "/games/inshimu-two.png",
-      downloadUrl: "#",
-      rating: 4.6,
-      downloads: "35K+",
-      achievements: 30,
-      category: "adventure",
-      genre: "Platformer",
-      releaseDate: "2025",
-    },
-    {
-      title: "Jam Boat",
-      description: "Navigate through traffic jams in this exciting boat puzzle game with vibrant graphics!",
-      image: "/games/jam-boat.png",
-      downloadUrl: "#",
-      rating: 4.2,
-      downloads: "20K+",
-      achievements: 18,
-      category: "puzzle",
-      genre: "Logic Puzzle",
-      releaseDate: "2025",
+      category: "Simulation",
+      description: "A narrative-driven restaurant simulation with premium art direction.",
     },
   ]
-
-  const categories = [
-    { id: "all", name: "All Games", icon: Gamepad2 },
-    { id: "puzzle", name: "Puzzle", icon: Trophy },
-    { id: "action", name: "Action", icon: Star },
-    { id: "simulation", name: "Simulation", icon: Users },
-    { id: "adventure", name: "Adventure", icon: Trophy },
-    { id: "word", name: "Word Games", icon: Star },
-  ]
-
-  const filteredGames = games.filter((game) => {
-    const matchesCategory = selectedCategory === "all" || game.category === selectedCategory
-    const matchesSearch =
-      game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      game.description.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 py-20 px-8 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto relative z-10">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 gradient-text floating-animation">Gaming Universe</h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90">
-              Explore our collection of <AnimatedCounter end={9} suffix="+" className="font-bold text-yellow-300" />{" "}
-              amazing games
-            </p>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-yellow-300 mb-2">
-                  <AnimatedCounter end={500} suffix="K+" />
-                </div>
-                <p className="text-sm opacity-80">Total Downloads</p>
+    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <section className="bg-gradient-to-r from-violet-900 via-indigo-900 to-slate-950 py-20 px-6 lg:px-12 text-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <span className="inline-flex rounded-full bg-amber-500/20 px-4 py-2 text-sm font-semibold text-amber-100 uppercase tracking-[0.24em]">
+                Game Portfolio
+              </span>
+              <h1 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
+                Games crafted for quality, retention, and engagement.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
+                Our gaming portfolio includes polished mobile and casual experiences designed to look premium and feel addictive.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link href="#products" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                  View catalog
+                </Link>
+                <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                  Talk to our team
+                </Link>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-green-300 mb-2">
-                  <AnimatedCounter end={4.7} suffix="" />
+            </div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-10 shadow-2xl backdrop-blur-xl">
+              <div className="space-y-4">
+                <div className="rounded-3xl bg-white/10 p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-amber-200">Highlights</p>
+                  <p className="mt-3 text-3xl font-semibold">Beautiful design</p>
                 </div>
-                <p className="text-sm opacity-80">Average Rating</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-blue-300 mb-2">
-                  <AnimatedCounter end={250} suffix="+" />
+                <div className="rounded-3xl bg-white/10 p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-amber-200">Focus</p>
+                  <p className="mt-3 text-3xl font-semibold">Long-term retention</p>
                 </div>
-                <p className="text-sm opacity-80">Achievements</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-3xl font-bold text-purple-300 mb-2">
-                  <AnimatedCounter end={9} />
-                </div>
-                <p className="text-sm opacity-80">Games Available</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Filters and Search */}
-      <section className="py-8 px-8 bg-white shadow-sm">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <input
-                type="text"
-                placeholder="Search games..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "grid" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                <Grid className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "list" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                <List className="h-5 w-5" />
-              </button>
-            </div>
+      <section id="products" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Games</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Selected titles from our studio.</h2>
           </div>
-
-          {/* Category Filters */}
-          <div className="flex flex-wrap gap-3 mt-6">
-            {categories.map((category) => {
-              const IconComponent = category.icon
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    selectedCategory === category.id
-                      ? "bg-blue-500 text-white shadow-lg"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  <IconComponent className="h-4 w-4" />
-                  <span>{category.name}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Games Grid */}
-      <section className="py-16 px-8">
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold gradient-text">
-              {selectedCategory === "all" ? "All Games" : categories.find((c) => c.id === selectedCategory)?.name}
-            </h2>
-            <span className="text-gray-600">
-              {filteredGames.length} game{filteredGames.length !== 1 ? "s" : ""} found
-            </span>
-          </div>
-
-          <div
-            className={`grid gap-8 ${
-              viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-            }`}
-          >
-            {filteredGames.map((game, index) => (
-              <div key={game.title} className="slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
-                <GameCard {...game} />
+          <div className="grid gap-6 lg:grid-cols-3">
+            {games.map((game) => (
+              <div key={game.title} className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950">
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{game.category}</p>
+                <h3 className="mt-4 text-2xl font-semibold">{game.title}</h3>
+                <p className="mt-4 text-slate-600 dark:text-slate-400">{game.description}</p>
               </div>
             ))}
           </div>
-
-          {filteredGames.length === 0 && (
-            <div className="text-center py-16">
-              <Gamepad2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-600 mb-2">No games found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria</p>
-            </div>
-          )}
         </div>
       </section>
 
-      {/* Coming Soon Section */}
-      <section className="py-16 px-8 bg-gradient-to-r from-gray-900 to-black text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-8 gradient-text">Coming Soon</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { title: "Cyber Quest", genre: "RPG", eta: "Q2 2025" },
-              { title: "Ocean Adventure", genre: "Adventure", eta: "Q3 2025" },
-              { title: "Sky Racers", genre: "Racing", eta: "Q4 2025" },
-            ].map((game, index) => (
-              <div
-                key={game.title}
-                className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-300 hover:scale-105"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
-                  <Gamepad2 className="h-12 w-12 text-white opacity-50" />
+      <section className="py-20 px-6 lg:px-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-10 lg:grid-cols-2 items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Why our games</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">A studio approach to design and retention.</h2>
+              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                We combine strong game design, polished visuals, and live product thinking to create titles that grow over time.
+              </p>
+              <ul className="mt-10 space-y-4">
+                {[
+                  "Player-first progression systems",
+                  "Brand-aligned art direction",
+                  "Live updates and retention planning",
+                  "Cross-platform enablement",
+                ].map((item) => (
+                  <li key={item} className="flex gap-3 text-slate-700 dark:text-slate-300">
+                    <span className="mt-1 inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+              <h3 className="text-2xl font-semibold mb-4">Product support</h3>
+              <div className="space-y-4 text-slate-700 dark:text-slate-300">
+                <div>
+                  <p className="font-semibold">Live operations planning</p>
+                  <p>Clear roadmaps for updates and player retention.</p>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{game.title}</h3>
-                <p className="text-gray-300 mb-2">{game.genre}</p>
-                <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">{game.eta}</span>
+                <div>
+                  <p className="font-semibold">Monetization strategy</p>
+                  <p>Thoughtful systems that respect players and drive revenue.</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Quality assurance</p>
+                  <p>Polished launches with stability and performance testing.</p>
+                </div>
               </div>
-            ))}
+              <Link href="#contact" className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-amber-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-amber-400">
+                Discuss your game
+              </Link>
+            </div>
           </div>
+        </div>
+      </section>
+
+      <section id="contact" className="py-20 px-6 lg:px-12 bg-slate-950 text-white">
+        <div className="container mx-auto max-w-6xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber-300">Talk games</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tight">Bring your next title to life with our studio.</h2>
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-300">
+            Email our games team to explore concept, production, and live product support.
+          </p>
+          <Link href="mailto:hello@gecogamesstudios.com" className="mt-10 inline-flex items-center justify-center rounded-full bg-amber-500 px-8 py-3 text-sm font-semibold text-white transition hover:bg-amber-400">
+            Email game team
+          </Link>
         </div>
       </section>
     </div>

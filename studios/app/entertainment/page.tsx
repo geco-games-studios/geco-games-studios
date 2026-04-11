@@ -1,342 +1,137 @@
-"use client"
-
-import { useState } from "react"
-import AnimatedCounter from "@/components/animated-counter"
-import { Play, Film, Music, Headphones, Calendar, Star, Users, Clock, Heart, Share2 } from "lucide-react"
+import Link from "next/link"
 
 export default function EntertainmentPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [likedItems, setLikedItems] = useState<number[]>([])
-
-  const entertainmentContent = [
+  const pieces = [
     {
-      id: 1,
-      title: "Behind the Scenes: Fruit Valley Development",
-      type: "video",
-      category: "documentary",
-      duration: "15:32",
-      views: "25K",
-      likes: 1200,
-      description: "Go behind the scenes and see how our hit game Fruit Valley was created from concept to release.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-15",
+      title: "Studio Showreel",
+      description: "A cinematic look at our most ambitious creative projects and game experiences.",
     },
     {
-      id: 2,
-      title: "Epic Gaming Soundtrack Collection",
-      type: "music",
-      category: "soundtrack",
-      duration: "45:20",
-      views: "18K",
-      likes: 890,
-      description: "A curated collection of our best game soundtracks and ambient music for your listening pleasure.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-10",
+      title: "Music & Sound Design",
+      description: "Original audio production crafted to amplify storytelling and emotional impact.",
     },
     {
-      id: 3,
-      title: "Developer Diary: Creating Block Cat Fill",
-      type: "podcast",
-      category: "interview",
-      duration: "32:15",
-      views: "12K",
-      likes: 650,
-      description: "Our lead developer discusses the challenges and breakthroughs in creating our puzzle game.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-08",
-    },
-    {
-      id: 4,
-      title: "Geco Games Animation Showcase",
-      type: "video",
-      category: "showcase",
-      duration: "8:45",
-      views: "35K",
-      likes: 1800,
-      description: "Watch stunning animations and cutscenes from our upcoming games in this visual showcase.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-05",
-    },
-    {
-      id: 5,
-      title: "Community Highlights Reel",
-      type: "video",
-      category: "community",
-      duration: "12:30",
-      views: "22K",
-      likes: 1100,
-      description: "Celebrating our amazing community with player highlights, fan art, and memorable moments.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-03",
-    },
-    {
-      id: 6,
-      title: "Relaxing Game Music for Focus",
-      type: "music",
-      category: "ambient",
-      duration: "60:00",
-      views: "40K",
-      likes: 2200,
-      description: "Perfect background music for work, study, or relaxation featuring our ambient game tracks.",
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      date: "2025-01-01",
+      title: "Community Stories",
+      description: "Behind-the-scenes features, interviews, and fan-driven narratives.",
     },
   ]
-
-  const categories = [
-    { id: "all", name: "All Content", icon: Play },
-    { id: "documentary", name: "Documentaries", icon: Film },
-    { id: "soundtrack", name: "Soundtracks", icon: Music },
-    { id: "interview", name: "Interviews", icon: Headphones },
-    { id: "showcase", name: "Showcases", icon: Star },
-    { id: "community", name: "Community", icon: Users },
-    { id: "ambient", name: "Ambient", icon: Heart },
-  ]
-
-  const filteredContent =
-    selectedCategory === "all"
-      ? entertainmentContent
-      : entertainmentContent.filter((item) => item.category === selectedCategory)
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "video":
-        return Film
-      case "music":
-        return Music
-      case "podcast":
-        return Headphones
-      default:
-        return Play
-    }
-  }
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "video":
-        return "bg-red-500"
-      case "music":
-        return "bg-green-500"
-      case "podcast":
-        return "bg-purple-500"
-      default:
-        return "bg-blue-500"
-    }
-  }
-
-  const handleLike = (id: number) => {
-    setLikedItems((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-pink-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 py-20 px-8 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 gradient-text floating-animation">Entertainment Hub</h1>
-          <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Discover exclusive content, behind-the-scenes footage, and amazing soundtracks
-          </p>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-3xl font-bold text-yellow-300 mb-2">
-                <AnimatedCounter end={150} suffix="+" />
+    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <section className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 py-20 px-6 lg:px-12 text-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div>
+              <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white">
+                Creative Entertainment
+              </span>
+              <h1 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
+                Showcase your brand with premium entertainment content.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/90">
+                We produce trailers, original media, and editorial content that make your games and events feel unforgettable.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link href="#content" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                  View content
+                </Link>
+                <Link href="#contact" className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                  Book a session
+                </Link>
               </div>
-              <p className="text-sm opacity-80">Videos & Content</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-3xl font-bold text-green-300 mb-2">
-                <AnimatedCounter end={500} suffix="K+" />
-              </div>
-              <p className="text-sm opacity-80">Total Views</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-3xl font-bold text-blue-300 mb-2">
-                <AnimatedCounter end={25} suffix="K+" />
-              </div>
-              <p className="text-sm opacity-80">Subscribers</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-3xl font-bold text-purple-300 mb-2">
-                <AnimatedCounter end={50} suffix="+" />
-              </div>
-              <p className="text-sm opacity-80">Hours of Content</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Category Filters */}
-      <section className="py-8 px-8 bg-white shadow-sm">
-        <div className="container mx-auto">
-          <div className="flex flex-wrap gap-3 justify-center">
-            {categories.map((category) => {
-              const IconComponent = category.icon
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-full transition-all duration-300 ${
-                    selectedCategory === category.id
-                      ? "bg-pink-500 text-white shadow-lg transform scale-105"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:scale-105"
-                  }`}
-                >
-                  <IconComponent className="h-5 w-5" />
-                  <span className="font-medium">{category.name}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Content */}
-      <section className="py-16 px-8">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold gradient-text mb-4">Featured Content</h2>
-            <p className="text-gray-600 text-lg">
-              {filteredContent.length} piece{filteredContent.length !== 1 ? "s" : ""} of entertainment
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredContent.map((item, index) => {
-              const TypeIcon = getTypeIcon(item.type)
-              const isLiked = likedItems.includes(item.id)
-
-              return (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-105 group"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {/* Thumbnail */}
-                  <div className="relative">
-                    <img
-                      src={item.thumbnail || "/placeholder.svg"}
-                      alt={item.title}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-
-                    {/* Type Badge */}
-                    <div
-                      className={`absolute top-4 left-4 ${getTypeColor(item.type)} text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1`}
-                    >
-                      <TypeIcon className="h-3 w-3" />
-                      <span className="capitalize">{item.type}</span>
-                    </div>
-
-                    {/* Duration */}
-                    <div className="absolute bottom-4 right-4 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center space-x-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{item.duration}</span>
-                    </div>
-
-                    {/* Play Overlay */}
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-colors">
-                        <Play className="h-8 w-8 text-white" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Content Info */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 gradient-text line-clamp-2">{item.title}</h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">{item.description}</p>
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between mb-4 text-sm text-gray-500">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <Users className="h-4 w-4" />
-                          <span>{item.views}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Heart className={`h-4 w-4 ${isLiked ? "text-red-500 fill-current" : ""}`} />
-                          <span>{item.likes + (isLiked ? 1 : 0)}</span>
-                        </div>
-                      </div>
-                      <span className="text-xs">{new Date(item.date).toLocaleDateString()}</span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex space-x-2">
-                      <button className="flex-1 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
-                        <Play className="h-4 w-4" />
-                        <span>Play</span>
-                      </button>
-                      <button
-                        onClick={() => handleLike(item.id)}
-                        className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center justify-center ${
-                          isLiked ? "bg-red-500 text-white" : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                      </button>
-                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 flex items-center justify-center">
-                        <Share2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-10 shadow-2xl backdrop-blur-xl">
+              <div className="space-y-4">
+                <div className="rounded-3xl bg-white/10 p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-white/80">Featured</p>
+                  <p className="mt-3 text-3xl font-semibold">Original series</p>
                 </div>
-              )
-            })}
+                <div className="rounded-3xl bg-white/10 p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-white/80">Formats</p>
+                  <p className="mt-3 text-3xl font-semibold">Video, audio, stories</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Upcoming Content */}
-      <section className="py-16 px-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="container mx-auto">
+      <section id="content" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Coming Soon</h2>
-            <p className="text-xl opacity-90">Exciting new content in the pipeline</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Our work</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Media that amplifies player engagement.</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Game Development Masterclass",
-                type: "Series",
-                date: "January 2025",
-                description: "Learn game development from our expert team",
-              },
-              {
-                title: "Live Developer Q&A",
-                type: "Live Stream",
-                date: "Every Friday",
-                description: "Ask questions directly to our development team",
-              },
-              {
-                title: "Original Game Soundtrack Album",
-                type: "Music Album",
-                date: "February 2025",
-                description: "Complete soundtrack collection from all our games",
-              },
-            ].map((item, index) => (
-              <div
-                key={item.title}
-                className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-300 hover:scale-105"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">{item.type}</span>
-                  <div className="flex items-center space-x-1 text-sm">
-                    <Calendar className="h-4 w-4" />
-                    <span>{item.date}</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="opacity-80">{item.description}</p>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {pieces.map((item) => (
+              <div key={item.title} className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950">
+                <h3 className="text-2xl font-semibold mb-3">{item.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400">{item.description}</p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-10 lg:grid-cols-2 items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Capabilities</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">From trailers to original storytelling.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                We help studios build cultural moments with visual stories, audio branding, and community-driven entertainment.
+              </p>
+              <ul className="mt-10 space-y-4">
+                {[
+                  "Trailer production and cinematic edits",
+                  "Music and sound design for games and campaigns",
+                  "Documentaries, interviews, and community features",
+                  "Branded content for launch and events",
+                ].map((item) => (
+                  <li key={item} className="flex gap-3 text-slate-700 dark:text-slate-300">
+                    <span className="mt-1 inline-flex h-3 w-3 rounded-full bg-pink-500"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+              <h3 className="text-2xl font-semibold mb-4">Featured formats</h3>
+              <div className="space-y-4 text-slate-700 dark:text-slate-300">
+                <div>
+                  <p className="font-semibold">Launch trailers</p>
+                  <p>High-impact trailers designed for launches and key campaigns.</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Audio identities</p>
+                  <p>Original soundtracks, ambient music, and audio branding.</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Behind-the-scenes content</p>
+                  <p>Studio stories and player-focused narratives that build trust.</p>
+                </div>
+              </div>
+              <Link href="#contact" className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-pink-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-pink-400">
+                Start a project
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="py-20 px-6 lg:px-12 bg-slate-950 text-white">
+        <div className="container mx-auto max-w-6xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-pink-300">Connect with our creative team</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tight">Build compelling content for your brand and audience.</h2>
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-300">
+            Reach out to explore video, audio, and editorial experiences for your next game or campaign.
+          </p>
+          <Link href="mailto:hello@gecogamesstudios.com" className="mt-10 inline-flex items-center justify-center rounded-full bg-pink-500 px-8 py-3 text-sm font-semibold text-white transition hover:bg-pink-400">
+            Email our team
+          </Link>
         </div>
       </section>
     </div>
