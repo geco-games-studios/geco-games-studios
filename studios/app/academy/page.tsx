@@ -1,5 +1,6 @@
 import Link from "next/link"
 import NewsletterSubscription from "../../components/newsletter-subscription"
+import AcademyApplicationForm from "../../components/academy-application-form"
 
 export default function AcademyPage() {
   return (
@@ -18,6 +19,9 @@ export default function AcademyPage() {
                 Our comprehensive academy offers specialized courses covering game development, programming, and web development skills taught by industry professionals.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
+                <Link href="/login?type=student" className="inline-flex items-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600">
+                  Student Dashboard
+                </Link>
                 <Link href="#programs" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   Explore courses
                 </Link>
@@ -155,21 +159,6 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      <section className="py-20 px-6 lg:px-12 bg-violet-50 dark:bg-slate-900">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-600 dark:text-violet-400">Stay Connected</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Join our learning community</h2>
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Subscribe to our newsletter for exclusive content, course updates, industry insights, and early access to new programs.
-            </p>
-          </div>
-          <div className="max-w-md mx-auto">
-            <NewsletterSubscription variant="default" />
-          </div>
-        </div>
-      </section>
-
       <section id="bootcamp" className="py-20 px-6 lg:px-12 bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900 text-white">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -253,16 +242,37 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      <section id="contact" className="py-20 px-6 lg:px-12 bg-slate-950 text-white">
+      <section id="contact" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-950">
+        <div className="container mx-auto max-w-6xl">
+          <AcademyApplicationForm />
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12 bg-slate-950 text-white">
         <div className="container mx-auto max-w-6xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-300">Get in touch</p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-tight">Ready to join the academy?</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-300">Questions?</p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tight">Didn't find what you were looking for?</h2>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-300">
-            Email our academy team and secure your spot in the next cohort.
+            Reach out to our academy team directly for any inquiries.
           </p>
           <Link href="mailto:hello@gecogamesstudios.com" className="mt-10 inline-flex items-center justify-center rounded-full bg-sky-500 px-8 py-3 text-sm font-semibold text-white transition hover:bg-sky-400">
             Email admissions
           </Link>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12 bg-violet-50 dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-600 dark:text-violet-400">Stay Connected</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Join our learning community</h2>
+            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Subscribe to our newsletter for exclusive content, course updates, industry insights, and early access to new programs.
+            </p>
+          </div>
+          <div className="max-w-md mx-auto">
+            <NewsletterSubscription variant="default" />
+          </div>
         </div>
       </section>
     </div>
