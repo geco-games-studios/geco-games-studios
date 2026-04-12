@@ -54,7 +54,7 @@ export default function Navigation() {
   const navItems = [
     { name: "Studio", href: "/" },
     { name: "Services", href: "/services" },
-    { name: "Portfolio", href: "/portfolio" },
+    { name: "About", href: "/about" },
     { name: "Academy", href: "/academy" },
     { name: "Esports", href: "/esports" },
     { name: "Support", href: "/support" },
