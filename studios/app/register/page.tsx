@@ -99,31 +99,53 @@ export default function SignupPage() {
 
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Call backend API for registration
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          type: selectedType,
+        }),
+      })
 
-    // In production, this would send data to backend
-    // For now, we'll just show success and redirect
-    setIsLoading(false)
+      const data = await response.json()
 
-    // Store user data temporarily (in production, backend handles this)
-    const newUser = {
-      email: formData.email,
-      type: selectedType,
-      name: formData.name,
-      userId: `${selectedType.toUpperCase()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+      if (!response.ok) {
+        setError(data.message || "Registration failed. Please try again.")
+        setIsLoading(false)
+        return
+      }
+
+      // Store user data in localStorage (in production, use secure session/token)
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({
+          email: data.user.email,
+          type: data.user.type,
+          name: data.user.name,
+          userId: data.user.userId,
+        })
+      )
+
+      // Redirect to appropriate dashboard
+      const dashboardMap: { [key: string]: string } = {
+        student: "/academy/dashboard",
+        gamer: "/gamer/dashboard",
+        customer: "/customer/dashboard",
+      }
+
+      setIsLoading(false)
+      router.push(dashboardMap[selectedType] || "/")
+    } catch (err) {
+      setError("Network error. Please check your connection and try again.")
+      setIsLoading(false)
     }
-
-    localStorage.setItem("currentUser", JSON.stringify(newUser))
-
-    // Redirect to appropriate dashboard
-    const dashboardMap: { [key: string]: string } = {
-      student: "/academy/dashboard",
-      gamer: "/gamer/dashboard",
-      customer: "/customer/dashboard",
-    }
-
-    router.push(dashboardMap[selectedType] || "/")
   }
 
   return (
