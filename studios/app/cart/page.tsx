@@ -86,7 +86,7 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2">
               <div className="space-y-4">
-                cartItems.length > 0 ? (
+                {cartItems.length > 0 ? (
                   cartItems.map((item) => (
                     <div
                       key={item.id}
