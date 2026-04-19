@@ -107,14 +107,14 @@ export default function HomePage() {
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <section className="relative overflow-hidden min-h-screen lg:min-h-[600px] flex items-center">
         {/* Background Video */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe 
-            src="https://www.youtube.com/embed/UXqq0ZvbOnk?autoplay=1&mute=1&loop=1&playlist=UXqq0ZvbOnk&controls=0&modestbranding=1&showinfo=0&rel=0&hd=1&vq=hd1080" 
+            src="https://www.youtube.com/embed/UXqq0ZvbOnk?autoplay=1&mute=1&loop=1&playlist=UXqq0ZvbOnk&controls=0&modestbranding=1&showinfo=0&rel=0&hd=1&vq=hd1080&fs=0" 
             title="Geco Games Studios Introduction" 
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             allowFullScreen
-            className="w-full h-full object-cover"
+            className="absolute top-1/2 left-1/2 w-[150%] h-[150%] -translate-x-1/2 -translate-y-1/2 object-cover"
           ></iframe>
         </div>
         
