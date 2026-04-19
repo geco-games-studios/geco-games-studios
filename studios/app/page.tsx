@@ -106,16 +106,20 @@ export default function HomePage() {
   return (
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <section className="relative overflow-hidden min-h-screen lg:min-h-[600px] flex items-center">
-        {/* Background Image */}
+        {/* Background Video */}
         <div className="absolute inset-0 z-0">
-          <Image 
-            src="/creativity/animation-portal.png" 
-            alt="Geco Games Studio background" 
-            fill
-            className="object-cover"
-            priority
-          />
+          <iframe 
+            src="https://www.youtube.com/embed/UXqq0ZvbOnk?autoplay=1&mute=1&loop=1&playlist=UXqq0ZvbOnk&controls=0&modestbranding=1&showinfo=0&rel=0&hd=1&vq=hd1080" 
+            title="Geco Games Studios Introduction" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowFullScreen
+            className="w-full h-full object-cover"
+          ></iframe>
         </div>
+        
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
         
         {/* Content positioned directly over the image */}
         <div className="container mx-auto px-6 py-20 lg:py-28 relative z-10">
@@ -417,6 +421,98 @@ export default function HomePage() {
             <div className="lg:pl-8">
               <NewsletterSubscription />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+        <div className="container mx-auto max-w-6xl text-center">
+          <div className="mb-16">
+            <span className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white mb-6">
+              Professional Tools
+            </span>
+            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl mb-6 bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              Licenses & Tools
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              We use industry-leading tools and hold licenses for professional game development, ensuring the highest quality in every project.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            <div className="group">
+              <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex flex-col items-center">
+                  <div className="w-32 h-32 mb-8 flex items-center justify-center bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-inner">
+                    <img 
+                      src="/blender.png" 
+                      alt="Blender" 
+                      className="w-full h-full object-contain filter group-hover:brightness-110 transition-all duration-300"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Blender</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center">3D Modeling & Animation</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex flex-col items-center">
+                  <div className="w-32 h-32 mb-8 flex items-center justify-center bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-inner">
+                    <img 
+                      src="/unity.jpeg" 
+                      alt="Unity 3D" 
+                      className="w-full h-full object-contain filter group-hover:brightness-110 transition-all duration-300"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Unity 3D</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center">Game Engine & Development</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex flex-col items-center">
+                  <div className="w-32 h-32 mb-8 flex items-center justify-center bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-inner">
+                    <img 
+                      src="/Unreal_Engine-Logo.wine.png" 
+                      alt="Unreal Engine" 
+                      className="w-full h-full object-contain filter group-hover:brightness-110 transition-all duration-300"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Unreal Engine</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center">Advanced Game Engine</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex flex-col items-center">
+                  <div className="w-32 h-32 mb-8 flex items-center justify-center bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-inner">
+                    <img 
+                      src="/Inkscape_Logo_full.png" 
+                      alt="Inkscape" 
+                      className="w-full h-full object-contain filter group-hover:brightness-110 transition-all duration-300"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Inkscape</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center">Vector Graphics & Design</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-sm text-slate-500 dark:text-slate-400 italic">
+              These industry-standard tools power our creative process and ensure professional-quality results.
+            </p>
           </div>
         </div>
       </section>
