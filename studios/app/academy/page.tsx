@@ -25,8 +25,8 @@ export default function AcademyPage() {
                 <Link href="#programs" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   Explore courses
                 </Link>
-                <Link href="#bootcamp" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
-                  2026 Boot Camp
+                <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                  Apply now
                 </Link>
               </div>
             </div>
@@ -34,12 +34,12 @@ export default function AcademyPage() {
               <div className="space-y-6">
                 <div className="rounded-3xl bg-slate-900 p-8">
                   <p className="text-sm uppercase tracking-[0.24em] text-sky-300">Next cohort</p>
-                  <p className="mt-3 text-3xl font-semibold">June 2026</p>
+                  <p className="mt-3 text-3xl font-semibold">1st Cohort to 4th May</p>
                 </div>
                 <div className="grid gap-4">
                   <div className="rounded-3xl bg-slate-900 p-6">
                     <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Duration</p>
-                    <p className="mt-2 text-xl font-semibold">12 weeks</p>
+                    <p className="mt-2 text-xl font-semibold">26 weeks</p>
                   </div>
                   <div className="rounded-3xl bg-slate-900 p-6">
                     <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Outcome</p>
@@ -166,7 +166,7 @@ export default function AcademyPage() {
               2026 Boot Camp
             </span>
             <h2 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
-              Transform your career in 12 weeks.
+              Transform your career in 26 weeks.
             </h2>
             <p className="mt-6 max-w-3xl mx-auto text-lg leading-8 text-white/80">
               Join our intensive 2026 Game Development Boot Camp and master the skills you need to build professional games. Learn online through Microsoft Teams with live instruction, hands-on projects, and career support.
@@ -176,7 +176,7 @@ export default function AcademyPage() {
           <div className="grid gap-8 lg:grid-cols-3 mb-12">
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">12</span>
+                <span className="text-2xl font-bold text-white">26</span>
               </div>
               <h3 className="text-xl font-semibold mb-2">Weeks of Intensive Training</h3>
               <p className="text-white/80">Full-time immersive learning experience with daily live sessions</p>

@@ -114,7 +114,7 @@ export default function HomePage() {
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             allowFullScreen
-            className="absolute top-1/2 left-1/2 w-[150%] h-[150%] -translate-x-1/2 -translate-y-1/2 object-cover"
+            className="absolute top-1/2 left-1/2 min-w-[120%] min-h-[120%] w-[180vw] h-[180vh] max-w-none max-h-none -translate-x-1/2 -translate-y-1/2"
           ></iframe>
         </div>
         
