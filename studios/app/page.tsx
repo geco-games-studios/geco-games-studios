@@ -105,17 +105,29 @@ const processSteps = [
 export default function HomePage() {
   return (
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <section className="relative overflow-hidden min-h-screen lg:min-h-[600px] flex items-center">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+      <section className="relative overflow-hidden h-screen flex items-center">
+        {/* Background Video - Desktop */}
+        <div className="absolute inset-0 z-0 overflow-hidden hidden lg:block">
           <iframe 
             src="https://www.youtube.com/embed/UXqq0ZvbOnk?autoplay=1&mute=1&loop=1&playlist=UXqq0ZvbOnk&controls=0&modestbranding=1&showinfo=0&rel=0&hd=1&vq=hd1080&fs=0" 
             title="Geco Games Studios Introduction" 
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             allowFullScreen
-            className="absolute top-1/2 left-1/2 min-w-[120%] min-h-[120%] w-[180vw] h-[180vh] max-w-none max-h-none -translate-x-1/2 -translate-y-1/2"
+            className="absolute top-1/2 left-1/2 w-[150vw] h-[150vh] max-w-none max-h-none -translate-x-1/2 -translate-y-1/2"
+            style={{ objectFit: "cover" }}
           ></iframe>
+        </div>
+
+        {/* Background Image - Mobile */}
+        <div className="absolute inset-0 z-0 overflow-hidden lg:hidden">
+          <Image
+            src="/creativity/animation-portal.png"
+            alt="Geco Games Studios background"
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
         
         {/* Overlay for better text readability */}
