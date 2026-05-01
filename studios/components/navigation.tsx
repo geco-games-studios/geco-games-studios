@@ -57,6 +57,7 @@ export default function Navigation() {
     { name: "About", href: "/about" },
     { name: "Academy", href: "/academy" },
     { name: "Esports", href: "/esports" },
+    { name: "Jampass", href: "/jampass" },
     { name: "Support", href: "/support" },
   ]
 

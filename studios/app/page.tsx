@@ -122,8 +122,8 @@ export default function HomePage() {
         {/* Background Image - Mobile */}
         <div className="absolute inset-0 z-0 overflow-hidden lg:hidden">
           <Image
-            src="/creativity/animation-portal.png"
-            alt="Geco Games Studios background"
+            src="/Mobile.jpeg"
+            alt="Geco Games Studios mobile background"
             fill
             className="object-cover"
             priority

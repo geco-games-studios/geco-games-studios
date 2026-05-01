@@ -1,7 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
-import NewsletterSubscription from "./newsletter-subscription"
+import { Facebook, Instagram, Linkedin, Twitter, Youtube, MessageSquare } from "lucide-react"
 
 export default function Footer() {
   const footerSections = [
@@ -20,16 +19,16 @@ export default function Footer() {
         { name: "Studio", href: "/" },
         { name: "Portfolio", href: "/portfolio" },
         { name: "Academy", href: "/academy" },
-        { name: "Careers", href: "/support" },
+        { name: "Careers", href: "/careers" },
       ],
     },
     {
       title: "Support",
       links: [
-        { name: "Contact", href: "#contact" },
-        { name: "FAQ", href: "/support" },
-        { name: "Privacy", href: "/support" },
-        { name: "Terms", href: "/support" },
+        { name: "Contact", href: "/support/contact" },
+        { name: "FAQ", href: "/support/faq" },
+        { name: "Privacy", href: "/support/privacy" },
+        { name: "Terms", href: "/support/terms" },
       ],
     },
     {
@@ -37,17 +36,19 @@ export default function Footer() {
       links: [
         { name: "News", href: "/newsletters" },
         { name: "Blog", href: "/newsletters" },
-        { name: "Careers", href: "/support" },
-        { name: "Press", href: "/support" },
+        { name: "Careers", href: "/careers" },
+        { name: "Press", href: "/newsletters" },
       ],
     },
   ]
 
   const socialLinks = [
-    { name: "LinkedIn", icon: Linkedin, href: "#" },
-    { name: "Twitter", icon: Twitter, href: "#" },
-    { name: "Facebook", icon: Facebook, href: "#" },
-    { name: "Instagram", icon: Instagram, href: "#" },
+    { name: "YouTube", icon: Youtube, href: "https://www.youtube.com/@GecoStudios" },
+    { name: "Facebook", icon: Facebook, href: "https://web.facebook.com/gecogameslimited" },
+    { name: "Instagram", icon: Instagram, href: "https://www.instagram.com/gecogamesstudios/" },
+    { name: "X", icon: Twitter, href: "https://x.com/GecoMain_77" },
+    { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/103224560/" },
+    { name: "Discord", icon: MessageSquare, href: "https://discord.com/invite/gecogamesstudios" },
   ]
 
   return (
@@ -71,21 +72,19 @@ export default function Footer() {
               {socialLinks.map((social) => {
                 const IconComponent = social.icon
                 return (
-                  <Link
+                  <a
                     key={social.name}
                     href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800"
                     aria-label={social.name}
                   >
                     <IconComponent className="h-5 w-5" />
-                  </Link>
+                  </a>
                 )
               })}
             </div>
-          </div>
-
-          <div>
-            <NewsletterSubscription variant="compact" />
           </div>
 
           {footerSections.map((section) => (
