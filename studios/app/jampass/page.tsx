@@ -136,10 +136,10 @@ export default function JampassPage() {
               🇿🇲 Lusaka, Zambia
             </p>
             <h1 className="text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-              Jampass — the national esports tournament system connecting Zambian gaming centers.
+              Geco Games Jammers Tournament — the national esports championship for Zambia.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Jampass is a centralized platform that brings together gaming centers across Lusaka and Zambia into one unified national esports competition. Centers register for free and pay K2,500 only when they enter the tournament. The best FC 26 and Mortal Kombat players from each qualifying center travel to Lusaka for the 5-day finals.
+              The Jammers Tournament is a centralized platform that brings together gaming centers across Lusaka and Zambia into one unified national esports competition. Centers register for free with a Jampass membership and pay K2,500 only when they enter the tournament. The top FC 25 and Mortal Kombat players from each qualifying center travel to Lusaka for the 5-day finals with full accommodation included.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="#how-it-works" className="inline-flex items-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">
@@ -163,24 +163,24 @@ export default function JampassPage() {
           </div>
           <div className="space-y-6 rounded-[2rem] border border-cyan-500/10 bg-slate-900/80 p-8 shadow-2xl shadow-cyan-900/30">
             <div className="rounded-3xl bg-slate-950/90 p-6">
-              <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">What is Jampass?</p>
+              <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">What is the Jammers Tournament?</p>
               <p className="mt-4 text-slate-300 text-sm leading-relaxed">
-                A unified esports tournament system where gaming centers across Zambia register as teams, host local qualifiers for FC 26 and Mortal Kombat, and send the top player from each game to compete in the national finals held in Lusaka.
+                The Jammers Tournament is a unified esports championship where gaming centers register with a free Jampass membership, host local qualifiers for FC 25 and Mortal Kombat, and qualify their top players to compete in the national finals in Lusaka. All finalists receive accommodation for the 5-day championship.
               </p>
             </div>
             <div className="rounded-3xl border border-slate-800 bg-slate-950/90 p-6">
               <div className="flex items-center gap-3 text-sm uppercase tracking-[0.25em] text-cyan-300 mb-4">
                 <Trophy className="h-4 w-4" />
-                Two game tracks
+                Tournament games
               </div>
               <div className="space-y-3">
                 <div className="rounded-2xl bg-slate-900 p-3">
-                  <p className="text-sm font-semibold text-white">EA Sports FC 26</p>
-                  <p className="text-xs text-slate-400 mt-1">Football/Soccer simulation</p>
+                  <p className="text-sm font-semibold text-white">EA Sports FC 25</p>
+                  <p className="text-xs text-slate-400 mt-1">Football/Soccer competitive title</p>
                 </div>
                 <div className="rounded-2xl bg-slate-900 p-3">
                   <p className="text-sm font-semibold text-white">Mortal Kombat</p>
-                  <p className="text-xs text-slate-400 mt-1">Fighting game competition</p>
+                  <p className="text-xs text-slate-400 mt-1">Fighting game championship</p>
                 </div>
               </div>
             </div>
@@ -294,27 +294,27 @@ export default function JampassPage() {
           <div className="grid gap-6">
             <Card className="border border-slate-800 bg-slate-950/95 text-white shadow-xl shadow-slate-950/20">
               <CardHeader className="space-y-3 p-6">
-                <CardTitle>Gaming center owners (Vendors)</CardTitle>
+                <CardTitle>Gaming center members (Jampass holders)</CardTitle>
                 <CardDescription className="text-slate-400">
-                  Register your arcade, pub, or gaming lounge in Lusaka or anywhere in Zambia.
+                  Register your gaming center and join the national Jammers Tournament network.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-300 text-sm">
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Register your center for free and pay only when you join the tournament</p>
+                  <p>Free Jampass membership registration with unlimited jammer slots</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Submit your two best competitive players</p>
+                  <p>Pay K2,500 Gold class ticket only when entering the tournament</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Track tournament progress and match schedule</p>
+                  <p>Qualify 3 representatives: 1 manager + 2 participants (FC & MK specialists)</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Send representatives to the finals in Lusaka</p>
+                  <p>Receive tournament resources and full accommodation in Lusaka</p>
                 </div>
               </CardContent>
             </Card>
@@ -397,7 +397,7 @@ export default function JampassPage() {
                 <CardDescription className="text-slate-400">Qualified players form the national finals roster.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 text-slate-300 text-sm">
-                <p>Each game sends one top player from each participating center to compete in Lusaka.</p>
+                <p>Each member center qualifies 3 representatives: 1 manager + 2 specialists (1 FC 25 player, 1 Mortal Kombat player) for the national finals in Lusaka.</p>
               </CardContent>
             </Card>
             <Card className="border border-slate-800 bg-slate-950/95 text-white shadow-lg shadow-slate-950/20">
@@ -411,11 +411,28 @@ export default function JampassPage() {
             </Card>
             <Card className="border border-slate-800 bg-slate-950/95 text-white shadow-lg shadow-slate-950/20 lg:col-span-3">
               <CardHeader className="p-6">
-                <CardTitle>Prize pool</CardTitle>
-                <CardDescription className="text-slate-400">National championship awards</CardDescription>
+                <CardTitle>Prize pool structure</CardTitle>
+                <CardDescription className="text-slate-400">Jammers Tournament championship awards</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 text-slate-300 text-sm">
-                <p>The finals award a total prize pool of K150,000 across both FC 26 and Mortal Kombat, with a champion reward for each game and runner-up packages for the best centers.</p>
+              <CardContent className="p-6 text-slate-300 text-sm space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-slate-900 p-4">
+                    <p className="text-cyan-300 font-semibold mb-3">Hotspot Prizes</p>
+                    <ul className="space-y-2 text-xs">
+                      <li className="flex justify-between"><span>1st Position</span> <span className="text-green-400 font-semibold">K15,000</span></li>
+                      <li className="flex justify-between"><span>2nd Position</span> <span className="text-green-400 font-semibold">K10,000</span></li>
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl bg-slate-900 p-4">
+                    <p className="text-cyan-300 font-semibold mb-3">Individual Prizes (Per Game)</p>
+                    <ul className="space-y-2 text-xs">
+                      <li className="flex justify-between"><span>1st Position</span> <span className="text-green-400 font-semibold">K10,000 x2</span></li>
+                      <li className="flex justify-between"><span>2nd Position</span> <span className="text-green-400 font-semibold">K5,000 x2</span></li>
+                      <li className="flex justify-between"><span>3rd Position</span> <span className="text-green-400 font-semibold">K2,500 x2</span></li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-xs">All finalists receive full accommodation for the 5-day tournament in Lusaka. Tournament accommodates 696 total individuals: 580 participants and 116 managers.</p>
               </CardContent>
             </Card>
           </div>
@@ -552,15 +569,15 @@ export default function JampassPage() {
               <ul className="space-y-4 text-sm">
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>Do I need to travel for qualifiers? <span className="text-cyan-300">A:</span> No. Each gaming center hosts local qualifiers. Only the finalists travel to Lusaka for the 5-day finals.</span>
+                  <span>What is the Jampass membership? <span className="text-cyan-300">A:</span> A free membership for gaming centers. Pay K2,500 Gold class ticket only when you enter the tournament.</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>What if I'm a solo player? <span className="text-cyan-300">A:</span> You need a gaming center to represent. Partner with a local center to compete.</span>
+                  <span>How many players can my center send? <span className="text-cyan-300">A:</span> Exactly 3: 1 manager + 2 competitors (1 FC 25 specialist, 1 Mortal Kombat specialist).</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>How are matches scheduled? <span className="text-cyan-300">A:</span> The admin panel automatically assigns match times and seats. You'll get notifications 24 hours before.</span>
+                  <span>Does accommodation include Lusaka stay? <span className="text-cyan-300">A:</span> Yes. All 696 finalists receive full accommodation during the 5-day championship.</span>
                 </li>
               </ul>
             </Card>
