@@ -1,13 +1,32 @@
 import { NextResponse } from "next/server"
+import { getApiUrl } from "@/lib/api"
 
-// TODO: Replace with actual database operations
-// This is a placeholder that always returns 501
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, email, password, type } = body
+    const {
+      first_name,
+      last_name,
+      email,
+      password,
+      account_type,
+      country,
+      phone_number,
+      nrc_number,
+      date_of_birth,
+    } = body
 
-    if (!name || !email || !password || !type) {
+    if (
+      !first_name ||
+      !last_name ||
+      !email ||
+      !password ||
+      !account_type ||
+      !country ||
+      !phone_number ||
+      !nrc_number ||
+      !date_of_birth
+    ) {
       return NextResponse.json(
         { message: "All fields are required." },
         { status: 400 }
@@ -28,25 +47,35 @@ export async function POST(request: Request) {
       )
     }
 
-    // TODO: Implement real registration
-    // - Validate email format
-    // - Check if user already exists in database
-    // - Hash password using bcrypt or similar
-    // - Create new user record in database
-    // - Send verification email if needed
-    // - Generate and return JWT or session token
-    // - Set secure HTTP-only cookie for session management
-
-    return NextResponse.json(
-      { 
-        message: "Registration service is not configured. Please set up your backend for user registration."
+    const apiResponse = await fetch(getApiUrl("register/"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      { status: 501 }
-    )
+      body: JSON.stringify(body),
+    })
+
+    const contentType = apiResponse.headers.get("content-type") || ""
+    const rawBody = await apiResponse.text()
+    let data: any = {}
+
+    if (contentType.includes("application/json")) {
+      try {
+        data = rawBody ? JSON.parse(rawBody) : {}
+      } catch (parseError) {
+        data = { message: rawBody || "Invalid JSON response from backend." }
+      }
+    } else {
+      data = rawBody ? { message: rawBody } : {}
+    }
+
+    return NextResponse.json(data, {
+      status: apiResponse.status,
+    })
   } catch (error) {
-    console.error("Registration error:", error)
+    console.error("Registration proxy error:", error)
     return NextResponse.json(
-      { message: "An error occurred during registration." },
+      { message: "An error occurred while forwarding registration to the backend." },
       { status: 500 }
     )
   }

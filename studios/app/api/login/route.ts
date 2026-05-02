@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
+import { getApiUrl } from "@/lib/api"
 
-// TODO: Replace with actual database query or authentication service
-// This is a placeholder that always returns 401
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -14,20 +13,33 @@ export async function POST(request: Request) {
       )
     }
 
-    // TODO: Implement real authentication
-    // - Query database for user with provided email
-    // - Validate password (use bcrypt or similar for hashed comparison)
-    // - Generate and return JWT or session token
-    // - Set secure HTTP-only cookie for session management
-
-    return NextResponse.json(
-      { 
-        message: "Authentication service is not configured. Please set up your backend for login."
+    const apiResponse = await fetch(getApiUrl("login/"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      { status: 401 }
-    )
+      body: JSON.stringify({ email, password }),
+    })
+
+    const contentType = apiResponse.headers.get("content-type") || ""
+    const rawBody = await apiResponse.text()
+    let data: any = {}
+
+    if (contentType.includes("application/json")) {
+      try {
+        data = rawBody ? JSON.parse(rawBody) : {}
+      } catch (parseError) {
+        data = { message: rawBody || "Invalid JSON response from backend." }
+      }
+    } else {
+      data = rawBody ? { message: rawBody } : {}
+    }
+
+    return NextResponse.json(data, {
+      status: apiResponse.status,
+    })
   } catch (error) {
-    console.error("Login error:", error)
+    console.error("Login proxy error:", error)
     return NextResponse.json(
       { message: "An error occurred during authentication." },
       { status: 500 }

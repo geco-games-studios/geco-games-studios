@@ -39,16 +39,25 @@ export default function Navigation() {
 
   const getDashboardLink = () => {
     if (!user) return "/"
-    switch (user.type) {
-      case "student":
-        return "/academy/dashboard"
-      case "gamer":
-        return "/gamer/dashboard"
-      case "customer":
-        return "/customer/dashboard"
-      default:
-        return "/"
+    if (["student", "academy", "admin", "trainee"].includes(user.type)) {
+      return "/academy/dashboard"
     }
+    if (["jampass", "player", "outlet"].includes(user.type)) {
+      return "/jampass"
+    }
+    if (user.type === "market") {
+      return "/marketplace"
+    }
+    if (user.type === "developer") {
+      return "/academy"
+    }
+    if (user.type === "gamer") {
+      return "/gamer/dashboard"
+    }
+    if (user.type === "customer") {
+      return "/customer/dashboard"
+    }
+    return "/"
   }
 
   const navItems = [

@@ -6,6 +6,25 @@ import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react"
 import Image from "next/image"
 
+function decodeJwt(token: string) {
+  try {
+    const [, payload] = token.split(".")
+    if (!payload) return null
+
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/")
+    const decoded = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((char) => `%${("00" + char.charCodeAt(0).toString(16)).slice(-2)}`)
+        .join("")
+    )
+
+    return JSON.parse(decoded)
+  } catch (error) {
+    return null
+  }
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -32,7 +51,12 @@ export default function LoginPage() {
         }),
       })
 
-      const data = await response.json()
+      let data: any = { message: "Authentication failed. Please check your credentials and try again." }
+      try {
+        data = await response.json()
+      } catch {
+        data = { message: "Invalid response from authentication service." }
+      }
 
       if (!response.ok) {
         setError(data.message || "Authentication failed. Please check your credentials and try again.")
@@ -40,25 +64,41 @@ export default function LoginPage() {
         return
       }
 
-      // Store user data in localStorage (in production, use secure session/token)
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify({
-          email: data.user.email,
-          type: data.user.type,
-          name: data.user.name,
-          userId: data.user.userId,
-        })
-      )
-
-      // Redirect based on user type
-      const redirectMap: { [key: string]: string } = {
-        student: "/academy/dashboard",
-        gamer: "/gamer/dashboard",
-        customer: "/customer/dashboard",
+      if (data.access) {
+        localStorage.setItem("accessToken", data.access)
+      }
+      if (data.refresh) {
+        localStorage.setItem("refreshToken", data.refresh)
       }
 
-      const redirectPath = redirectMap[data.user.type] || "/"
+      const decodedToken = data.access ? decodeJwt(data.access) : null
+      const isValidAccessToken = decodedToken && decodedToken.token_type === "access"
+
+      if (!isValidAccessToken) {
+        setError("Invalid access token returned from the server.")
+        setIsLoading(false)
+        return
+      }
+
+      const currentUser = {
+        email,
+        type: data.account_type || decodedToken?.user_type || decodedToken?.role || "academy",
+        name: email,
+        userId: decodedToken?.user_id || decodedToken?.sub || "",
+        academy_sub_type: data.academy_sub_type || decodedToken?.academy_sub_type || null,
+        is_staff: decodedToken?.is_staff || false,
+      }
+      localStorage.setItem("currentUser", JSON.stringify(currentUser))
+
+      const getRedirectPath = (user: any) => {
+        if (["market"].includes(user.type)) return "/marketplace"
+        if (user.type === "admin" || user.academy_sub_type === "admin" || user.is_staff === true) return "/academy/admin/dashboard"
+        if (["developer", "academy", "trainee", "student", "jampass"].includes(user.type)) return "/academy/dashboard"
+        if (["player", "outlet"].includes(user.type)) return "/jampass"
+        return "/"
+      }
+
+      const redirectPath = getRedirectPath(currentUser)
       setIsLoading(false)
       router.push(redirectPath)
     } catch (err) {
