@@ -56,6 +56,14 @@ export default function AcademyDashboard() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const router = useRouter()
 
+  const isAcademyUser = (parsedUser: any) => {
+    const userType = parsedUser.type || parsedUser.account_type || parsedUser.user_type || parsedUser.role || ""
+    const academySubType = parsedUser.academy_sub_type || ""
+    return ["student", "academy", "trainee", "developer", "jampass"].includes(userType) ||
+           ["student", "academy", "trainee", "developer", "jampass"].includes(academySubType) ||
+           ["student", "academy", "trainee", "developer", "jampass"].includes(parsedUser.account_type)
+  }
+
   useEffect(() => {
     setIsClient(true)
   }, [])
@@ -77,7 +85,7 @@ export default function AcademyDashboard() {
     }
 
     // Allow academy-related roles to access the academy dashboard
-    if (!["student", "academy", "trainee", "developer", "jampass"].includes(parsedUser.type)) {
+    if (!isAcademyUser(parsedUser)) {
       router.push("/login")
       return
     }
@@ -97,7 +105,7 @@ export default function AcademyDashboard() {
       }
 
       // Fetch courses using the academy proxy endpoint
-      const coursesRes = await fetch("/academy/courses", {
+      const coursesRes = await fetch("/api/academy/courses", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -119,7 +127,7 @@ export default function AcademyDashboard() {
       }
 
       // Fetch leaderboard data
-      const leaderboardRes = await fetch("/academy/leaderboard", {
+      const leaderboardRes = await fetch("/api/academy/leaderboard", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -140,7 +148,7 @@ export default function AcademyDashboard() {
       }
 
       // Fetch user stats
-      const statsRes = await fetch("/academy/stats", {
+      const statsRes = await fetch("/api/academy/stats", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -348,11 +356,12 @@ export default function AcademyDashboard() {
                         {course.progress}%
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-cyan-500 to-indigo-600 transition-all duration-500"
-                        style={{ width: `${course.progress}%` }}
-                      ></div>
+                    <div className="mb-2">
+                      <progress
+                        value={course.progress ?? 0}
+                        max={100}
+                        className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 accent-cyan-500"
+                      />
                     </div>
                   </div>
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, BookOpen, FileText } from "lucide-react"
+import { getApiUrl } from "@/lib/api"
 
 interface Course {
   id: number
@@ -29,6 +30,14 @@ export default function CoursesPage() {
   const [error, setError] = useState("")
   const router = useRouter()
 
+  const isAcademyUser = (parsedUser: any) => {
+    const userType = parsedUser.type || parsedUser.account_type || parsedUser.user_type || parsedUser.role || ""
+    const academySubType = parsedUser.academy_sub_type || ""
+    return ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(userType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(academySubType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.account_type)
+  }
+
   useEffect(() => {
     const userData = localStorage.getItem("currentUser")
     if (!userData) {
@@ -37,7 +46,7 @@ export default function CoursesPage() {
     }
 
     const parsedUser = JSON.parse(userData)
-    if (!["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.type)) {
+    if (!isAcademyUser(parsedUser)) {
       router.push("/login")
       return
     }
@@ -55,7 +64,7 @@ export default function CoursesPage() {
         return
       }
 
-      const response = await fetch("/api/academy/courses", {
+      const response = await fetch(getApiUrl("academy/courses"), {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -65,6 +74,10 @@ export default function CoursesPage() {
         const data = await response.json()
         const coursesList = Array.isArray(data) ? data : data.results || []
         setCourses(coursesList)
+      } else {
+        const errorText = await response.text()
+        console.error("Courses fetch failed", response.status, errorText)
+        setError("Failed to load courses. Please refresh or login again.")
       }
 
       setIsLoading(false)
@@ -94,7 +107,7 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+    <div suppressHydrationWarning className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
         <div className="container mx-auto px-4 lg:px-6">
@@ -160,34 +173,47 @@ export default function CoursesPage() {
                   {course.description || "No description available"}
                 </p>
 
-                {course.progress !== undefined && (
+                {((course.progress !== undefined) || (course.lessons && course.completed_lessons !== undefined)) && (
                   <div className="mb-6">
                     <div className="mb-2 flex justify-between text-xs">
                       <span className="text-slate-600 dark:text-slate-400">Progress</span>
                       <span className="font-semibold text-slate-900 dark:text-white">
-                        {course.progress}%
+                        {course.progress !== undefined
+                          ? `${course.progress}%`
+                          : course.lessons && course.completed_lessons !== undefined
+                          ? `${Math.round((course.completed_lessons / course.lessons) * 100)}%`
+                          : "0%"}
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-cyan-500 to-indigo-600 transition-all duration-500"
-                        style={{ width: `${course.progress}%` }}
-                      ></div>
+                    <div className="mb-2">
+                      <progress
+                        value={course.progress ?? (course.lessons && course.completed_lessons !== undefined ? Math.round((course.completed_lessons / course.lessons) * 100) : 0)}
+                        max={100}
+                        className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 accent-cyan-500"
+                      />
                     </div>
+                    {course.lessons !== undefined && course.completed_lessons !== undefined && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {course.completed_lessons} of {course.lessons} lessons completed
+                      </p>
+                    )}
                   </div>
                 )}
 
                 <div className="space-y-2">
                   <Link
-                    href={`academy/courses/${course.id}/outline`}
+                    href={`/academy/courses/${course.id}/outline`}
                     className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500"
                   >
                     <FileText className="h-4 w-4" />
                     View Outline
                   </Link>
-                  <button className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
+                  <Link
+                    href={`/academy/courses/${course.id}/outline`}
+                    className="flex w-full items-center justify-center rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                  >
                     Continue Learning
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))

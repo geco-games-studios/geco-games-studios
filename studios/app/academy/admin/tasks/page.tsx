@@ -29,15 +29,30 @@ interface Task {
   title: string
   description: string
   department: string
-  assigned_to: string
+  assigned_to: number
   due_date: string
-  course?: string
+  course: number
   course_id?: number
   status: "draft" | "published" | "archived"
   submissions_count?: number
   pending_reviews?: number
   created_at: string
   updated_at: string
+}
+
+interface Course {
+  id: number
+  title: string
+  code: string
+  department?: string
+}
+
+interface User {
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+  email: string
 }
 
 interface TaskSubmission {
@@ -58,6 +73,8 @@ interface TaskSubmission {
 export default function AdminTasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [submissions, setSubmissions] = useState<TaskSubmission[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
@@ -82,7 +99,80 @@ export default function AdminTasksPage() {
     }
 
     fetchTasks()
+    fetchCourses()
+    fetchUsers()
   }, [router])
+
+  const fetchTaskSubmissionsCount = async (tasksData: Task[]) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken")
+      if (!accessToken) return tasksData
+
+      // Fetch all pending reviews
+      const pendingRes = await fetch(getApiUrl("academy/admin/tasks/pending_reviews/"), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      let pendingReviewsByTask: Record<number, number> = {}
+
+      if (pendingRes.ok) {
+        const pendingData = await pendingRes.json()
+        console.log("Pending reviews data:", pendingData)
+        
+        const pendingList = Array.isArray(pendingData) ? pendingData : pendingData.results || []
+        
+        // Count pending reviews by task_id
+        pendingList.forEach((review: any) => {
+          const taskId = review.task_id || review.task || review.id
+          if (taskId) {
+            pendingReviewsByTask[taskId] = (pendingReviewsByTask[taskId] || 0) + 1
+          }
+        })
+      }
+
+      // Try to fetch all submissions to get submission counts
+      let submissionsByTask: Record<number, number> = {}
+      try {
+        const submissionsRes = await fetch(getApiUrl("academy/admin/tasks/submissions/"), {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (submissionsRes.ok) {
+          const submissionsData = await submissionsRes.json()
+          console.log("Submissions data:", submissionsData)
+          
+          const submissionsList = Array.isArray(submissionsData) ? submissionsData : submissionsData.results || []
+          
+          // Count submissions by task_id
+          submissionsList.forEach((submission: any) => {
+            const taskId = submission.task_id || submission.task
+            if (taskId) {
+              submissionsByTask[taskId] = (submissionsByTask[taskId] || 0) + 1
+            }
+          })
+        }
+      } catch (err) {
+        console.log("Submissions endpoint not available, using pending reviews only")
+      }
+
+      // Update tasks with counts
+      const tasksWithCounts = tasksData.map((task) => ({
+        ...task,
+        submissions_count: submissionsByTask[task.id] || 0,
+        pending_reviews: pendingReviewsByTask[task.id] || 0,
+      }))
+
+      console.log("Tasks with counts:", tasksWithCounts)
+      return tasksWithCounts
+    } catch (err) {
+      console.error("Error calculating submission counts:", err)
+      return tasksData
+    }
+  }
 
   const fetchTasks = async () => {
     try {
@@ -104,7 +194,10 @@ export default function AdminTasksPage() {
       }
 
       const data = await response.json()
-      setTasks(data)
+      
+      // Fetch submission counts for each task
+      const tasksWithCounts = await fetchTaskSubmissionsCount(data)
+      setTasks(tasksWithCounts)
     } catch (err) {
       console.error("Error fetching tasks:", err)
       setError("Failed to load tasks")
@@ -113,12 +206,12 @@ export default function AdminTasksPage() {
     }
   }
 
-  const fetchTaskSubmissions = async (taskId: number) => {
+  const fetchCourses = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken")
       if (!accessToken) return
 
-      const response = await fetch(getApiUrl(`academy/admin/tasks/${taskId}/submissions/`), {
+      const response = await fetch(getApiUrl("academy/admin/courses/"), {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -126,18 +219,86 @@ export default function AdminTasksPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setSubmissions(data)
+        setCourses(data)
+      }
+    } catch (err) {
+      console.error("Error fetching courses:", err)
+    }
+  }
+
+  const fetchUsers = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken")
+      if (!accessToken) return
+
+      const response = await fetch(getApiUrl("users/"), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // Filter to only show students and academy users
+        const filteredUsers = data.filter((user: User) => 
+          user.account_type === "student" || user.account_type === "academy" || user.account_type === "trainee" || user.account_type === "developer"
+        )
+        setUsers(filteredUsers)
+      }
+    } catch (err) {
+      console.error("Error fetching users:", err)
+    }
+  }
+
+  const fetchTaskSubmissions = async (taskId: number) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken")
+      if (!accessToken) return
+
+      // Try normal submissions endpoint first
+      const response = await fetch(getApiUrl(`academy/tasks/${taskId}/submissions/`), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setSubmissions(data)
+          return
+        }
+      }
+
+      // If no submissions, fallback to pending_reviews
+      const pendingRes = await fetch(getApiUrl("academy/admin/tasks/pending_reviews/"), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      if (pendingRes.ok) {
+        const pendingData = await pendingRes.json()
+        const pendingList = Array.isArray(pendingData) ? pendingData : pendingData.results || []
+        // Filter for this task only
+        const filtered = pendingList.filter((item: any) => item.id === taskId || item.task_id === taskId || item.task === taskId)
+        setSubmissions(filtered)
+      } else {
+        setSubmissions([])
       }
     } catch (err) {
       console.error("Error fetching submissions:", err)
+      setSubmissions([])
     }
   }
 
   const filteredTasks = tasks.filter(task => {
+    const user = users.find(u => u.id === task.assigned_to)
+    const course = courses.find(c => c.id === task.course)
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          task.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.assigned_to.toLowerCase().includes(searchTerm.toLowerCase())
+                         (user ? `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+                         (course ? course.title.toLowerCase().includes(searchTerm.toLowerCase()) : false)
 
     const matchesFilter = filterStatus === "all" || task.status === filterStatus
 
@@ -357,7 +518,7 @@ export default function AdminTasksPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Search tasks by title, description, or course..."
+                  placeholder="Search tasks by title, description, course, or assigned user..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -412,8 +573,13 @@ export default function AdminTasksPage() {
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Course: {courses.find(c => c.id === task.course)?.title}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                     <User className="h-4 w-4" />
-                    <span>Assigned to: {task.assigned_to}</span>
+                    <span>Assigned to: {users.find(u => u.id === task.assigned_to)?.first_name} {users.find(u => u.id === task.assigned_to)?.last_name}</span>
                   </div>
 
                   {task.due_date && (
@@ -439,7 +605,11 @@ export default function AdminTasksPage() {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={() => openSubmissionsModal(task)}
-                    className="flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 transition"
+                    className={`flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg transition
+                      ${task.pending_reviews > 0
+                        ? 'bg-yellow-400 text-yellow-900 animate-pulse border-2 border-yellow-600 shadow-lg hover:bg-yellow-500 dark:bg-yellow-300 dark:text-yellow-900 dark:border-yellow-500'
+                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800'}
+                    `}
                   >
                     <Eye className="h-3 w-3" />
                     Review ({task.pending_reviews || 0})
@@ -491,7 +661,8 @@ export default function AdminTasksPage() {
                 title: formData.get('title'),
                 description: formData.get('description'),
                 department: formData.get('department'),
-                assigned_to: formData.get('assigned_to'),
+                course: parseInt(formData.get('course') as string),
+                assigned_to: parseInt(formData.get('assigned_to') as string),
                 due_date: formData.get('due_date'),
               }
               handleCreateTask(taskData)
@@ -523,6 +694,24 @@ export default function AdminTasksPage() {
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Course *
+                  </label>
+                  <select
+                    name="course"
+                    required
+                    className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  >
+                    <option value="">Select a course...</option>
+                    {courses.map((course) => (
+                      <option key={course.id} value={course.id}>
+                        {course.code} - {course.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                     Department *
                   </label>
                   <input
@@ -538,13 +727,18 @@ export default function AdminTasksPage() {
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                     Assigned To *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="assigned_to"
                     required
-                    placeholder="e.g., student_username or student_id"
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
+                  >
+                    <option value="">Select a user...</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.first_name} {user.last_name} ({user.username})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -603,11 +797,16 @@ export default function AdminTasksPage() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="font-semibold text-slate-900 dark:text-white">
-                        {submission.student.first_name} {submission.student.last_name}
+                        {/* Try to show student name if available, else fallback to assigned_by_name or blank */}
+                        {submission.student?.first_name && submission.student?.last_name
+                          ? `${submission.student.first_name} ${submission.student.last_name}`
+                          : submission.assigned_by_name || "Unknown"}
                       </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        @{submission.student.username}
-                      </p>
+                      {submission.student?.username && (
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          @{submission.student.username}
+                        </p>
+                      )}
                     </div>
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       submission.status === 'submitted' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -615,13 +814,23 @@ export default function AdminTasksPage() {
                       submission.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                     }`}>
-                      {submission.status}
+                      {submission.status || 'submitted'}
                     </span>
                   </div>
 
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                    Submitted: {new Date(submission.submitted_at).toLocaleString()}
-                  </p>
+                  {submission.submitted_at && (
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                      Submitted: {new Date(submission.submitted_at).toLocaleString()}
+                    </p>
+                  )}
+
+
+                  {submission.submission_text && (
+                    <div className="mb-3">
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Submission:</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{submission.submission_text}</p>
+                    </div>
+                  )}
 
                   {submission.grade && (
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
@@ -636,16 +845,40 @@ export default function AdminTasksPage() {
                     </div>
                   )}
 
-                  {submission.status === 'submitted' && (
+                  {(submission.status === 'submitted' || !submission.status) && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleReviewSubmission(submission.id, 'approved', 100, 'Great work!')}
+                        onClick={async () => {
+                          const accessToken = localStorage.getItem("accessToken");
+                          if (!accessToken) return;
+                          await fetch(getApiUrl(`academy/admin/tasks/${submission.id}/approve_task/`), {
+                            method: "POST",
+                            headers: {
+                              Authorization: `Bearer ${accessToken}`,
+                              "Content-Type": "application/json",
+                            },
+                          });
+                          fetchTasks();
+                          setShowSubmissionsModal(false);
+                        }}
                         className="px-3 py-1 text-xs font-semibold rounded-lg bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-200 transition"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleReviewSubmission(submission.id, 'rejected', 0, 'Needs improvement')}
+                        onClick={async () => {
+                          const accessToken = localStorage.getItem("accessToken");
+                          if (!accessToken) return;
+                          await fetch(getApiUrl(`academy/admin/tasks/${submission.id}/reject_task/`), {
+                            method: "POST",
+                            headers: {
+                              Authorization: `Bearer ${accessToken}`,
+                              "Content-Type": "application/json",
+                            },
+                          });
+                          fetchTasks();
+                          setShowSubmissionsModal(false);
+                        }}
                         className="px-3 py-1 text-xs font-semibold rounded-lg bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900 dark:text-red-200 transition"
                       >
                         Reject

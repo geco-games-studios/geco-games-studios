@@ -83,6 +83,7 @@ export default function LoginPage() {
       const currentUser = {
         email,
         type: data.account_type || decodedToken?.user_type || decodedToken?.role || "academy",
+        account_type: data.account_type || decodedToken?.account_type || decodedToken?.user_type || decodedToken?.role || "academy",
         name: email,
         userId: decodedToken?.user_id || decodedToken?.sub || "",
         academy_sub_type: data.academy_sub_type || decodedToken?.academy_sub_type || null,

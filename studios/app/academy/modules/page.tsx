@@ -27,6 +27,14 @@ export default function ModulesPage() {
   const [error, setError] = useState("")
   const router = useRouter()
 
+  const isAcademyUser = (parsedUser: any) => {
+    const userType = parsedUser.type || parsedUser.account_type || parsedUser.user_type || parsedUser.role || ""
+    const academySubType = parsedUser.academy_sub_type || ""
+    return ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(userType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(academySubType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.account_type)
+  }
+
   useEffect(() => {
     const userData = localStorage.getItem("currentUser")
     if (!userData) {
@@ -35,7 +43,7 @@ export default function ModulesPage() {
     }
 
     const parsedUser = JSON.parse(userData)
-    if (!["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.type)) {
+    if (!isAcademyUser(parsedUser)) {
       router.push("/login")
       return
     }

@@ -35,7 +35,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} bg-white text-slate-950 dark:bg-slate-950 dark:text-white transition-colors duration-300`}>
+      <body suppressHydrationWarning className={`${inter.className} bg-white text-slate-950 dark:bg-slate-950 dark:text-white transition-colors duration-300`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
           <Navigation />
           <main>{children}</main>

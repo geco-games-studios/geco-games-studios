@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { getApiUrl } from "@/lib/api"
 
 interface Task {
   id: number
@@ -37,6 +38,14 @@ export default function TasksPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
+  const isAcademyUser = (parsedUser: any) => {
+    const userType = parsedUser.type || parsedUser.account_type || parsedUser.user_type || parsedUser.role || ""
+    const academySubType = parsedUser.academy_sub_type || ""
+    return ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(userType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(academySubType) ||
+           ["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.account_type)
+  }
+
   useEffect(() => {
     const userData = localStorage.getItem("currentUser")
     if (!userData) {
@@ -45,7 +54,7 @@ export default function TasksPage() {
     }
 
     const parsedUser = JSON.parse(userData)
-    if (!["student", "academy", "admin", "trainee", "developer", "jampass"].includes(parsedUser.type)) {
+    if (!isAcademyUser(parsedUser)) {
       router.push("/login")
       return
     }
@@ -63,34 +72,27 @@ export default function TasksPage() {
         return
       }
 
-      // Fetch all tasks
-      const tasksRes = await fetch("/api/academy/tasks", {
+      // Fetch all tasks - combine submitted and pending reviews
+      const submittedRes = await fetch(getApiUrl("academy/tasks/my_reviews"), {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
 
-      if (tasksRes.ok) {
-        const tasksData = await tasksRes.json()
-        const tasksList = Array.isArray(tasksData) ? tasksData : tasksData.results || []
-        setTasks(tasksList)
-      }
-
-      // Fetch submitted tasks (my_reviews)
-      const submittedRes = await fetch("/api/academy/tasks/my_reviews", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-
+      let allTasks: Task[] = []
       if (submittedRes.ok) {
         const submittedData = await submittedRes.json()
+        console.log("Submitted tasks data:", submittedData)
         const submittedList = Array.isArray(submittedData) ? submittedData : submittedData.results || []
+        console.log("Submitted tasks list:", submittedList)
+        allTasks = [...allTasks, ...submittedList]
         setSubmittedTasks(submittedList)
+      } else {
+        console.log("Submitted tasks fetch failed:", submittedRes.status, submittedRes.statusText)
       }
 
       // Fetch pending reviews
-      const pendingRes = await fetch("/api/academy/tasks/my_pending_reviews", {
+      const pendingRes = await fetch(getApiUrl("academy/tasks/my_pending_reviews"), {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -98,9 +100,20 @@ export default function TasksPage() {
 
       if (pendingRes.ok) {
         const pendingData = await pendingRes.json()
+        console.log("Pending reviews data:", pendingData)
         const pendingList = Array.isArray(pendingData) ? pendingData : pendingData.results || []
+        console.log("Pending reviews list:", pendingList)
+        allTasks = [...allTasks, ...pendingList]
         setTasksInReview(pendingList)
+      } else {
+        console.log("Pending reviews fetch failed:", pendingRes.status, pendingRes.statusText)
       }
+
+      // Remove duplicates and set tasks
+      const uniqueTasks = allTasks.filter((task, index, self) =>
+        index === self.findIndex(t => t.id === task.id)
+      )
+      setTasks(uniqueTasks)
 
       setIsLoading(false)
     } catch (err) {
@@ -125,7 +138,7 @@ export default function TasksPage() {
         return
       }
 
-      const response = await fetch("/api/academy/tasks/submit_task", {
+      const response = await fetch(getApiUrl("academy/tasks/submit_task"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,6 +231,7 @@ export default function TasksPage() {
         <div className="mb-8 border-b border-slate-200 dark:border-slate-800">
           <div className="flex gap-4">
             <button
+              type="button"
               onClick={() => setActiveTab("all")}
               className={`pb-4 px-4 font-semibold text-sm transition ${
                 activeTab === "all"
@@ -228,6 +242,7 @@ export default function TasksPage() {
               All Tasks ({tasks.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("submitted")}
               className={`pb-4 px-4 font-semibold text-sm transition ${
                 activeTab === "submitted"
@@ -238,6 +253,7 @@ export default function TasksPage() {
               Submitted ({submittedTasks.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("review")}
               className={`pb-4 px-4 font-semibold text-sm transition ${
                 activeTab === "review"
