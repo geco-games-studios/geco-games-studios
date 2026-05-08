@@ -49,7 +49,7 @@ export default function Navigation() {
       return "/marketplace"
     }
     if (user.type === "developer") {
-      return "/academy"
+      return "/developer/dashboard"
     }
     if (user.type === "gamer") {
       return "/gamer/dashboard"
@@ -65,6 +65,7 @@ export default function Navigation() {
     { name: "Services", href: "/services" },
     { name: "About", href: "/about" },
     { name: "Academy", href: "/academy" },
+    { name: "Developer", href: "/developer" },
     { name: "Esports", href: "/esports" },
     { name: "Jampass", href: "/jampass" },
     { name: "Support", href: "/support" },

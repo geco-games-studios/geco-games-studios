@@ -94,7 +94,8 @@ export default function LoginPage() {
       const getRedirectPath = (user: any) => {
         if (["market"].includes(user.type)) return "/marketplace"
         if (user.type === "admin" || user.academy_sub_type === "admin" || user.is_staff === true) return "/academy/admin/dashboard"
-        if (["developer", "academy", "trainee", "student", "jampass"].includes(user.type)) return "/academy/dashboard"
+        if (user.type === "developer") return "/developer/dashboard"
+        if (["academy", "trainee", "student"].includes(user.type)) return "/academy/dashboard"
         if (["player", "outlet"].includes(user.type)) return "/jampass"
         return "/"
       }

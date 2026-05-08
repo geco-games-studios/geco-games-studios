@@ -19,6 +19,7 @@ export default function Footer() {
         { name: "Studio", href: "/" },
         { name: "Portfolio", href: "/portfolio" },
         { name: "Academy", href: "/academy" },
+        { name: "Developer", href: "/developer" },
         { name: "Careers", href: "/careers" },
       ],
     },

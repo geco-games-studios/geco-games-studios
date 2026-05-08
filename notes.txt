@@ -1,0 +1,144 @@
+So now lets use the actual endpoints and there data:
+ path('developer/games/', GameViewSet.as_view({'get': 'list', 'post': 'create'}), name='developer-game-list'),
+    path('developer/games/<int:pk>/', GameViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='developer-game-detail'),
+
+    [
+    {
+        "id": 1,
+        "developer_name": "Bulemu Shilukukwa",
+        "platforms": [
+            "web"
+        ],
+        "api_key": "HbQ89uYTRpM3zXUdTaYB2_7WEtHaJukOh1FL4Sca3L0",
+        "average_rating": 0.0,
+        "title": "Players ground",
+        "studio_name": "Geco Games Studios",
+        "status": "production",
+        "version": "1.0.0",
+        "game_image": "http://127.0.0.1:8000/media/game_images/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "screenshot_1": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "screenshot_2": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_CAYapdG.36.51_AM.png",
+        "screenshot_3": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_G4AW5qL.36.51_AM.png",
+        "screenshot_4": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_Jr5WWp4.36.51_AM.png",
+        "gameplay_video": "http://127.0.0.1:8000/media/game_videos/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "description": "bluh bluh bluh",
+        "game_currency": "ZMW",
+        "has_iaps": false,
+        "iap_provider": null,
+        "has_ads": false,
+        "ad_provider": null,
+        "is_active": false,
+        "created_at": "2026-05-08T07:47:34.577134Z",
+        "updated_at": "2026-05-08T07:47:34.577228Z",
+        "developer": 2
+    }
+]
+
+create
+ "id": 1,
+    "developer_name": "Bulemu Shilukukwa",
+    "platforms": [
+        "web"
+    ],
+    "api_key": "HbQ89uYTRpM3zXUdTaYB2_7WEtHaJukOh1FL4Sca3L0",
+    "average_rating": 0.0,
+    "title": "Players ground",
+    "studio_name": "Geco Games Studios",
+    "status": "production",
+    "version": "1.0.0",
+    "game_image": "http://127.0.0.1:8000/media/game_images/Screenshot_2026-05-08_at_8.36.51_AM.png",
+    "screenshot_1": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8.36.51_AM.png",
+    "screenshot_2": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_CAYapdG.36.51_AM.png",
+    "screenshot_3": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_G4AW5qL.36.51_AM.png",
+    "screenshot_4": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_Jr5WWp4.36.51_AM.png",
+    "gameplay_video": "http://127.0.0.1:8000/media/game_videos/Screenshot_2026-05-08_at_8.36.51_AM.png",
+    "description": "bluh bluh bluh",
+    "game_currency": "ZMW",
+    "has_iaps": false,
+    "iap_provider": null,
+    "has_ads": false,
+    "ad_provider": null,
+    "is_active": false,
+    "created_at": "2026-05-08T07:47:34.577134Z",
+    "updated_at": "2026-05-08T07:47:34.577228Z",
+    "developer": 2
+
+    Analytics
+     path('developer/games/<int:pk>/verify/', GamePublicViewSet.as_view({'post': 'verify'}), name='developer-game-verify'),
+    path('developer/games/<int:pk>/connect/', GamePublicViewSet.as_view({'post': 'connect'}), name='developer-game-connect'),
+    path('developer/games/<int:pk>/rate/', GamePublicViewSet.as_view({'post': 'rate'}), name='developer-game-rate'),
+    path('developer/games/<int:pk>/ratings/', GamePublicViewSet.as_view({'get': 'ratings'}), name='developer-game-ratings'),
+    path('developer/games/<int:pk>/stats/', GamePublicViewSet.as_view({'get': 'stats'}), name='developer-game-stats'),
+    path('developer/games/top-performing/', GamePublicViewSet.as_view({'get': 'top_performing'}), name='developer-game-top-performing'),
+
+
+{
+    "connected_users": 1,
+    "session": {
+        "id": 1,
+        "game": 1,
+        "user": 2,
+        "user_name": "Bulemu Shilukukwa",
+        "session_key": "168ccbd26759448a85794acb58b4fd39",
+        "login_at": "2026-05-08T08:02:24.287695Z",
+        "last_activity": "2026-05-08T08:02:24.287740Z",
+        "disconnected_at": null,
+        "is_connected": true
+    }
+}
+
+rating
+{
+  "score": 1
+}
+
+{
+    "id": 1,
+    "game": 1,
+    "user": 2,
+    "user_name": "Bulemu Shilukukwa",
+    "score": 1,
+    "comment": "",
+    "created_at": "2026-05-08T08:04:12.757818Z"
+}
+
+stats
+{
+    "connected_users": 1,
+    "average_rating": 1.0,
+    "active_users": 0,
+    "rating_count": 1
+}
+
+top performing
+[
+    {
+        "id": 1,
+        "developer_name": "Bulemu Shilukukwa",
+        "platforms": [
+            "web"
+        ],
+        "average_rating": 1.0,
+        "connected_users": 1,
+        "title": "Players ground",
+        "studio_name": "Geco Games Studios",
+        "status": "production",
+        "version": "1.0.0",
+        "game_image": "http://127.0.0.1:8000/media/game_images/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "screenshot_1": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "screenshot_2": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_CAYapdG.36.51_AM.png",
+        "screenshot_3": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_G4AW5qL.36.51_AM.png",
+        "screenshot_4": "http://127.0.0.1:8000/media/game_screenshots/Screenshot_2026-05-08_at_8_Jr5WWp4.36.51_AM.png",
+        "gameplay_video": "http://127.0.0.1:8000/media/game_videos/Screenshot_2026-05-08_at_8.36.51_AM.png",
+        "description": "bluh bluh bluh",
+        "game_currency": "ZMW",
+        "has_iaps": false,
+        "iap_provider": null,
+        "has_ads": false,
+        "ad_provider": null,
+        "is_active": true,
+        "created_at": "2026-05-08T07:47:34.577134Z",
+        "updated_at": "2026-05-08T07:53:47.116292Z",
+        "developer": 2
+    }
+]
