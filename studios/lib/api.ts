@@ -1,4 +1,5 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://system.gecogames.com/api/v1/test/"
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1/test/"
+export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "http://localhost:8000"
 
 export function getApiUrl(path: string) {
   const base = API_BASE_URL.replace(/\/+$|^\s+|\s+$/g, "")
@@ -7,9 +8,26 @@ export function getApiUrl(path: string) {
   return `${base}/${trimmedPath}`
 }
 
-export function getAuthHeaders() {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+export function getMediaUrl(path: string) {
+  if (!path) return ""
+  if (path.startsWith("http")) return path // Already a full URL
+
+  const base = MEDIA_BASE_URL.replace(/\/+$|^\s+|\s+$/g, "")
+  let trimmedPath = path.replace(/^\/+/, "")
+
+  // If the path doesn't start with 'media/', prepend it
+  if (!trimmedPath.startsWith("media/")) {
+    trimmedPath = `media/${trimmedPath}`
+  }
+
+  return `${base}/${trimmedPath}`
+}
+
+export function getAuthHeaders(contentType: string | null = "application/json") {
+  const headers: Record<string, string> = {}
+
+  if (contentType) {
+    headers["Content-Type"] = contentType
   }
 
   if (typeof window !== "undefined") {
@@ -25,6 +43,42 @@ export function getAuthHeaders() {
   }
 
   return headers
+}
+
+export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
+  const response = await fetch(getApiUrl(path), {
+    method: "POST",
+    headers: getAuthHeaders(null),
+    body: formData,
+    ...init,
+  })
+
+  const contentType = response.headers.get("content-type") || ""
+  const data = contentType.includes("application/json") ? await response.json() : null
+
+  if (!response.ok) {
+    throw new Error(data?.message || data?.detail || "API request failed")
+  }
+
+  return data as T
+}
+
+export async function putFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
+  const response = await fetch(getApiUrl(path), {
+    method: "PATCH",
+    headers: getAuthHeaders(null),
+    body: formData,
+    ...init,
+  })
+
+  const contentType = response.headers.get("content-type") || ""
+  const data = contentType.includes("application/json") ? await response.json() : null
+
+  if (!response.ok) {
+    throw new Error(data?.message || data?.detail || "API request failed")
+  }
+
+  return data as T
 }
 
 export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {

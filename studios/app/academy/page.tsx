@@ -1,6 +1,5 @@
 import Link from "next/link"
 import NewsletterSubscription from "../../components/newsletter-subscription"
-import AcademyApplicationForm from "../../components/academy-application-form"
 
 export default function AcademyPage() {
   return (
@@ -239,12 +238,6 @@ export default function AcademyPage() {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="contact" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-950">
-        <div className="container mx-auto max-w-6xl">
-          <AcademyApplicationForm />
         </div>
       </section>
 

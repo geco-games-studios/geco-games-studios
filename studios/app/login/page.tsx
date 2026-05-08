@@ -87,6 +87,7 @@ export default function LoginPage() {
         name: email,
         userId: decodedToken?.user_id || decodedToken?.sub || "",
         academy_sub_type: data.academy_sub_type || decodedToken?.academy_sub_type || null,
+        sub_user_type: data.sub_user_type || data.jampass_sub_type || decodedToken?.sub_user_type || decodedToken?.jampass_sub_type || null,
         is_staff: decodedToken?.is_staff || false,
       }
       localStorage.setItem("currentUser", JSON.stringify(currentUser))
@@ -96,6 +97,7 @@ export default function LoginPage() {
         if (user.type === "admin" || user.academy_sub_type === "admin" || user.is_staff === true) return "/academy/admin/dashboard"
         if (user.type === "developer") return "/developer/dashboard"
         if (["academy", "trainee", "student"].includes(user.type)) return "/academy/dashboard"
+        if (user.type === "jampass" && (user.sub_user_type === "player" || user.jampass_sub_type === "player")) return "/jampass/player/dashboard"
         if (["player", "outlet"].includes(user.type)) return "/jampass"
         return "/"
       }

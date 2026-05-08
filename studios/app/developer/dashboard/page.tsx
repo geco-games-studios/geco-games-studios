@@ -21,6 +21,7 @@ interface User {
   type: string
   name: string
   userId: string
+  studio_name?: string
 }
 
 interface Game {
@@ -34,6 +35,16 @@ interface Game {
   developer_name: string
   studio_name: string
   game_image: string
+  screenshot_1?: string
+  screenshot_2?: string
+  screenshot_3?: string
+  screenshot_4?: string
+  gameplay_video?: string
+  game_currency?: string
+  has_iaps: boolean
+  iap_provider?: string
+  has_ads: boolean
+  ad_provider?: string
   is_active: boolean
   created_at: string
   updated_at: string
@@ -149,6 +160,44 @@ export default function DeveloperDashboard() {
     router.push("/login")
   }
 
+  const handleGameCreated = (game: Game) => {
+    setGames((previousGames) => {
+      const updatedGames = [game, ...previousGames]
+      const activeGames = updatedGames.filter((item) => item.is_active).length
+      const averageRating = updatedGames.length
+        ? (
+            updatedGames.reduce((sum, item) => sum + (item.average_rating || 0), 0) /
+            updatedGames.length
+          ).toFixed(1)
+        : "0.0"
+
+      setStats((previousStats) => [
+        {
+          label: "Games Submitted",
+          value: updatedGames.length,
+          icon: <Gamepad2 className="h-6 w-6 text-cyan-500" />,
+        },
+        {
+          label: "Active Games",
+          value: activeGames,
+          icon: <TrendingUp className="h-6 w-6 text-orange-500" />,
+        },
+        {
+          label: "Average Rating",
+          value: averageRating,
+          icon: <Star className="h-6 w-6 text-green-500" />,
+        },
+        previousStats[3] || {
+          label: "Community Followers",
+          value: 0,
+          icon: <Users className="h-6 w-6 text-purple-500" />,
+        },
+      ])
+
+      return updatedGames
+    })
+  }
+
   if (isLoading || !dataLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -247,16 +296,10 @@ export default function DeveloperDashboard() {
 
         {/* Games Section */}
         <div className="mb-12">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
               My Games
             </h2>
-            <Link
-              href="/developer"
-              className="text-sm font-semibold text-cyan-600 transition hover:text-cyan-700 dark:text-cyan-400"
-            >
-              Submit game →
-            </Link>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -335,12 +378,6 @@ export default function DeveloperDashboard() {
                 <p className="text-slate-500 dark:text-slate-500 mb-6">
                   Share your game with our community and reach players worldwide.
                 </p>
-                <Link
-                  href="/developer"
-                  className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500"
-                >
-                  Submit Your Game
-                </Link>
               </div>
             )}
           </div>

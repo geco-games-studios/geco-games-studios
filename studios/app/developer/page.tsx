@@ -1,6 +1,5 @@
 import Link from "next/link"
 import NewsletterSubscription from "../../components/newsletter-subscription"
-import DeveloperGameSubmissionForm from "../../components/developer-game-submission-form"
 
 export default function DeveloperPage() {
   return (
@@ -25,7 +24,7 @@ export default function DeveloperPage() {
                 <Link href="#features" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   Explore features
                 </Link>
-                <Link href="#submit" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                <Link href="/developer/games" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                   Submit your game
                 </Link>
               </div>
@@ -228,17 +227,11 @@ export default function DeveloperPage() {
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-md mx-auto">
               <h3 className="text-xl font-semibold mb-4">Share your game with our studio</h3>
               <p className="text-white/80 mb-6">Our team is ready to review your game submission and help you bring it to an engaged audience.</p>
-              <Link href="#submit" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 w-full">
+              <Link href="/developer/games" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 w-full">
                 Submit your game
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="submit" className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-950">
-        <div className="container mx-auto max-w-6xl">
-          <DeveloperGameSubmissionForm />
         </div>
       </section>
 

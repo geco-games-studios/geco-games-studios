@@ -51,6 +51,7 @@ export default function DeveloperProfilePage() {
   const [editSuccess, setEditSuccess] = useState("")
   const [formData, setFormData] = useState({
     name: "",
+    studio_name: "",
     phone: "",
     country: "",
     website: "",
@@ -96,6 +97,7 @@ export default function DeveloperProfilePage() {
       setUser(combinedUser)
       setFormData({
         name: profileData?.name || parsedUser.name || "",
+        studio_name: profileData?.studio_name || parsedUser.studio_name || "",
         phone: profileData?.phone || "",
         country: profileData?.country || "",
         website: profileData?.website || "",
@@ -111,6 +113,14 @@ export default function DeveloperProfilePage() {
         setUser(parsedUser)
         setFormData({
           name: parsedUser.name || "",
+          phone: parsedUser.phone || "",
+          country: parsedUser.country || "",
+          website: parsedUser.website || "",
+          bio: parsedUser.bio || "",
+        })
+        setFormData({
+          name: parsedUser.name || "",
+          studio_name: parsedUser.studio_name || "",
           phone: parsedUser.phone || "",
           country: parsedUser.country || "",
           website: parsedUser.website || "",
@@ -134,6 +144,7 @@ export default function DeveloperProfilePage() {
     if (user) {
       setFormData({
         name: user.name || "",
+        studio_name: user.studio_name || "",
         phone: user.phone || "",
         country: user.country || "",
         website: user.website || "",
@@ -177,6 +188,7 @@ export default function DeveloperProfilePage() {
       // Prepare the profile update payload
       const profileUpdatePayload = {
         name: formData.name,
+        studio_name: formData.studio_name,
         phone: formData.phone,
         country: formData.country,
         website: formData.website,
@@ -190,6 +202,7 @@ export default function DeveloperProfilePage() {
       const updatedUser = {
         ...parsedUser,
         name: formData.name,
+        studio_name: formData.studio_name,
         phone: formData.phone,
         country: formData.country,
         website: formData.website,
@@ -371,6 +384,14 @@ export default function DeveloperProfilePage() {
                   </div>
                 </div>
 
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-700">
+                  <User className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide">Studio Name</p>
+                    <p className="text-slate-900 dark:text-white font-semibold">{user.studio_name || "Not set"}</p>
+                  </div>
+                </div>
+
                 {/* Account Type */}
                 <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-700">
                   <Award className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
@@ -457,6 +478,19 @@ export default function DeveloperProfilePage() {
                         onChange={handleFormChange}
                         className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Studio Name
+                      </label>
+                      <input
+                        type="text"
+                        name="studio_name"
+                        value={formData.studio_name}
+                        onChange={handleFormChange}
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
                     </div>
 

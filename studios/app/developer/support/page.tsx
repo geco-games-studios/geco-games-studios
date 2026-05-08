@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, HelpCircle, MessageSquare, Mail, Phone, FileText, ChevronDown, ChevronUp, Send, CheckCircle } from "lucide-react"
+import { fetchJson, postJson } from "@/lib/api"
 
 interface FAQ {
   question: string
@@ -14,7 +15,8 @@ interface SupportTicket {
   id: string
   subject: string
   status: "open" | "in-progress" | "resolved"
-  createdAt: string
+  createdAt?: string
+  created_at?: string
   priority: "low" | "medium" | "high"
 }
 
@@ -24,6 +26,7 @@ export default function DeveloperSupportPage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [formError, setFormError] = useState("")
   const [contactForm, setContactForm] = useState({
     subject: "",
     category: "",
@@ -57,7 +60,6 @@ export default function DeveloperSupportPage() {
         return
       }
 
-      // Mock FAQ data
       const mockFaqs: FAQ[] = [
         {
           question: "How do I submit a new game for review?",
@@ -93,26 +95,14 @@ export default function DeveloperSupportPage() {
         }
       ]
 
-      // Mock support tickets
-      const mockTickets: SupportTicket[] = [
-        {
-          id: "TICK-001",
-          subject: "Game submission review taking longer than expected",
-          status: "in-progress",
-          createdAt: "2026-05-05",
-          priority: "medium"
-        },
-        {
-          id: "TICK-002",
-          subject: "Analytics data not updating",
-          status: "resolved",
-          createdAt: "2026-05-01",
-          priority: "low"
-        }
-      ]
-
       setFaqs(mockFaqs)
-      setTickets(mockTickets)
+
+      const url = `developer/support/`
+      const response = await fetchJson<SupportTicket[]>(url)
+      setTickets(response.map((ticket) => ({
+        ...ticket,
+        createdAt: ticket.createdAt || ticket.created_at || new Date().toISOString().split('T')[0],
+      })))
       setIsLoading(false)
     } catch (err) {
       console.error("Error fetching support data:", err)
@@ -142,22 +132,31 @@ export default function DeveloperSupportPage() {
 
   const handleSubmitSupport = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFormError("")
+
+    if (!contactForm.subject.trim() || !contactForm.category.trim() || !contactForm.message.trim()) {
+      setFormError("Please complete all required fields before submitting.")
+      return
+    }
+
     try {
       setIsSubmitting(true)
-
-      // Mock API call - in real app this would send to backend
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Add new ticket to the list
-      const newTicket: SupportTicket = {
-        id: `TICK-${String(tickets.length + 1).padStart(3, '0')}`,
+      const payload = {
         subject: contactForm.subject,
-        status: "open",
-        createdAt: new Date().toISOString().split('T')[0],
-        priority: contactForm.priority as "low" | "medium" | "high"
+        category: contactForm.category,
+        priority: contactForm.priority,
+        description: contactForm.message,
+        message: contactForm.message,
       }
 
-      setTickets(prev => [newTicket, ...prev])
+      const createdTicket = await postJson<SupportTicket>(`developer/support/`, payload)
+
+      const ticketToAdd = {
+        ...createdTicket,
+        createdAt: createdTicket.createdAt || createdTicket.created_at || new Date().toISOString().split('T')[0],
+      }
+
+      setTickets(prev => [ticketToAdd, ...prev])
       setSubmitSuccess(true)
       setContactForm({
         subject: "",
@@ -166,10 +165,10 @@ export default function DeveloperSupportPage() {
         priority: "medium"
       })
 
-      // Hide success message after 3 seconds
       setTimeout(() => setSubmitSuccess(false), 3000)
     } catch (err) {
       console.error("Error submitting support request:", err)
+      setFormError(err instanceof Error ? err.message : "Failed to submit support request.")
     } finally {
       setIsSubmitting(false)
     }
@@ -351,6 +350,12 @@ export default function DeveloperSupportPage() {
                 </div>
               )}
 
+              {formError && (
+                <div className="mb-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                  <p className="text-red-700 dark:text-red-400 text-sm">{formError}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmitSupport} className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
@@ -368,13 +373,15 @@ export default function DeveloperSupportPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Category
+                  <label htmlFor="support-category" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Category *
                   </label>
                   <select
+                    id="support-category"
                     name="category"
                     value={contactForm.category}
                     onChange={handleFormChange}
+                    required
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   >
                     <option value="">Select a category</option>
@@ -388,10 +395,11 @@ export default function DeveloperSupportPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label htmlFor="support-priority" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                     Priority
                   </label>
                   <select
+                    id="support-priority"
                     name="priority"
                     value={contactForm.priority}
                     onChange={handleFormChange}
@@ -446,8 +454,8 @@ export default function DeveloperSupportPage() {
                   <Mail className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">Email</p>
-                    <a href="mailto:developer-support@gecogamesstudios.com" className="text-cyan-600 dark:text-cyan-400 hover:underline">
-                      developer-support@gecogamesstudios.com
+                    <a href="mailto:hello@gecogamesstudios.com" className="text-cyan-600 dark:text-cyan-400 hover:underline">
+                      hello@gecogamesstudios.com
                     </a>
                   </div>
                 </div>
@@ -464,7 +472,7 @@ export default function DeveloperSupportPage() {
                   <FileText className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">Documentation</p>
-                    <a href="/docs" className="text-cyan-600 dark:text-cyan-400 hover:underline">
+                    <a href="/documentation" className="text-cyan-600 dark:text-cyan-400 hover:underline">
                       Developer Documentation
                     </a>
                   </div>
