@@ -15,6 +15,10 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
+  // Dialog state for verification result
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false)
+  const [verifyDialogStatus, setVerifyDialogStatus] = useState<'success' | 'fail' | 'connect-fail' | null>(null)
+  const [verifyDialogMessage, setVerifyDialogMessage] = useState("")
 
 interface Game {
   id: number
@@ -128,26 +132,70 @@ export default function DeveloperGamesPage() {
 
   const handleVerifyGame = async (game: Game) => {
     if (!game.api_key) {
-      alert("No API key found for this game.")
+      setVerifyDialogStatus('fail')
+      setVerifyDialogMessage('No API key found for this game.')
+      setVerifyDialogOpen(true)
       return
     }
 
+    // 1. Check connection to the game
+    try {
+      const connectRes = await postJson<{ status: string }>(`developer/games/${game.id}/connect/`, {})
+      if (connectRes.status !== 'connected') {
+        setVerifyDialogStatus('connect-fail')
+        setVerifyDialogMessage('Could not connect to the game. Please ensure your game is online and try again.')
+        setVerifyDialogOpen(true)
+        return
+      }
+    } catch (err) {
+      setVerifyDialogStatus('connect-fail')
+      setVerifyDialogMessage('Failed to connect to the game. Please ensure your game is online and try again.')
+      setVerifyDialogOpen(true)
+      return
+    }
+
+    // 2. If connection is successful, verify the key
     try {
       const response = await postJson<{ status: string }>("developer/games/verify-key/", {
         api_key: game.api_key
       })
       if (response.status === "verified") {
-        alert("Game verified successfully!")
+        setVerifyDialogStatus('success')
+        setVerifyDialogMessage('Game verified successfully!')
+        setVerifyDialogOpen(true)
         // Optionally refresh games to show updated status
         fetchGames()
       } else {
-        alert("Game verification failed. API key not found or invalid.")
+        setVerifyDialogStatus('fail')
+        setVerifyDialogMessage('Game verification failed. API key not found or invalid.')
+        setVerifyDialogOpen(true)
       }
     } catch (err) {
-      console.error("Error verifying game:", err)
-      alert("Failed to verify game. Please try again.")
+      setVerifyDialogStatus('fail')
+      setVerifyDialogMessage('Failed to verify game. Please try again.')
+      setVerifyDialogOpen(true)
     }
   }
+      {/* Verification Result Dialog */}
+      <Dialog open={verifyDialogOpen} onOpenChange={setVerifyDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {verifyDialogStatus === 'success' && 'Game Verified!'}
+              {verifyDialogStatus === 'fail' && 'Verification Failed'}
+              {verifyDialogStatus === 'connect-fail' && 'Connection Failed'}
+            </DialogTitle>
+            <DialogDescription>
+              {verifyDialogMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <button className="mt-2 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">Close</button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
   const handleGameCreated = (game: Game) => {
     setGames((previousGames) => [game, ...previousGames])
