@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -15,10 +17,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
-  // Dialog state for verification result
-  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false)
-  const [verifyDialogStatus, setVerifyDialogStatus] = useState<'success' | 'fail' | 'connect-fail' | null>(null)
-  const [verifyDialogMessage, setVerifyDialogMessage] = useState("")
+
 
 interface Game {
   id: number
@@ -60,6 +59,10 @@ export default function DeveloperGamesPage() {
   const [developerName, setDeveloperName] = useState<string>("")
   const [studioName, setStudioName] = useState<string>("")
   const router = useRouter()
+    // Dialog state for verification result
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false)
+  const [verifyDialogStatus, setVerifyDialogStatus] = useState<'success' | 'fail' | 'connect-fail' | null>(null)
+  const [verifyDialogMessage, setVerifyDialogMessage] = useState("")
 
   useEffect(() => {
     fetchGames()
