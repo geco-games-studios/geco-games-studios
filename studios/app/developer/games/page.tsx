@@ -133,7 +133,18 @@ export default function DeveloperGamesPage() {
     }
   }
 
+
   const handleVerifyGame = async (game: Game) => {
+    // Check access token before any API call
+    const accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null
+    if (!accessToken) {
+      setVerifyDialogStatus('fail')
+      setVerifyDialogMessage('Session expired. Please log in again.')
+      setVerifyDialogOpen(true)
+      router.push("/login")
+      return
+    }
+
     if (!game.api_key) {
       setVerifyDialogStatus('fail')
       setVerifyDialogMessage('No API key found for this game.')
@@ -170,12 +181,18 @@ export default function DeveloperGamesPage() {
         fetchGames()
       } else {
         setVerifyDialogStatus('fail')
-        setVerifyDialogMessage('Game verification failed. API key not found or invalid.')
+        setVerifyDialogMessage(response.message || 'Game verification failed. API key not found or invalid.')
         setVerifyDialogOpen(true)
       }
-    } catch (err) {
+    } catch (err: any) {
       setVerifyDialogStatus('fail')
-      setVerifyDialogMessage('Failed to verify game. Please try again.')
+      // Show detail/message from API error if available
+      let msg = 'Failed to verify game. Please try again.'
+      if (err && typeof err === 'object') {
+        if (err.detail) msg = err.detail
+        else if (err.message) msg = err.message
+      }
+      setVerifyDialogMessage(msg)
       setVerifyDialogOpen(true)
     }
   }
@@ -224,6 +241,30 @@ export default function DeveloperGamesPage() {
     }
   }
 
+
+  // Always render the verification dialog so it can show during loading or error
+  const verificationDialog = (
+    <Dialog open={verifyDialogOpen} onOpenChange={setVerifyDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {verifyDialogStatus === 'success' && 'Game Verified!'}
+            {verifyDialogStatus === 'fail' && 'Verification Failed'}
+            {verifyDialogStatus === 'connect-fail' && 'Connection Failed'}
+          </DialogTitle>
+          <DialogDescription>
+            {verifyDialogMessage}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <button className="mt-2 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">Close</button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -231,6 +272,7 @@ export default function DeveloperGamesPage() {
           <div className="h-12 w-12 rounded-full border-4 border-cyan-200 border-t-cyan-600 animate-spin mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-400">Loading games...</p>
         </div>
+        {verificationDialog}
       </div>
     )
   }
@@ -248,12 +290,14 @@ export default function DeveloperGamesPage() {
             Retry
           </button>
         </div>
+        {verificationDialog}
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      {verificationDialog}
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
         <div className="container mx-auto px-4 lg:px-6">

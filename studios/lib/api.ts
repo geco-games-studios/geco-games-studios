@@ -1,7 +1,7 @@
-// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1/test/"
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://system.gecogames.com/api/v1/test/"
-// export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "http://localhost:8000"
-export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "https://system.gecogames.com/"
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1/test/"
+// export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://system.gecogames.com/api/v1/test/"
+export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "http://localhost:8000"
+// export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "https://system.gecogames.com/"
 
 export function getApiUrl(path: string) {
   const base = API_BASE_URL.replace(/\/+$|^\s+|\s+$/g, "")
