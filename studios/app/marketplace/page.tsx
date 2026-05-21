@@ -97,6 +97,9 @@ export default function MarketplacePage() {
                 <Link href="#products" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   View collection
                 </Link>
+                <Link href="#normils-boutique" className="inline-flex items-center rounded-full bg-pink-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-pink-600">
+                  Normils Boutique
+                </Link>
                 <Link href="/support" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                   Inquire with us
                 </Link>
@@ -215,6 +218,90 @@ export default function MarketplacePage() {
           </div>
         </div>
       </section>
+
+      {/* Normils Boutique Section */}
+      <section id="normils-boutique" className="py-20 px-6 lg:px-12 bg-gradient-to-b from-pink-50 to-rose-50 dark:from-rose-950/20 dark:to-pink-950/20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="inline-flex rounded-full bg-pink-100 px-4 py-2 text-sm font-semibold text-pink-800 dark:bg-pink-900/20 dark:text-pink-300 uppercase tracking-[0.24em] mb-6">
+              Special Collection
+            </span>
+            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl mb-4">Normils Boutique</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Discover our premium collection of baby essentials and products. Carefully curated for quality, comfort, and style.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3 mb-12">
+            <div className="rounded-3xl overflow-hidden border border-pink-200 dark:border-pink-800 shadow-lg hover:shadow-xl transition flex flex-col">
+              <div className="relative h-80 w-full bg-slate-200 dark:bg-slate-700">
+                <img src="/baby.avif" alt="Normils Boutique Product" className="w-full h-full object-cover" />
+              </div>
+              <div className="p-6 bg-white dark:bg-slate-800 flex-grow flex flex-col">
+                <h3 className="text-xl font-semibold mb-2">Premium Baby Collection</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-grow">High-quality baby products designed for comfort and safety.</p>
+                <div className="flex gap-3">
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-500">
+                    Buy Now
+                  </button>
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full border border-pink-600 text-pink-600 px-4 py-2 text-sm font-semibold transition hover:bg-pink-50 dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-950/20">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl overflow-hidden border border-pink-200 dark:border-pink-800 shadow-lg hover:shadow-xl transition flex flex-col">
+              <div className="relative h-80 w-full bg-slate-200 dark:bg-slate-700">
+                <img src="/baby%202.avif" alt="Normils Boutique Baby Essentials" className="w-full h-full object-cover" />
+              </div>
+              <div className="p-6 bg-white dark:bg-slate-800 flex-grow flex flex-col">
+                <h3 className="text-xl font-semibold mb-2">Baby Essentials</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-grow">Everything parents need for a comfortable and joyful experience.</p>
+                <div className="flex gap-3">
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-500">
+                    Buy Now
+                  </button>
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full border border-pink-600 text-pink-600 px-4 py-2 text-sm font-semibold transition hover:bg-pink-50 dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-950/20">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl overflow-hidden border border-pink-200 dark:border-pink-800 shadow-lg hover:shadow-xl transition flex flex-col">
+              <div className="relative h-80 w-full bg-slate-200 dark:bg-slate-700">
+                <img src="/baby%203.jpg" alt="Normils Boutique Selection" className="w-full h-full object-cover" />
+              </div>
+              <div className="p-6 bg-white dark:bg-slate-800 flex-grow flex flex-col">
+                <h3 className="text-xl font-semibold mb-2">Curated Selection</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-grow">Handpicked items trusted by parents and caregivers worldwide.</p>
+                <div className="flex gap-3">
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-500">
+                    Buy Now
+                  </button>
+                  <button className="flex-1 inline-flex items-center justify-center rounded-full border border-pink-600 text-pink-600 px-4 py-2 text-sm font-semibold transition hover:bg-pink-50 dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-950/20">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <div className="inline-block bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-pink-200 dark:border-pink-800">
+              <h3 className="text-2xl font-semibold mb-4">Explore Normils Boutique</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
+                Browse our exclusive collection of baby products, clothing, and accessories.
+              </p>
+              <Link href="/support" className="inline-flex items-center justify-center rounded-full bg-pink-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-pink-500">
+                Shop Now
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
+
