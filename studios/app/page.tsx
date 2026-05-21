@@ -75,6 +75,12 @@ const featuredGames = [
     image: "/games/clear-skies-3d.png",
     description: "A polished 3D flight simulation with cinematic world art.",
   },
+  {
+    title: "Kopala Survival",
+    image: "/Kopala.jpg",
+    description: "An atmospheric survival adventure built for tense exploration and emergent gameplay.",
+    status: "coming-soon",
+  },
 ]
 
 const characterGallery = [
@@ -225,7 +231,7 @@ export default function HomePage() {
               We're looking for talented individuals to help us create amazing games and stories. Newly accepted positions will be classified as Full-Time and Remote.
             </p>
 
-            <div className="grid gap-6 md:grid-cols-2 mb-8">
+            <div className="grid gap-6 md:grid-cols-3 mb-8">
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
                 <div className="text-3xl mb-4">✍️</div>
                 <h3 className="text-2xl font-semibold mb-3">Story Writer</h3>
@@ -257,6 +263,22 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
+
+              <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
+                <div className="text-3xl mb-4">💻</div>
+                <h3 className="text-2xl font-semibold mb-3">Frontend Developer</h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-4">
+                  Build polished web experiences for our studio and client projects. Work with Next.js, modern UI, and responsive design.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
+                    Full-Time
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
+                    Remote
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-green-200 dark:border-green-800">
@@ -277,10 +299,16 @@ export default function HomePage() {
                 >
                   Apply for Game Developer
                 </Link>
+                <Link
+                  href="mailto:hello@gecogames.com?subject=Application for Frontend Developer Position"
+                  className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
+                >
+                  Apply for Frontend Developer
+                </Link>
               </div>
               <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <strong>⏰ Application Deadline:</strong> April 10, 2026
+                  <strong>⏰ Application Deadline:</strong> May 22, 2026
                 </p>
               </div>
             </div>
@@ -331,18 +359,26 @@ export default function HomePage() {
                 <div className="p-6">
                   <h3 className="text-2xl font-semibold">{game.title}</h3>
                   <p className="mt-4 text-slate-600 dark:text-slate-400">{game.description}</p>
-                  <div className="mt-6 flex gap-3">
-                    <a
-                      href="https://play.google.com/store/apps/dev?id=5105347513801222490"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-                    >
-                      Download on Google Play
-                    </a>
-                    <span className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
-                      iOS Coming Soon
-                    </span>
+                  <div className="mt-6 flex gap-3 flex-wrap">
+                    {game.status === "coming-soon" ? (
+                      <span className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
+                        Coming Soon
+                      </span>
+                    ) : (
+                      <>
+                        <a
+                          href="https://play.google.com/store/apps/dev?id=5105347513801222490"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+                        >
+                          Download on Google Play
+                        </a>
+                        <span className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
+                          iOS Coming Soon
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -451,7 +487,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-12">
             <div className="group">
               <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -482,6 +518,23 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Unity 3D</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 text-center">Game Engine & Development</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="relative bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-950/20 dark:to-slate-900/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex flex-col items-center">
+                  <div className="w-32 h-32 mb-8 flex items-center justify-center bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-inner">
+                    <img
+                      src="/godot.webp"
+                      alt="Godot Engine"
+                      className="w-full h-full object-contain filter group-hover:brightness-110 transition-all duration-300"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Godot Engine</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center">Open-source Game Engine</p>
                 </div>
               </div>
             </div>

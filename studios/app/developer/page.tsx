@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import NewsletterSubscription from "../../components/newsletter-subscription"
 
 export default function DeveloperPage() {
@@ -229,6 +230,77 @@ export default function DeveloperPage() {
               <p className="text-white/80 mb-6">Our team is ready to review your game submission and help you bring it to an engaged audience.</p>
               <Link href="/developer/games" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 w-full">
                 Submit your game
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 lg:px-12 bg-white dark:bg-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="inline-flex rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300 uppercase tracking-[0.24em] mb-6">
+              Success Story
+            </span>
+            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl mb-4">See what's possible with Geco</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Kopala Survival is an example of the ambitious games finding success through our developer platform.
+            </p>
+          </div>
+
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 overflow-hidden shadow-lg dark:border-slate-800 dark:bg-slate-950">
+              <div className="relative h-80 w-full">
+                <Image src="/Kopala.jpg" alt="Kopala Survival" fill className="object-cover" />
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-3xl font-semibold mb-4">Kopala Survival</h3>
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">
+                An atmospheric survival adventure built for tense exploration and emergent gameplay. This title demonstrates the kind of ambitious, polished experiences that thrive on the Geco platform.
+              </p>
+              
+              <div className="grid gap-4 mb-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
+                    <span className="text-lg">🎮</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">Gameplay Focus</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Emergent survival mechanics with environmental storytelling</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
+                    <span className="text-lg">🎨</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">Visual Quality</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Premium art direction and atmospheric world design</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
+                    <span className="text-lg">📱</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">Multi-Platform</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Launching across mobile and PC platforms</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="inline-flex items-center rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300 mb-8">
+                🚀 Coming Soon
+              </div>
+
+              <p className="text-slate-600 dark:text-slate-400 mb-8">
+                Games like Kopala showcase the quality and ambition possible when developers partner with Geco. Ready to submit your next project?
+              </p>
+
+              <Link href="/developer/games" className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500">
+                Submit Your Game
               </Link>
             </div>
           </div>
