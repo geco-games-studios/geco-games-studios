@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "Geco Games Studios",
   description: "Geco Games Studios is a professional game studio delivering premium games, interactive experiences, and esports production.",
   generator: "v0.dev",
+  icons: {
+    icon: "/logo-light.png",
+    shortcut: "/logo-light.png",
+    apple: "/logo-light.png",
+  },
 }
 
 export default function RootLayout({
