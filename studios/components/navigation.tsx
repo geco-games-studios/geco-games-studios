@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, Mail } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, Mail, ChevronDown } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -62,6 +62,15 @@ export default function Navigation() {
 
   const navItems = [
     { name: "Studio", href: "/" },
+    {
+      name: "Stories",
+      href: "/stories",
+      children: [
+        { name: "Jeonz", href: "/stories/jeonz" },
+        { name: "Lotus", href: "/stories/lotus" },
+        { name: "Mis Fortune", href: "/stories/mis-fortune" },
+      ],
+    },
     { name: "Services", href: "/services" },
     { name: "About", href: "/about" },
     { name: "Academy", href: "/academy" },
@@ -117,7 +126,42 @@ export default function Navigation() {
 
           <div className="hidden items-center gap-8 lg:flex">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+              const isActive =
+                pathname === item.href ||
+                (item.href !== "/" && pathname.startsWith(item.href)) ||
+                item.children?.some(
+                  (child) => pathname === child.href || pathname.startsWith(child.href),
+                )
+
+              if (item.children) {
+                return (
+                  <div key={item.name} className="relative group">
+                    <Link
+                      href={item.href}
+                      className={`inline-flex items-center gap-1 text-sm font-medium transition rounded-lg px-2 py-1 ${
+                        isActive
+                          ? "text-slate-950 dark:text-white underline underline-offset-4 decoration-2"
+                          : "text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white nav-link-hover"
+                      }`}
+                    >
+                      {item.name}
+                      <ChevronDown className="h-4 w-4" />
+                    </Link>
+                    <div className="absolute left-0 top-full z-50 mt-2 hidden min-w-[14rem] flex-col gap-1 rounded-3xl border border-slate-200 bg-white p-3 shadow-lg transition duration-200 dark:border-slate-800 dark:bg-slate-950 group-hover:flex group-focus-within:flex">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.name}
+                          href={child.href}
+                          className="rounded-2xl px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+
               return (
                 <Link
                   key={item.name}
@@ -234,7 +278,43 @@ export default function Navigation() {
       <div className={`lg:hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"} overflow-hidden transition-all duration-300`}>
         <div className="space-y-1 border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href)) ||
+              item.children?.some(
+                (child) => pathname === child.href || pathname.startsWith(child.href),
+              )
+
+            if (item.children) {
+              return (
+                <div key={item.name} className="space-y-1">
+                  <Link
+                    href={item.href}
+                    className={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
+                      isActive
+                        ? "bg-slate-950 text-white dark:bg-slate-100 dark:text-slate-900"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                  <div className="space-y-1 rounded-3xl bg-slate-50 p-2 dark:bg-slate-900">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        href={child.href}
+                        className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+
             return (
               <Link
                 key={item.name}
