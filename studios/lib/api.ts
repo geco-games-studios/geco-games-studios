@@ -47,6 +47,20 @@ export function getAuthHeaders(contentType: string | null = "application/json") 
   return headers
 }
 
+function createApiError(response: Response, data: unknown) {
+  const message =
+    typeof data === "object" && data !== null && "message" in data
+      ? (data as any).message
+      : typeof data === "object" && data !== null && "detail" in data
+      ? (data as any).detail
+      : `API request failed with status ${response.status}`
+
+  const error = new Error(message as string)
+  ;(error as any).responseData = data
+  ;(error as any).status = response.status
+  return error
+}
+
 export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
   const response = await fetch(getApiUrl(path), {
     method: "POST",
@@ -59,7 +73,7 @@ export async function postFormData<T = unknown>(path: string, formData: FormData
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -77,7 +91,7 @@ export async function putFormData<T = unknown>(path: string, formData: FormData,
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -95,7 +109,7 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
 
   if (!response.ok) {
     console.error(`API Error [${response.status}] at ${path}:`, data)
-    throw new Error(data?.message || data?.detail || `API request failed with status ${response.status}`)
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -113,7 +127,7 @@ export async function postJson<T = unknown>(path: string, payload: unknown, init
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -131,7 +145,7 @@ export async function putJson<T = unknown>(path: string, payload: unknown, init?
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -149,7 +163,7 @@ export async function patchJson<T = unknown>(path: string, payload: unknown, ini
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T
@@ -166,7 +180,7 @@ export async function deleteJson<T = unknown>(path: string, init?: Omit<RequestI
   const data = contentType.includes("application/json") ? await response.json() : null
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.detail || "API request failed")
+    throw createApiError(response, data)
   }
 
   return data as T

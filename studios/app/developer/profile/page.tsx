@@ -318,6 +318,12 @@ export default function DeveloperProfilePage() {
               Analytics
             </Link>
             <Link
+              href="/developer/leaderboards"
+              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
+            >
+              Leaderboards
+            </Link>
+            <Link
               href="/developer/support"
               className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
             >

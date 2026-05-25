@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
-  LogOut,
   Trophy,
   Users,
   MessageSquare,
@@ -111,13 +110,6 @@ export default function PlayerDashboardPage() {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser")
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("refreshToken")
-    router.push("/login")
-  }
-
   const handleJoinCommunity = async (communityId: number) => {
     try {
       await postJson(`jampass/communities/${communityId}/join/`, {})
@@ -202,60 +194,8 @@ export default function PlayerDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
-        <div className="container mx-auto px-4 lg:px-6">
-          <div className="py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Jampass Player Dashboard
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Welcome back, gamer!
-              </p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex gap-1 border-t border-slate-200 dark:border-slate-800 pt-4 pb-0 -mb-px overflow-x-auto">
-            <Link
-              href="/jampass/player/dashboard"
-              className="px-4 py-3 border-b-2 border-cyan-600 text-cyan-600 font-semibold dark:border-cyan-400 dark:text-cyan-400 text-sm"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/jampass/player/communities"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Communities
-            </Link>
-            <Link
-              href="/jampass/player/games"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              My Games
-            </Link>
-            <Link
-              href="/jampass/player/leaderboards"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Leaderboards
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 lg:px-6">
+    <main className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white min-h-screen">
+      <div className="container mx-auto px-4 py-12 lg:px-6">
         {/* Stats Overview */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
           <div className="rounded-xl bg-white shadow-lg dark:bg-slate-800 p-6">
@@ -513,7 +453,7 @@ export default function PlayerDashboardPage() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }

@@ -154,8 +154,10 @@ export default function DeveloperGamesPage() {
 
     // 1. Check connection to the game
     try {
-      const connectRes = await postJson<{ status: string }>(`developer/games/${game.id}/connect/`, {})
-      if (connectRes.status !== 'connected') {
+      const connectRes = await postJson<any>(`developer/games/${game.id}/connect/`, {})
+      // Check if session exists and is_connected is true, or if status field indicates success
+      const isConnected = connectRes?.session?.is_connected === true || connectRes?.status === 'connected'
+      if (!isConnected) {
         setVerifyDialogStatus('connect-fail')
         setVerifyDialogMessage('Could not connect to the game. Please ensure your game is online and try again.')
         setVerifyDialogOpen(true)
@@ -170,10 +172,10 @@ export default function DeveloperGamesPage() {
 
     // 2. If connection is successful, verify the key
     try {
-      const response = await postJson<{ status: string }>("developer/games/verify-key/", {
+      const response = await postJson<any>("developer/games/verify-key/", {
         api_key: game.api_key
       })
-      if (response.status === "verified") {
+      if (response.status === "verified" || response.verified === true) {
         setVerifyDialogStatus('success')
         setVerifyDialogMessage('Game verified successfully!')
         setVerifyDialogOpen(true)
@@ -196,26 +198,6 @@ export default function DeveloperGamesPage() {
       setVerifyDialogOpen(true)
     }
   }
-      {/* Verification Result Dialog */}
-      <Dialog open={verifyDialogOpen} onOpenChange={setVerifyDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {verifyDialogStatus === 'success' && 'Game Verified!'}
-              {verifyDialogStatus === 'fail' && 'Verification Failed'}
-              {verifyDialogStatus === 'connect-fail' && 'Connection Failed'}
-            </DialogTitle>
-            <DialogDescription>
-              {verifyDialogMessage}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <button className="mt-2 px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700">Close</button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
   const handleGameCreated = (game: Game) => {
     setGames((previousGames) => [game, ...previousGames])
@@ -244,7 +226,13 @@ export default function DeveloperGamesPage() {
 
   // Always render the verification dialog so it can show during loading or error
   const verificationDialog = (
-    <Dialog open={verifyDialogOpen} onOpenChange={setVerifyDialogOpen}>
+    <Dialog open={verifyDialogOpen} onOpenChange={(open) => {
+      setVerifyDialogOpen(open)
+      // If closing after successful verification, refresh the page
+      if (!open && verifyDialogStatus === 'success') {
+        setTimeout(() => window.location.reload(), 300)
+      }
+    }}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -346,6 +334,12 @@ export default function DeveloperGamesPage() {
               Analytics
             </Link>
             <Link
+              href="/developer/leaderboards"
+              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
+            >
+              Leaderboards
+            </Link>
+            <Link
               href="/developer/support"
               className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
             >
@@ -374,6 +368,43 @@ export default function DeveloperGamesPage() {
             <Plus className="h-4 w-4" />
             Submit New Game
           </button>
+        </div>
+
+        <div className="rounded-xl bg-white shadow-lg dark:bg-slate-800 p-6 mb-8">
+          <div className="flex flex-col gap-3 md:items-center md:flex-row md:justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Dynamic Leaderboard Setup</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Configure your game rankings and keep leaderboard metrics updated with the developer API.
+              </p>
+            </div>
+            <Link
+              href="/developer/analytics"
+              className="inline-flex items-center rounded-full bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-900/30 dark:text-cyan-300 dark:hover:bg-cyan-900"
+            >
+              Learn More in Analytics
+            </Link>
+          </div>
+          <ol className="mt-6 space-y-4 text-sm text-slate-700 dark:text-slate-300">
+            <li>
+              <span className="font-semibold">1. Register your game</span> — submit your title through the portal or <code>POST /developer/games/</code>.
+            </li>
+            <li>
+              <span className="font-semibold">2. Configure the leaderboard metric</span> — create a config via <code>POST /developer/leaderboard-configs/</code> with <code>game</code>, <code>metric_name</code>, <code>display_name</code>, and <code>metric_type</code>.
+            </li>
+            <li>
+              <span className="font-semibold">3. Update player progress</span> — keep the chosen metric synced in player profiles or the <code>XPoints</code> model.
+            </li>
+            <li>
+              <span className="font-semibold">4. View the leaderboard</span> — fetch ranking data from <code>GET /leaderboard/game/&lt;game_id&gt;/</code>.
+            </li>
+            <li>
+              <span className="font-semibold">5. Change the leaderboard metric</span> — update your game’s leaderboard config to switch from <code>score</code> to <code>coins</code>, <code>level</code>, or another field.
+            </li>
+            <li>
+              <span className="font-semibold">6. Display it in your game</span> — consume the leaderboard API in your game client or website.
+            </li>
+          </ol>
         </div>
 
         {/* Games Grid */}
