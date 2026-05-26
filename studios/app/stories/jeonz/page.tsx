@@ -16,10 +16,10 @@ export default function JeonzPage() {
                 Chapter I
               </p>
               <h1 className="max-w-3xl text-5xl font-black tracking-tight sm:text-6xl">
-                Jeonz, the city’s silent architect.
+                Angel
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
-                In the neon district, Jeonz learned to read the world like a map. Every glance, crowd, and alleyway became a move in a game that only he knew how to win.
+                Angel was just another kid trying to survive in a violent, dying city until the night he was caught in a massacre caused by a secret experiment beneath the streets. Left dying, he encountered a fallen angel imprisoned below the city — a divine being abandoned by Heaven itself.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -29,7 +29,7 @@ export default function JeonzPage() {
                   Back to stories
                 </Link>
                 <span className="inline-flex items-center rounded-full border border-cyan-200/80 bg-cyan-100/70 px-3 py-1 text-xs uppercase tracking-[0.24em] text-cyan-700 dark:border-cyan-500/30 dark:bg-cyan-500/10 dark:text-cyan-200">
-                  Neon tactician
+                  Fallen avatar
                 </span>
               </div>
             </div>
@@ -39,7 +39,7 @@ export default function JeonzPage() {
               <div className="absolute -right-10 bottom-8 h-36 w-36 rounded-full bg-violet-300/10 blur-3xl dark:bg-violet-500/15" />
               <Image
                 src="/characters/jeonz.png"
-                alt="Jeonz"
+                alt="Angel"
                 width={640}
                 height={640}
                 className="relative rounded-[1.75rem] object-cover"
@@ -55,7 +55,7 @@ export default function JeonzPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-300">Origin</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">The neon alley begun</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Jeonz first found his rhythm between glass towers and electric signs. The city never sleeps, and he learned to move through its light and shadow with equal clarity.
+              Angel was just another kid trying to survive in a violent, dying city when a secret experiment beneath the streets turned into a massacre. Left for dead, he found a fallen angel imprisoned below — a divine being abandoned by Heaven itself.
             </p>
           </article>
 
@@ -63,7 +63,7 @@ export default function JeonzPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-300">Turning point</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A quiet victory</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              In the middle of a high-stakes match, he chose patience over spectacle. That moment transformed Jeonz from a contender into a leader who controls the room before the first move lands.
+              The entity offered him a choice: die powerless, or become something feared. Angel accepted, and the fallen angel now lives inside him, granting terrifying power while slowly consuming his humanity.
             </p>
           </article>
 
@@ -71,7 +71,7 @@ export default function JeonzPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-300">Legacy</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A story of clarity</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Today, Jeonz is the one people watch when they want to understand how the city moves. His legacy is written in decisions that felt small in the moment and enormous in their consequences.
+              Angel fights to stay in control, but each use of his power blurs the line between saviour and monster a little more. The blue wings behind him are fragments of the fallen creature trying to fully manifest through his body.
             </p>
           </article>
         </div>

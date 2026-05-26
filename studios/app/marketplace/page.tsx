@@ -1,14 +1,15 @@
 import Link from "next/link"
 import MerchandiseCard from "../../components/merchandise-card"
+import CharacterTshirtCarousel from "../../components/character-tshirt-carousel"
 
 export default function MarketplacePage() {
   const merchandise = [
     {
-      title: "GECO T-Shirt",
+      title: "GECO Character T-Shirt",
       category: "Apparel",
-      price: "ZMW 250",
-      description: "Premium cotton t-shirt with embroidered GECO logo. Available in black, white, and navy.",
-      image: "/GECO GAMES merchandise .png",
+      price: "ZMW 255",
+      description: "Custom GECO character t-shirt with collectible artwork. Browse the featured designs above.",
+      image: "/design.png",
       rating: 4.8,
     },
     {
@@ -118,6 +119,27 @@ export default function MarketplacePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Character Tee Slideshow */}
+      <section className="py-20 px-6 lg:px-12 bg-slate-50 dark:bg-slate-950">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
+              Geco Character T-Shirts
+            </p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl text-slate-900 dark:text-white">
+              Browse the new character designs
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+              Each tee is available for ZMW 255. Swipe through the full range of designs below.
+            </p>
+          </div>
+          <CharacterTshirtCarousel
+            price="255"
+            images={["/desgin2.png", "/design.png", "/design3.png", "/design4.png", "/design5.png", "/desgin6.png", "/desgin7.png"]}
+          />
         </div>
       </section>
 

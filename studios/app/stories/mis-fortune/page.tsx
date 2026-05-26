@@ -16,10 +16,10 @@ export default function MisFortunePage() {
                 Chapter III
               </p>
               <h1 className="max-w-3xl text-5xl font-black tracking-tight sm:text-6xl">
-                Mis Fortune, the balance between risk and shelter.
+                Maya — Mis Fortune
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
-                In the places where shadows and chance meet, she moves deliberately. Each decision is a promise, each gamble a shield for the people she protects.
+                Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile lab and wired for an impossible experiment, she became the human anomaly they could not control.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -29,7 +29,7 @@ export default function MisFortunePage() {
                   Back to stories
                 </Link>
                 <span className="inline-flex items-center rounded-full border border-amber-200/80 bg-amber-100/70 px-3 py-1 text-xs uppercase tracking-[0.24em] text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-                  Gamble queen
+                  Quantum anchor
                 </span>
               </div>
             </div>
@@ -52,26 +52,26 @@ export default function MisFortunePage() {
       <section className="container mx-auto px-6 pb-24">
         <div className="grid gap-8 lg:grid-cols-3">
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-white/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/80 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Hidden past</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A life shaped by risk</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Before the name</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Maya in the lab</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Mis Fortune grew up with every opportunity weighed against the danger that comes with it. She learned early that the right gamble could protect more than just herself.
+              Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile room by lab-coated handlers, she was one half of a pair of experiments designed to weaponize the impossible.
             </p>
           </article>
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-slate-50/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/75 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">The pact</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Choosing who to shield</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">The experiment</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Probability turned weapon</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              When a reckless challenger threatened the balance of the city, Mis Fortune stepped in. Her intervention was both subtle and decisive — the kind that changes the story without flair.
+              While they chained divinity into Angel, Maya’s handlers pumped her nervous system full of quantum-reactive isotopes and tried to force her brain to control chaos. Instead, the chaos controlled them.
             </p>
           </article>
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-white/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/80 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Her mission</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Protect the world without being seen</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Symbiosis</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Jackpot is more than a gadget</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Mis Fortune is not interested in glory. Her story is about quiet influence, the courage to take a loss for others, and the discipline to stay one step ahead of what fate expects.
+              The volatile energy from Maya’s overloaded system struck a scrapped neon-pink bot, creating Jackpot. He is her quantum anchor and external battery — the symbiotic processor that handles the raw probability data her human brain cannot.
             </p>
           </article>
         </div>

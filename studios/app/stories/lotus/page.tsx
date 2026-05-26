@@ -16,10 +16,10 @@ export default function LotusPage() {
                 Chapter II
               </p>
               <h1 className="max-w-3xl text-5xl font-black tracking-tight sm:text-6xl">
-                Lotus, the arena’s quiet storm.
+                Jennie — The Neon Bloom Lotus
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
-                Lotus moves with the calm of a river and the force of a storm. Every match is a meditation, every victory a carefully placed blossom.
+                Before she was a glowing sanctuary, Jennie was just a civilian snatched off the street and thrown into an underground lab. The scientists had ripped open a portal to another dimension, then sealed her inside an alien vat of living soil.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -29,7 +29,7 @@ export default function LotusPage() {
                   Back to stories
                 </Link>
                 <span className="inline-flex items-center rounded-full border border-pink-200/80 bg-pink-100/70 px-3 py-1 text-xs uppercase tracking-[0.24em] text-pink-700 dark:border-pink-500/30 dark:bg-pink-500/10 dark:text-pink-200">
-                  Tournament sovereign
+                  Sacred healer
                 </span>
               </div>
             </div>
@@ -52,26 +52,26 @@ export default function LotusPage() {
       <section className="container mx-auto px-6 pb-24">
         <div className="grid gap-8 lg:grid-cols-3">
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-white/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/80 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">Early trials</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Rising through the ranks</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">Alien soil</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Jennie’s true origin</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Lotus began in small competitions where every success was earned with discipline. Each day taught her that consistency was the true edge, not just a flash of brilliance.
+              The scientists brought back a thick, dark earth from another dimension and sealed her inside it. The mud was suffocating, vibrating with chaotic energy, and everything in it should have killed her.
             </p>
           </article>
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-slate-50/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/75 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The breakthrough</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A single calm strike</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The Sacred Bloom</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">She rose pure from alien mud</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              In a match where everyone expected her to crack, Lotus held her breath and did not waver. That quiet precision became the moment people realized she was not just strong — she was inevitable.
+              When Jennie finally broke out of the vat, she was not covered in mud. Neon-pink petals of energy swirled around her, and she had learned to channel the pure, restorative essence of that extradimensional world.
             </p>
           </article>
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-white/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/80 dark:shadow-black/20">
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The present</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">The steady force</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The healer</p>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Sacred energy with a cost</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Lotus now commands attention without raising her voice. She is the standard for those who turn pressure into momentum and focus into legend.
+              The petals around her form a healing field that regenerates allies and stitches wounds back together. That power drains her, dropping her body temperature so low that her oversized jacket is not fashion — it is survival.
             </p>
           </article>
         </div>

@@ -233,10 +233,10 @@ export default function HomePage() {
 
             <div className="grid gap-6 md:grid-cols-3 mb-8">
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="text-3xl mb-4">✍️</div>
-                <h3 className="text-2xl font-semibold mb-3">Story Writer</h3>
+                <div className="text-3xl mb-4">📣</div>
+                <h3 className="text-2xl font-semibold mb-3">Marketing Specialist</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  Craft compelling narratives and character arcs for our games. Help bring worlds and stories to life through engaging storytelling.
+                  Drive campaigns, grow brand visibility, and support launch strategy. Create marketing content that connects with players.
                 </p>
                 <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                   <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
@@ -249,10 +249,10 @@ export default function HomePage() {
               </div>
 
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="text-3xl mb-4">🎮</div>
-                <h3 className="text-2xl font-semibold mb-3">Game Developer</h3>
+                <div className="text-3xl mb-4">🎨</div>
+                <h3 className="text-2xl font-semibold mb-3">Graphics Designer</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  Build interactive experiences using modern game engines. Work on gameplay systems, mechanics, and technical implementation.
+                  Design visuals for campaigns, merchandise, and game marketing. Bring our studio’s creative identity to life across digital and print.
                 </p>
                 <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                   <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
@@ -288,16 +288,16 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <Link
-                  href="mailto:hello@gecogames.com?subject=Application for Story Writer Position"
+                  href="mailto:hello@gecogames.com?subject=Application for Marketing Specialist Position"
                   className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
                 >
-                  Apply for Story Writer
+                  Apply for Marketing Specialist
                 </Link>
                 <Link
-                  href="mailto:hello@gecogames.com?subject=Application for Game Developer Position"
+                  href="mailto:hello@gecogames.com?subject=Application for Graphics Designer Position"
                   className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
                 >
-                  Apply for Game Developer
+                  Apply for Graphics Designer
                 </Link>
                 <Link
                   href="mailto:hello@gecogames.com?subject=Application for Frontend Developer Position"
@@ -308,7 +308,7 @@ export default function HomePage() {
               </div>
               <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <strong>⏰ Application Deadline:</strong> May 22, 2026
+                  <strong>⏰ Application Deadline:</strong> 30th May 2026
                 </p>
               </div>
             </div>
