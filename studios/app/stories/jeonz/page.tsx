@@ -21,6 +21,9 @@ export default function JeonzPage() {
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
                 Angel was just another kid trying to survive in a violent, dying city until the night he was caught in a massacre caused by a secret experiment beneath the streets. Left dying, he encountered a fallen angel imprisoned below the city — a divine being abandoned by Heaven itself.
               </p>
+              <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
+                The entity offered him a choice: die powerless, or become something feared. Angel accepted, and now the fallen angel lives inside him, granting terrifying power while slowly consuming his humanity.
+              </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
                   href="/stories"
@@ -61,17 +64,17 @@ export default function JeonzPage() {
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-slate-50/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/75 dark:shadow-black/20">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-300">Turning point</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A quiet victory</h2>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A dangerous bargain</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              The entity offered him a choice: die powerless, or become something feared. Angel accepted, and the fallen angel now lives inside him, granting terrifying power while slowly consuming his humanity.
+              The entity offered him a choice: die powerless, or become something feared. Angel accepted, and now the fallen angel lives inside him, granting terrifying power while slowly consuming his humanity.
             </p>
           </article>
 
           <article className="rounded-[1.75rem] border border-slate-200/80 bg-white/80 p-10 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/80 dark:shadow-black/20">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-600 dark:text-cyan-300">Legacy</p>
-            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A story of clarity</h2>
+            <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">A story of blurred lines</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Angel fights to stay in control, but each use of his power blurs the line between saviour and monster a little more. The blue wings behind him are fragments of the fallen creature trying to fully manifest through his body.
+              Angel fights to stay in control, but every time he uses his powers, the line between saviour and monster disappears a little more. The blue wings behind him are fragments of the fallen creature trying to fully manifest through his body.
             </p>
           </article>
         </div>

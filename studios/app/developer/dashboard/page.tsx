@@ -235,46 +235,6 @@ export default function DeveloperDashboard() {
               Logout
             </button>
           </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex gap-1 border-t border-slate-200 dark:border-slate-800 pt-4 pb-0 -mb-px overflow-x-auto">
-            <Link
-              href="/developer/dashboard"
-              className="px-4 py-3 border-b-2 border-cyan-600 text-cyan-600 font-semibold dark:border-cyan-400 dark:text-cyan-400 text-sm"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/developer/profile"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Profile
-            </Link>
-            <Link
-              href="/developer/games"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              My Games
-            </Link>
-            <Link
-              href="/developer/analytics"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/developer/leaderboards"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Leaderboards
-            </Link>
-            <Link
-              href="/developer/support"
-              className="px-4 py-3 border-b-2 border-cyan-600 text-cyan-600 font-semibold dark:border-cyan-400 dark:text-cyan-400 text-sm"
-            >
-              Support
-            </Link>
-          </div>
         </div>
       </header>
 

@@ -19,7 +19,7 @@ export default function MisFortunePage() {
                 Maya — Mis Fortune
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
-                Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile lab and wired for an impossible experiment, she became the human anomaly they could not control.
+                Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile room by people in lab coats who thought they could put a leash on the impossible, her body became a dangerous experiment in quantum probability.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -55,7 +55,7 @@ export default function MisFortunePage() {
             <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Before the name</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Maya in the lab</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile room by lab-coated handlers, she was one half of a pair of experiments designed to weaponize the impossible.
+              Before the streets knew her as Mis Fortune, she was simply Maya. Locked in a sterile room by people in lab coats who thought they could put a leash on the impossible, she was one half of a pair of experiments designed to weaponize probability.
             </p>
           </article>
 
@@ -63,7 +63,7 @@ export default function MisFortunePage() {
             <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">The experiment</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Probability turned weapon</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              While they chained divinity into Angel, Maya’s handlers pumped her nervous system full of quantum-reactive isotopes and tried to force her brain to control chaos. Instead, the chaos controlled them.
+              While they were trying to chain divinity into Angel, Maya’s handlers pumped her nervous system full of experimental, quantum-reactive isotopes and tried to force her brain to calculate and control chaos. Instead, the chaos controlled them.
             </p>
           </article>
 
@@ -71,7 +71,10 @@ export default function MisFortunePage() {
             <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-300">Symbiosis</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Jackpot is more than a gadget</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              The volatile energy from Maya’s overloaded system struck a scrapped neon-pink bot, creating Jackpot. He is her quantum anchor and external battery — the symbiotic processor that handles the raw probability data her human brain cannot.
+              When her system overloaded, the volatile energy didn't kill her. It sought an exhaust port and struck a scrapped neon-pink novelty bot, creating Jackpot — her quantum anchor and external battery.
+            </p>
+            <p className="mt-5 text-sm italic text-slate-500 dark:text-slate-400">
+              “You may be out of luck, but Mis Fortune’s got your back.”
             </p>
           </article>
         </div>

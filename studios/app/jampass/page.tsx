@@ -5,24 +5,29 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 
 const featureTiles = [
   {
-    title: "Role-based workflows",
-    description: "Admin, vendor, player and developer interfaces with tailored permissions, registration flows, and ecosystem controls.",
+    title: "Aggregator payments",
+    description: "One unified gateway for game developers that routes payments, tracks settlement, and maintains transparent revenue splits.",
     icon: ShieldCheck,
   },
   {
-    title: "On-demand tournament entry",
-    description: "Pay K2,500 only when your center decides to enter the esports tournament, keeping the platform affordable and accessible.",
+    title: "Developer monetization",
+    description: "Convert currency into in-game Jam tokens, manage ad-driven rewards, and collect platform revenue with clear analytics.",
     icon: Trophy,
   },
   {
-    title: "Jam Wallet & marketplace",
-    description: "Deposit money, buy in-game items, join clans, and access communities through the Jam Store outside tournament play.",
+    title: "Real-time leaderboards",
+    description: "Live scoreboards with daily, weekly, and all-time ranking filters to keep players competing and engaged.",
     icon: Globe,
   },
   {
-    title: "Developer integration",
-    description: "Build Jampass into mobile, PC, Xbox, and web games with currency/token conversion and reward ad systems.",
+    title: "Community hubs",
+    description: "Zero-contact chat rooms, clan boards, and moderation tools that protect player privacy while enabling social play.",
     icon: Activity,
+  },
+  {
+    title: "Rewarded ad flows",
+    description: "Support timed rewarded ads that generate developer revenue while preserving gameplay and player choice.",
+    icon: Globe,
   },
 ]
 
@@ -33,18 +38,18 @@ export default function JampassPage() {
         <div className="container mx-auto grid gap-16 lg:grid-cols-[1.1fr_0.9fr] items-center">
           <div className="max-w-2xl">
             <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-cyan-500/10 px-4 py-2 text-sm uppercase tracking-[0.3em] text-cyan-300">
-              🇿🇲 Lusaka, Zambia
+              African game commerce
             </p>
             <h1 className="text-5xl font-semibold tracking-tight text-slate-900 sm:text-6xl">
-              Geco Games Jampass — Zambia's esports wallet, developer platform, and tournament access system.
+              Jampass is the payment and engagement platform for African game developers.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-              Jampass brings gaming centers, players and developers into one unified ecosystem. Centers register free and pay K2,500 only when they decide to enter the esports tournament, while developers integrate token conversion, reward ad systems, and players outside competition use the Jam Store, communities, and clan networks.
+              Jampass unifies transaction routing, ledger-level settlement, leaderboards, community chat, and rewarded ad infrastructure into one developer-friendly experience.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Button asChild className="bg-cyan-500 hover:bg-cyan-400">
+            <div className="mt-10 flex flex-wrap gap-4 items-center">
+              <Button asChild className="rounded-full bg-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-400">
                 <Link href="/register" className="inline-flex items-center gap-2">
-                  Register your center
+                  Register your studio
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -56,37 +61,35 @@ export default function JampassPage() {
                 Learn more
               </Link>
             </div>
-            <div className="mt-12 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-slate-200 bg-slate-100 p-5 shadow-lg shadow-cyan-200/20">
-                <p className="text-sm uppercase tracking-[0.28em] text-slate-500">Finals Location</p>
-                <p className="mt-3 text-2xl font-semibold text-slate-900">Lusaka, Zambia</p>
-              </div>
-              <div className="rounded-3xl border border-slate-200 bg-slate-100 p-5 shadow-lg shadow-cyan-200/20">
-                <p className="text-sm uppercase tracking-[0.28em] text-slate-500">Tournament Duration</p>
-                <p className="mt-3 text-2xl font-semibold text-slate-900">5-day live event</p>
-              </div>
+            <div className="mt-6 inline-flex flex-wrap items-center gap-3 rounded-full bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-700 ring-1 ring-cyan-200">
+              <span className="rounded-full bg-cyan-500 px-3 py-1 text-white">New</span>
+              <span>Launch your studio with payment routing, leaderboards, and rewarded engagement in one platform.</span>
             </div>
           </div>
           <div className="space-y-6 rounded-[2rem] border border-cyan-500/10 bg-white p-8 shadow-2xl shadow-cyan-200/40">
             <div className="rounded-3xl bg-slate-50 p-6">
               <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">What is Jampass?</p>
               <p className="mt-4 text-slate-600 text-sm leading-relaxed">
-                Jampass is Zambia's unified esports ecosystem for centers, players, and developers. It includes optional tournament entry, a Jam Wallet for buying in-game goods, community and clan access, and a developer framework for token conversion and reward ad systems.
+                Jampass is a master aggregator for game commerce. It gives developers one integration point for payments, transparent fee splits, real-time engagement, and secure platform services.
               </p>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-white p-6">
               <div className="flex items-center gap-3 text-sm uppercase tracking-[0.25em] text-cyan-300 mb-4">
                 <Trophy className="h-4 w-4" />
-                Tournament games
+                Core capabilities
               </div>
               <div className="space-y-3">
                 <div className="rounded-2xl bg-slate-100 p-3">
-                  <p className="text-sm font-semibold text-slate-900">EA Sports FC 25</p>
-                  <p className="text-xs text-slate-500 mt-1">Football/Soccer competitive title</p>
+                  <p className="text-sm font-semibold text-slate-900">Payment aggregation</p>
+                  <p className="text-xs text-slate-500 mt-1">One endpoint for all sub-merchant transactions and settlement tracking.</p>
                 </div>
                 <div className="rounded-2xl bg-slate-100 p-3">
-                  <p className="text-sm font-semibold text-slate-900">Mortal Kombat</p>
-                  <p className="text-xs text-slate-500 mt-1">Fighting game championship</p>
+                  <p className="text-sm font-semibold text-slate-900">Leaderboards & chat</p>
+                  <p className="text-xs text-slate-500 mt-1">Live game rankings, community rooms, and moderated clan channels.</p>
+                </div>
+                <div className="rounded-2xl bg-slate-100 p-3">
+                  <p className="text-sm font-semibold text-slate-900">Rewarded ads</p>
+                  <p className="text-xs text-slate-500 mt-1">Support 1s, 7s, and 15s ad experiences for player rewards and revenue.</p>
                 </div>
               </div>
             </div>
@@ -98,18 +101,18 @@ export default function JampassPage() {
         <div className="container mx-auto space-y-12">
           <div className="max-w-4xl">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-300 mb-4">How Jampass works</p>
-            <h2 className="text-4xl font-semibold text-slate-900 mb-6">A simple, transparent Jampass ecosystem for Zambian esports.</h2>
+            <h2 className="text-4xl font-semibold text-slate-900 mb-6">A simple, transparent platform for game commerce and engagement.</h2>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-3">
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">1</div>
-                <CardTitle>Free platform registration</CardTitle>
+                <CardTitle>Developer integration</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  Gaming centers join the Jampass network at no cost. Registration secures your center profile, dashboard access, and eligibility to declare tournament intent.
+                  Integrate Jampass into mobile, PC, Xbox, and web games through a single SDK and backend interface.
                 </p>
               </CardContent>
             </Card>
@@ -117,11 +120,11 @@ export default function JampassPage() {
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">2</div>
-                <CardTitle>Pay only to join</CardTitle>
+                <CardTitle>Transaction routing</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  Your center pays K2,500 only when it decides to enter the tournament. This keeps the platform accessible while funding the finals and prize pool.
+                  All player purchases flow through Jampass as the master aggregator, with clear fee and payout tracking for each sub-merchant.
                 </p>
               </CardContent>
             </Card>
@@ -129,11 +132,11 @@ export default function JampassPage() {
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">3</div>
-                <CardTitle>Local qualifiers at your center</CardTitle>
+                <CardTitle>Settlement tracking</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  Each gaming center hosts its own local qualifier for FC 26 and Mortal Kombat. The strongest player in each game earns the center's national tournament slot.
+                  Jampass tracks net payouts, platform margin, and developer balances so each partner sees accurate financial status.
                 </p>
               </CardContent>
             </Card>
@@ -141,11 +144,11 @@ export default function JampassPage() {
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">4</div>
-                <CardTitle>Best players advance</CardTitle>
+                <CardTitle>Leaderboards</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  The top FC 26 and top Mortal Kombat player from each entered center advances, creating a national field of finalists for Lusaka.
+                  Live leaderboards keep gameplay competitive with daily, weekly, and all-time scopes and instant ranking updates.
                 </p>
               </CardContent>
             </Card>
@@ -153,23 +156,23 @@ export default function JampassPage() {
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">5</div>
-                <CardTitle>5-day finals in Lusaka</CardTitle>
+                <CardTitle>Community & chat</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  Qualifiers travel to Lusaka for a live 5-day finals event. Matches are staged on premium stations with full event production.
+                  Zero-contact community rooms and clan boards let players connect without exposing personal data.
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="bg-slate-50 p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">🏆</div>
-                <CardTitle>Prize pool winners</CardTitle>
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 text-lg font-semibold mb-4">6</div>
+                <CardTitle>Rewarded ads</CardTitle>
               </CardHeader>
               <CardContent className="p-6 text-slate-600">
                 <p>
-                  The national finals award a prize pool to the top FC 26 and Mortal Kombat champions, plus runner-up support and center recognition.
+                  Support 1s, 7s, and 15s rewarded ad experiences that provide developers with incremental revenue while respecting players.
                 </p>
               </CardContent>
             </Card>
@@ -180,10 +183,10 @@ export default function JampassPage() {
       <section id="features" className="border-b border-slate-200 px-6 py-20 lg:px-12">
         <div className="container mx-auto grid gap-12 lg:grid-cols-2">
           <div className="space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Key user roles</p>
-            <h2 className="text-4xl font-semibold text-slate-900">Who uses Jampass?</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Key platform pillars</p>
+            <h2 className="text-4xl font-semibold text-slate-900">Built for developers, players, and operators.</h2>
             <p className="max-w-2xl text-lg leading-8 text-slate-600">
-              Jampass is designed for four core users, each with their own interface and responsibilities in the ecosystem.
+              Jampass combines payment aggregation, engagement systems, and secure settlement into one platform that scales with games and studios.
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
               {featureTiles.map((feature) => (
@@ -200,110 +203,67 @@ export default function JampassPage() {
           <div className="grid gap-6">
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-xl shadow-slate-200/40">
               <CardHeader className="space-y-3 p-6">
-                <CardTitle>Gaming center members (Jampass holders)</CardTitle>
-                <CardDescription className="text-slate-500">
-                  Register your gaming center and join the national Jampass ecosystem.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Free Jampass membership registration with unlimited jammer slots</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Pay K2,500 Gold class ticket only when entering the tournament</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Qualify 3 representatives: 1 manager + 2 participants (FC & MK specialists)</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Receive tournament resources and full accommodation in Lusaka</p>
-                </div>
-                <div className="pt-4">
-                  <Link href="/register" className="inline-flex items-center rounded-full bg-cyan-500 px-4 py-2 text-xs font-semibold text-slate-950 transition hover:bg-cyan-400">
-                    Register your center
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-xl shadow-slate-200/40">
-              <CardHeader className="space-y-3 p-6">
-                <CardTitle>Competitive players</CardTitle>
-                <CardDescription className="text-slate-500">
-                  Represent your gaming center on the national stage and access the broader Jam ecosystem.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Build your competitive profile and gaming stats</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Compete against other Zambian players nationally</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Buy goods and services from the Jam Store, join clans, and interact in communities</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Qualify for the 5-day finals event and earn rewards</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-xl shadow-slate-200/40">
-              <CardHeader className="space-y-3 p-6">
                 <CardTitle>Game developers</CardTitle>
                 <CardDescription className="text-slate-500">
-                  Integrate Jampass as a developer framework across mobile, PC, Xbox, and web games.
+                  Integrate Jampass into mobile, PC, Xbox, or web titles and manage payments, rewards, and analytics from one dashboard.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Convert real currency into in-game Jam tokens</p>
+                  <p>Convert currency into Jam tokens for in-game economy flows.</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Set token value back to real money with transparent settlement</p>
+                  <p>Track settlement and platform fee splits with transparent reporting.</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Use dynamic reward ads to reward players and earn ad-based value</p>
-                </div>
-                <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Access developer analytics, campaign management, and game support tools</p>
+                  <p>Offer rewarded ads and special in-game incentives backed by secure validation.</p>
                 </div>
               </CardContent>
             </Card>
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-xl shadow-slate-200/40">
               <CardHeader className="space-y-3 p-6">
-                <CardTitle>Tournament administrators</CardTitle>
+                <CardTitle>Players</CardTitle>
                 <CardDescription className="text-slate-500">
-                  Jampass organizers manage the entire event.
+                  Enjoy seamless virtual commerce, competitive leaderboards, and private community spaces in one experience.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Manage vendor registrations and approvals</p>
+                  <p>Buy game items, earn rewards, and track progress in your Jam Wallet.</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Generate brackets and group stage draws</p>
+                  <p>Compete on live leaderboards with daily, weekly, and all-time rankings.</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Manage match schedules and seat assignments</p>
+                  <p>Join games, clans, and moderated chat rooms with privacy-safe handles.</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border border-slate-200 bg-white text-slate-900 shadow-xl shadow-slate-200/40">
+              <CardHeader className="space-y-3 p-6">
+                <CardTitle>Platform operators</CardTitle>
+                <CardDescription className="text-slate-500">
+                  Monitor platform health, balance settlement flows, and manage community content from one control center.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
+                <div className="flex gap-3">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <p>See revenue, payouts, and current ledger balances in real time.</p>
                 </div>
                 <div className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
-                  <p>Monitor real-time tournament progress</p>
+                  <p>Moderate community channels and enforce keyword filters automatically.</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <p>Manage leaderboard resets and support developer analytics across games.</p>
                 </div>
               </CardContent>
             </Card>
@@ -314,132 +274,54 @@ export default function JampassPage() {
       <section className="border-b border-slate-200 px-6 py-20 lg:px-12">
         <div className="container mx-auto space-y-12">
           <div className="max-w-4xl">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300 mb-4">Example tournament structure</p>
-            <h2 className="text-4xl font-semibold text-slate-900">How the Jampass season unfolds</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300 mb-4">Platform flow</p>
+            <h2 className="text-4xl font-semibold text-slate-900">How Jampass supports monetization and engagement.</h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="p-6">
-                <CardTitle>Step 1: Local qualifiers</CardTitle>
-                <CardDescription className="text-slate-500">Each center hosts a local tournament for FC 26 and MK.</CardDescription>
+                <CardTitle>Master aggregation</CardTitle>
+                <CardDescription className="text-slate-500">One integration for game commerce.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 text-slate-600 text-sm">
-                <p>The best player for each game is selected as the center's representative for the national field.</p>
+                <p>Developers connect once and route all purchases through the Jampass gateway.</p>
               </CardContent>
             </Card>
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="p-6">
-                <CardTitle>Step 2: National entry</CardTitle>
-                <CardDescription className="text-slate-500">Qualified players form the national finals roster.</CardDescription>
+                <CardTitle>Transparent settlement</CardTitle>
+                <CardDescription className="text-slate-500">Clear financial tracking.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 text-slate-600 text-sm">
-                <p>Each member center qualifies 3 representatives: 1 manager + 2 specialists (1 FC 25 player, 1 Mortal Kombat player) for the national finals in Lusaka.</p>
+                <p>Jampass records gross value, platform fee, and developer share for every transaction.</p>
               </CardContent>
             </Card>
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
               <CardHeader className="p-6">
-                <CardTitle>Step 3: Finals bracket</CardTitle>
-                <CardDescription className="text-slate-500">5-day live event in Lusaka.</CardDescription>
+                <CardTitle>Engagement systems</CardTitle>
+                <CardDescription className="text-slate-500">Live social features.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 text-slate-600 text-sm">
-                <p>Players compete in a knockout bracket with live match production, seat assignments, and final day grand finals.</p>
+                <p>Players stay engaged with leaderboards, community rooms, and reward flows.</p>
               </CardContent>
             </Card>
             <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40 lg:col-span-3">
               <CardHeader className="p-6">
-                <CardTitle>Prize pool structure</CardTitle>
-                <CardDescription className="text-slate-500">Jampass championship awards</CardDescription>
+                <CardTitle>Developer revenue</CardTitle>
+                <CardDescription className="text-slate-500">Built for studio growth.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 text-slate-600 text-sm space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl bg-slate-100 p-4">
-                    <p className="text-cyan-300 font-semibold mb-3">Hotspot Prizes</p>
-                    <ul className="space-y-2 text-xs">
-                      <li className="flex justify-between"><span>1st Position</span> <span className="text-green-400 font-semibold">K15,000</span></li>
-                      <li className="flex justify-between"><span>2nd Position</span> <span className="text-green-400 font-semibold">K10,000</span></li>
-                    </ul>
+                    <p className="text-cyan-300 font-semibold mb-3">Fee split model</p>
+                    <p className="text-xs text-slate-500">A 2.5% processing fee is split transparently into platform margin and developer settlement.</p>
                   </div>
                   <div className="rounded-2xl bg-slate-100 p-4">
-                    <p className="text-cyan-300 font-semibold mb-3">Individual Prizes (Per Game)</p>
-                    <ul className="space-y-2 text-xs">
-                      <li className="flex justify-between"><span>1st Position</span> <span className="text-green-400 font-semibold">K10,000 x2</span></li>
-                      <li className="flex justify-between"><span>2nd Position</span> <span className="text-green-400 font-semibold">K5,000 x2</span></li>
-                      <li className="flex justify-between"><span>3rd Position</span> <span className="text-green-400 font-semibold">K2,500 x2</span></li>
-                    </ul>
+                    <p className="text-cyan-300 font-semibold mb-3">Real-time visibility</p>
+                    <p className="text-xs text-slate-500">Track payouts, ad earnings, and engagement metrics from one dashboard.</p>
                   </div>
                 </div>
-                <p className="text-slate-500 text-xs">All finalists receive full accommodation for the 5-day tournament in Lusaka. Tournament accommodates 696 total individuals: 580 participants and 116 managers.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-      <section className="border-b border-slate-200 px-6 py-20 lg:px-12">
-        <div className="container mx-auto space-y-12">
-          <div className="max-w-4xl">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300 mb-4">Why Jampass?</p>
-            <h2 className="text-4xl font-semibold text-slate-900">A better way to compete and connect Zambia's gaming community.</h2>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-2">
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500/20 text-green-300 text-lg font-semibold mb-4">🎯</div>
-                <CardTitle>Fair & transparent competition</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>No hidden rules or favoritism. Every gaming center competes under the same framework with automated bracket generation and clear advancement rules.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-300 text-lg font-semibold mb-4">🏆</div>
-                <CardTitle>National recognition</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>Winners become official national champions. Your gaming center gains prestige and standing in the Zambian esports ecosystem.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-300 text-lg font-semibold mb-4">💰</div>
-                <CardTitle>Revenue & prizes</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>Entry fees and sponsorships fund prize pools. Players and centers earn rewards for performance and qualification to the finals.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/20 text-orange-300 text-lg font-semibold mb-4">📱</div>
-                <CardTitle>Digital-first management</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>Real-time schedule updates, automatic seat assignments, live bracket tracking, and all administrative oversight through one unified platform.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-500/20 text-pink-300 text-lg font-semibold mb-4">🌍</div>
-                <CardTitle>National reach</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>Participate from anywhere in Zambia. Compete against centers from Lusaka, Copperbelt, Southern Province, and beyond without traveling until the finals.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-200/40">
-              <CardHeader className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/20 text-red-300 text-lg font-semibold mb-4">⚡</div>
-                <CardTitle>Scalable infrastructure</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 text-slate-600 text-sm space-y-3">
-                <p>Start with regional tournaments and scale to nationwide competitions. The system is built to grow as Zambia's esports community expands.</p>
               </CardContent>
             </Card>
           </div>
@@ -449,24 +331,24 @@ export default function JampassPage() {
       <section className="px-6 py-20 lg:px-12">
         <div className="container mx-auto grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
           <div className="space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Getting started</p>
-            <h2 className="text-4xl font-semibold text-slate-900">Join Jampass in Zambia.</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Get started</p>
+            <h2 className="text-4xl font-semibold text-slate-900">Take your game studio further with Jampass.</h2>
             <div className="space-y-4 text-slate-600">
               <p>
-                Jampass is launching its inaugural season with gaming centers across Lusaka and Zambia. Whether you run a gaming center, are a competitive player, or an esports organizer, there's a role for you.
+                Jampass is designed for African game studios that need a unified payments, engagement, and reward ecosystem without extra integration overhead.
               </p>
               <p>
-                The platform is built to be fair, transparent, and accessible to every gaming center in Zambia. Compete at your level, climb the national rankings, and prove your center is the best.
+                Build with confidence knowing every player payment, leaderboard event, and ad impression is tracked transparently and securely.
               </p>
             </div>
             <div className="space-y-3 grid gap-3 sm:grid-cols-2">
               <div className="rounded-3xl border border-slate-200 bg-slate-100 p-5">
-                <p className="text-sm font-semibold text-cyan-300">Early access</p>
-                <p className="mt-2 text-slate-600 text-sm">Pilot event with 16 centers in Lusaka.</p>
+                <p className="text-sm font-semibold text-cyan-300">Developer-ready</p>
+                <p className="mt-2 text-slate-600 text-sm">One integration for payments, rewards, and community tools.</p>
               </div>
               <div className="rounded-3xl border border-slate-200 bg-slate-100 p-5">
-                <p className="text-sm font-semibold text-cyan-300">Entry fee</p>
-                <p className="mt-2 text-slate-600 text-sm">K2,500 per gaming center per tournament.</p>
+                <p className="text-sm font-semibold text-cyan-300">Transparent finance</p>
+                <p className="mt-2 text-slate-600 text-sm">Net developer shares are tracked clearly with every transaction.</p>
               </div>
             </div>
             <Button asChild className="bg-cyan-500 hover:bg-cyan-400">
@@ -479,25 +361,25 @@ export default function JampassPage() {
           <div className="grid gap-6">
             <Card className="border border-slate-200 bg-white shadow-lg shadow-slate-200/40">
               <CardHeader className="p-6">
-                <CardTitle>Platform pathways</CardTitle>
-                <CardDescription>How Jampass tournaments are structured.</CardDescription>
+                <CardTitle>Platform overview</CardTitle>
+                <CardDescription className="text-slate-500">Jampass supports every layer of the game commerce lifecycle.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5 p-6">
                 <div className="rounded-3xl bg-slate-100 p-5">
-                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Registration phase</p>
-                  <p className="mt-2 text-slate-600">Gaming centers register and submit players.</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Integration</p>
+                  <p className="mt-2 text-slate-600">Connect your game once and use the platform for payments, leaderboards, ads, and communities.</p>
                 </div>
                 <div className="rounded-3xl bg-slate-100 p-5">
-                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Group stage</p>
-                  <p className="mt-2 text-slate-600">Teams divided into groups. Round-robin matches determine group winners.</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Engagement</p>
+                  <p className="mt-2 text-slate-600">Deliver live leaderboards, private clan rooms, and reward experiences to players.</p>
                 </div>
                 <div className="rounded-3xl bg-slate-100 p-5">
-                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Knockout phase</p>
-                  <p className="mt-2 text-slate-600">Single-elimination bracket. Winners advance until finals.</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Settlement</p>
+                  <p className="mt-2 text-slate-600">View net revenue, platform charges, and payout balances through a single dashboard.</p>
                 </div>
                 <div className="rounded-3xl bg-slate-100 p-5">
-                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">5-day finals</p>
-                  <p className="mt-2 text-slate-600">Top 2 teams from each game compete live in Lusaka with prizes.</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Support</p>
+                  <p className="mt-2 text-slate-600">Developer tools and analytics help studios optimize monetization and player retention.</p>
                 </div>
               </CardContent>
             </Card>
@@ -506,22 +388,56 @@ export default function JampassPage() {
               <ul className="space-y-4 text-sm">
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>What is the Jampass membership? <span className="text-cyan-300">A:</span> A free membership for gaming centers and developers. Pay K2,500 only when you enter the esports tournament.</span>
+                  <span>What is Jampass? <span className="text-cyan-300">A:</span> A unified game payment and engagement platform that supports developers, players, and studios across Africa.</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>How do developers use Jampass? <span className="text-cyan-300">A:</span> Developers integrate Jampass into mobile, PC, Xbox, or web games to convert real currency to in-game tokens, settle token value back to cash, and run reward-based ad campaigns.</span>
+                  <span>How does Jampass handle fees? <span className="text-cyan-300">A:</span> A flat 2.5% processing fee is split transparently between platform margin and net developer settlement.</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>What can players do outside the tournament? <span className="text-cyan-300">A:</span> Players can buy goods and services from the Jam Store, join communities and clans, and use the Jam Wallet for in-game purchases.</span>
+                  <span>Can developers add leaderboards? <span className="text-cyan-300">A:</span> Yes, Jampass provides live leaderboards with time-scoped rank filters and reset controls.</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-cyan-300 font-semibold flex-shrink-0">Q:</span>
-                  <span>Does accommodation include Lusaka stay? <span className="text-cyan-300">A:</span> Yes. All 696 finalists receive full accommodation during the 5-day championship.</span>
+                  <span>What community features are included? <span className="text-cyan-300">A:</span> Zero-contact lobby chat, clan feeds, and automated moderation to keep interactions safe and private.</span>
                 </li>
               </ul>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cyan-500/5 px-6 py-20 lg:px-12">
+        <div className="container mx-auto rounded-[2rem] border border-cyan-200 bg-white/90 p-10 shadow-xl shadow-cyan-200/20">
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-500 mb-4">Inquiry</p>
+              <h2 className="text-4xl font-semibold text-slate-900">Questions about Jampass for your studio?</h2>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Reach out and our team will help you understand how Jampass fits your studio, handles payments, and powers player engagement.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Button asChild className="bg-cyan-500 hover:bg-cyan-400 px-8 py-4 text-base font-semibold text-white">
+                  <Link href="/contact" className="inline-flex items-center gap-2">
+                    Send an inquiry
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <a href="mailto:hello@gecogames.studio" className="inline-flex items-center rounded-full border border-cyan-200 bg-slate-100 px-6 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
+                  Email hello@gecogames.studio
+                </a>
+              </div>
+            </div>
+            <div className="rounded-[2rem] bg-cyan-500/10 p-8 text-slate-900 shadow-lg shadow-cyan-200/30">
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-500">Need help fast?</p>
+              <p className="mt-4 text-xl font-semibold">Studio launch, payment setup, or platform demo.</p>
+              <ul className="mt-6 space-y-4 text-slate-600">
+                <li className="flex gap-3"><span className="text-cyan-500">•</span> Integration planning</li>
+                <li className="flex gap-3"><span className="text-cyan-500">•</span> Payment routing and settlement</li>
+                <li className="flex gap-3"><span className="text-cyan-500">•</span> Leaderboards and rewarded engagement</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>

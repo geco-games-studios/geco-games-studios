@@ -12,6 +12,8 @@ interface CurrentUser {
   type: string
   name: string
   userId: string
+  sub_user_type?: string
+  jampass_sub_type?: string
 }
 
 export default function Navigation() {
@@ -42,7 +44,17 @@ export default function Navigation() {
     if (["student", "academy", "admin", "trainee"].includes(user.type)) {
       return "/academy/dashboard"
     }
-    if (["jampass", "player", "outlet"].includes(user.type)) {
+    if (user.type === "jampass") {
+      const subType = user.sub_user_type || user.jampass_sub_type || ""
+      if (subType === "player") {
+        return "/jampass/player/dashboard"
+      }
+      return "/jampass"
+    }
+    if (user.type === "player") {
+      return "/jampass/player/dashboard"
+    }
+    if (user.type === "outlet") {
       return "/jampass"
     }
     if (user.type === "market") {

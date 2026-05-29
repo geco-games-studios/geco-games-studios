@@ -1,8 +1,28 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import NewsletterSubscription from "../../components/newsletter-subscription"
 
 export default function DeveloperPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const userData = typeof window !== "undefined" ? localStorage.getItem("currentUser") : null
+    if (!userData) return
+
+    try {
+      const parsedUser = JSON.parse(userData)
+      if (parsedUser?.type === "developer") {
+        router.push("/developer/dashboard")
+      }
+    } catch (error) {
+      console.error("Developer redirect error:", error)
+    }
+  }, [router])
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <section className="bg-slate-950 text-white py-20 px-6 lg:px-12">

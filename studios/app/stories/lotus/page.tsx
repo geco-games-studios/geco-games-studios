@@ -19,7 +19,7 @@ export default function LotusPage() {
                 Jennie — The Neon Bloom Lotus
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-700 dark:text-slate-300">
-                Before she was a glowing sanctuary, Jennie was just a civilian snatched off the street and thrown into an underground lab. The scientists had ripped open a portal to another dimension, then sealed her inside an alien vat of living soil.
+                Before she was a glowing sanctuary, Jennie was just a civilian snatched off the street, thrown into the back of a van, and dragged into an underground lab by scientists desperate for human guinea pigs. They ripped a tiny portal to another dimension and brought back a vat of thick, dark earth.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link
@@ -55,7 +55,7 @@ export default function LotusPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">Alien soil</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Jennie’s true origin</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              The scientists brought back a thick, dark earth from another dimension and sealed her inside it. The mud was suffocating, vibrating with chaotic energy, and everything in it should have killed her.
+              Before she was a glowing sanctuary, she was just a civilian. She was snatched off the streets in the dead of night, thrown into the back of a van, and dragged into an underground lab by scientists desperate for human guinea pigs.
             </p>
           </article>
 
@@ -63,7 +63,7 @@ export default function LotusPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The Sacred Bloom</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">She rose pure from alien mud</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              When Jennie finally broke out of the vat, she was not covered in mud. Neon-pink petals of energy swirled around her, and she had learned to channel the pure, restorative essence of that extradimensional world.
+              Scientists ripped a tiny portal to another dimension, but they could not step through. They brought back a massive vat of thick, dark earth that was heavy, suffocating, and practically vibrating with chaotic alien energy.
             </p>
           </article>
 
@@ -71,7 +71,7 @@ export default function LotusPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-300">The healer</p>
             <h2 className="mt-4 text-3xl font-semibold text-slate-950 dark:text-white">Sacred energy with a cost</h2>
             <p className="mt-5 leading-7 text-slate-700 dark:text-slate-300">
-              The petals around her form a healing field that regenerates allies and stitches wounds back together. That power drains her, dropping her body temperature so low that her oversized jacket is not fashion — it is survival.
+              The neon-pink petals around her act as a healing field, accelerating regeneration and stitching allies back together. Channelling that alien energy drains her instantly, dropping her core body temperature and making her oversized jacket a matter of survival.
             </p>
           </article>
         </div>
