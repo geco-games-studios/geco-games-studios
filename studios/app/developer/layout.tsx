@@ -13,7 +13,9 @@ const navItems = [
   { href: "/developer/analytics", label: "Analytics" },
   { href: "/developer/leaderboards", label: "Leaderboards" },
   { href: "/developer/communities", label: "Communities" },
+  { href: "/developer/stores", label: "Stores" },
   { href: "/developer/support", label: "Support" },
+  { href: "/developer/finance", label: "Finance" },
 ]
 
 export default function DeveloperLayout({ children }: { children: ReactNode }) {

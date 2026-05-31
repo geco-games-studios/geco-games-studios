@@ -10,7 +10,7 @@ import {
   ArrowUpRight,
   Eye,
 } from "lucide-react"
-import { fetchJson, getMediaUrl } from "@/lib/api"
+import { fetchJson, postJson, getMediaUrl } from "@/lib/api"
 import {
   Dialog,
   DialogContent,
@@ -46,6 +46,7 @@ interface PlayerGame {
   has_ads?: boolean
   ad_provider?: string
   is_active?: boolean
+  is_connected?: boolean
   created_at?: string
   updated_at?: string
   total_points?: number
@@ -67,6 +68,8 @@ export default function MyGamesPage() {
   const [error, setError] = useState("")
   const [detailsGame, setDetailsGame] = useState<PlayerGame | null>(null)
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
+  const [connectingGameId, setConnectingGameId] = useState<number | null>(null)
+  const [connectionError, setConnectionError] = useState<string>("")
   const router = useRouter()
 
   useEffect(() => {
@@ -147,6 +150,7 @@ export default function MyGamesPage() {
         total_players: game.total_players,
         win_rate: game.win_rate,
         recent_matches: game.recent_matches,
+        is_connected: game.is_connected ?? game.connected ?? false,
       })))
 
       setIsLoading(false)
@@ -159,6 +163,27 @@ export default function MyGamesPage() {
 
   const resolveTitle = (game: PlayerGame) => game.title ?? game.game_title ?? "Untitled Game"
   const resolveRating = (game: PlayerGame) => game.average_rating ?? game.player_rating ?? 0
+
+  const handleConnectToGame = async (gameId?: number) => {
+    if (!gameId) return
+
+    setConnectingGameId(gameId)
+    setConnectionError("")
+    try {
+      const response = await postJson<any>(`/api/developer/games/${gameId}/connect/`, {})
+      if (response?.status !== "connected" && response?.session?.is_connected !== true) {
+        throw new Error("Unable to establish an active game connection.")
+      }
+      // Refresh games list to update connection status
+      await fetchGamesData()
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to connect to game"
+      console.error("Failed to connect to game:", err)
+      setConnectionError(errorMsg)
+    } finally {
+      setConnectingGameId(null)
+    }
+  }
 
   const filteredAndSortedGames = games
     .filter((game) =>
@@ -293,6 +318,20 @@ export default function MyGamesPage() {
             </div>
           </div>
 
+          {connectionError && (
+            <div className="mb-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">{connectionError}</p>
+              </div>
+              <button
+                onClick={() => setConnectionError("")}
+                className="ml-4 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
           <div className="space-y-6">
             {filteredAndSortedGames.length > 0 ? (
               filteredAndSortedGames.map((game) => (
@@ -379,6 +418,18 @@ export default function MyGamesPage() {
                           <p className="text-xs uppercase tracking-wide">Updated</p>
                           <p className="font-semibold text-slate-900 dark:text-white">{game.updated_at ? new Date(game.updated_at).toLocaleDateString() : "—"}</p>
                         </div>
+                      </div>
+                      <div className="mt-6 flex flex-wrap items-center gap-3">
+                        <button
+                          onClick={() => handleConnectToGame(game.game_id)}
+                          disabled={connectingGameId === game.game_id}
+                          className="rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:opacity-60"
+                        >
+                          {connectingGameId === game.game_id ? "Connecting..." : game.is_connected ? "Connected" : "Connect to Game"}
+                        </button>
+                        {game.is_connected && (
+                          <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Session active</span>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
