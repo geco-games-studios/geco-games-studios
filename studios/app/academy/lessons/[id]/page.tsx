@@ -351,9 +351,9 @@ export default function LessonPlayerPage() {
                         <span style={s.qNum}>Q{qi + 1}.</span> {q.question}
                       </p>
                       {q.options.map((opt, oi) => {
-                        let bg = t.surfaceHigh
+                        let bg: string = t.surfaceHigh
                         let border = `1px solid ${t.border}`
-                        let color = t.textSecondary
+                        let color: string = t.textSecondary
                         if (quizSubmitted) {
                           if (oi === q.correct) {
                             bg = t.successBg; border = `1px solid ${t.successBorder}`; color = t.success
@@ -542,7 +542,7 @@ const s: Record<string, CSSProperties> = {
   pureVideoNote: { fontSize: 12, color: t.textMuted, marginBottom: 16, fontStyle: "italic" },
   alreadyDone: { background: t.primaryBg, color: t.primary, borderRadius: t.radius, padding: "10px 14px", fontSize: 13, marginBottom: 16 },
   tabs: { display: "flex", borderBottom: `1px solid ${t.border}`, marginBottom: 20 },
-  tab: { fontSize: 13, padding: "8px 16px", background: "none", border: "none", borderBottom: "2px solid transparent", cursor: "pointer", color: t.textMuted, marginBottom: -1 },
+  tab: { fontSize: 13, padding: "8px 16px", background: "none", border: "none", borderBottomWidth: 2, borderBottomStyle: "solid", borderBottomColor: "transparent", cursor: "pointer", color: t.textMuted, marginBottom: -1 },
   tabActive: { color: t.primary, borderBottomColor: t.primary, fontWeight: 500 },
   tabContent: { marginBottom: 28 },
   notes: { fontSize: 14, color: t.textSecondary, lineHeight: 1.75, whiteSpace: "pre-wrap" },

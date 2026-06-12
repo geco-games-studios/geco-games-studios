@@ -18,11 +18,11 @@ export async function GET(
 
     // Get all 
     const segments = params?.segments || []
-    const endpoint = segments.filter(s => s).join("/") // Filter out empty segments
+    const endpoint = segments.filter((s: string) => s).join("/") // Filter out empty segments
     console.log("Academy route - segments:", segments)
     console.log("Academy route - filtered endpoint:", endpoint)
 
-    // Handle user endpoints differently - they go to /users/ 
+    // Handle user endpoints differently - they go to /users/
     let backendUrl: string
     if (endpoint.startsWith('users/')) {
       backendUrl = `${API_BASE_URL}/${endpoint}/`
@@ -31,6 +31,9 @@ export async function GET(
       backendUrl = `${API_BASE_URL}/academy/${endpoint}/`
       console.log("Academy endpoint, backend URL:", backendUrl)
     }
+
+    // Preserve query string (e.g. ?course=2 filters)
+    backendUrl += request.nextUrl.search
 
     const response = await fetch(backendUrl, {
       method: request.method,
@@ -41,15 +44,19 @@ export async function GET(
       body: request.method !== "GET" ? await request.text() : undefined,
     })
 
-    if (!response.ok) {
+    // Forward the backend response as-is, tolerating empty bodies (e.g. 204 on DELETE)
+    const text = await response.text()
+    if (!text) {
+      return new NextResponse(null, { status: response.status })
+    }
+    try {
+      return NextResponse.json(JSON.parse(text), { status: response.status })
+    } catch {
       return NextResponse.json(
-        { error: "Failed to fetch from backend" },
-        { status: response.status }
+        { error: "Backend returned a non-JSON response", detail: text.slice(0, 500) },
+        { status: response.status >= 400 ? response.status : 502 }
       )
     }
-
-    const data = await response.json()
-    return NextResponse.json(data)
   } catch (error) {
     console.error("Error proxying academy request:", error)
     return NextResponse.json(
