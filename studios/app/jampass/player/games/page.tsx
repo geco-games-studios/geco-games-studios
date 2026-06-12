@@ -1,4 +1,5 @@
 "use client"
+import { X } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -327,7 +328,7 @@ export default function MyGamesPage() {
                 onClick={() => setConnectionError("")}
                 className="ml-4 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
           )}

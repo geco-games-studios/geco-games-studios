@@ -1,4 +1,6 @@
 "use client"
+import { Gamepad2, Wrench } from "lucide-react"
+import { User } from "lucide-react"
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -98,7 +100,7 @@ export default function DeveloperGameSubmissionForm() {
     <div className="w-full">
       <div className="mb-8 text-center">
         <span className="inline-flex rounded-full bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-600 dark:text-sky-300 uppercase tracking-[0.24em] mb-3">
-          🎮 Game Submission
+          <Gamepad2 className="h-3.5 w-3.5 mr-1.5" /> Game Submission
         </span>
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Submit your game to the studio</h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
@@ -124,7 +126,7 @@ export default function DeveloperGameSubmissionForm() {
           <div className="rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 p-5 mb-6">
             <div className="flex items-center gap-2 mb-5">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/20">
-                <span className="text-sm">👤</span>
+                <User className="h-4 w-4 text-sky-600 dark:text-sky-300" />
               </div>
               <h3 className="text-lg font-semibold">Contact details</h3>
             </div>
@@ -179,7 +181,7 @@ export default function DeveloperGameSubmissionForm() {
           <div className="rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 p-5 mb-6">
             <div className="flex items-center gap-2 mb-5">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/20">
-                <span className="text-sm">🎮</span>
+                <Gamepad2 className="h-4 w-4" />
               </div>
               <h3 className="text-lg font-semibold">Game details</h3>
             </div>
@@ -255,7 +257,7 @@ export default function DeveloperGameSubmissionForm() {
           <div className="rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 p-5">
             <div className="flex items-center gap-2 mb-5">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/10 dark:bg-slate-200/10">
-                <span className="text-sm">🛠️</span>
+                <Wrench className="h-4 w-4" />
               </div>
               <h3 className="text-lg font-semibold">Release details</h3>
             </div>
