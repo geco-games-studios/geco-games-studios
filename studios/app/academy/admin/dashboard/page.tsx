@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react"
+import { Archive, ArrowRight, BarChart3, BookOpen, Check, Flame, Link2, Package, Pencil, Plus, Trophy, Users, Video } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { t } from "@/lib/academy-theme"
@@ -19,12 +20,12 @@ import {
 // Page shell
 // ────────────────────────────────────────────────────────────────────────────
 
-const TABS: [string, string][] = [
-  ["trainees", "👥 Trainees"],
-  ["courses", "📚 Courses & Lessons"],
-  ["analytics", "📈 Analytics"],
-  ["legacy", "🗂 Legacy"],
-]
+const TABS = [
+  ["trainees", "Trainees", Users],
+  ["courses", "Courses & Lessons", BookOpen],
+  ["analytics", "Analytics", BarChart3],
+  ["legacy", "Legacy", Archive],
+] as const
 
 export default function AdminPanel() {
   const router = useRouter()
@@ -62,9 +63,9 @@ export default function AdminPanel() {
         </div>
 
         <div style={s.tabs}>
-          {TABS.map(([key, label]) => (
+          {TABS.map(([key, label, Icon]) => (
             <button key={key} style={{ ...s.tab, ...(tab === key ? s.tabActive : {}) }} onClick={() => setTab(key)}>
-              {label}
+              <Icon size={15} /> {label}
             </button>
           ))}
         </div>
@@ -128,7 +129,7 @@ function TraineesTab() {
                 <span style={s.progressPill}><span style={{ ...s.progressPillFill, width: `${pct}%` }} /></span>
                 <span style={{ fontSize: 11, color: t.textMuted }}>{trainee.completed_lessons}/{trainee.total_lessons}</span>
               </span>
-              <span style={{ flex: 1, textAlign: "center", color: t.textMuted }}>{trainee.streak_days} 🔥</span>
+              <span style={{ flex: 1, textAlign: "center", color: t.textMuted, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{trainee.streak_days} <Flame size={13} color={t.xp} /></span>
               <span style={{ flex: 1.4, textAlign: "right", fontSize: 12, color: t.textMuted }}>
                 {trainee.last_active ? new Date(trainee.last_active).toLocaleDateString() : "—"}
               </span>
@@ -188,7 +189,7 @@ function TraineePanel({ traineeId }: { traineeId: number }) {
       <div style={s.detailGrid}>
         <div style={s.detailStat}><div style={s.detailStatVal}>{detail.total_xp}</div><div style={s.detailStatLabel}>Total XP</div></div>
         <div style={s.detailStat}><div style={s.detailStatVal}>Lv {detail.level}</div><div style={s.detailStatLabel}>Level</div></div>
-        <div style={s.detailStat}><div style={s.detailStatVal}>{detail.streak_days} 🔥</div><div style={s.detailStatLabel}>Streak</div></div>
+        <div style={s.detailStat}><div style={{ ...s.detailStatVal, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>{detail.streak_days} <Flame size={15} color={t.xp} /></div><div style={s.detailStatLabel}>Streak</div></div>
         <div style={s.detailStat}><div style={s.detailStatVal}>{detail.longest_streak}</div><div style={s.detailStatLabel}>Best streak</div></div>
       </div>
 
@@ -230,8 +231,8 @@ function TraineePanel({ traineeId }: { traineeId: number }) {
               <div style={s.submissionBox}>
                 <div style={{ whiteSpace: "pre-wrap" }}>{completion.submission_text}</div>
                 {completion.submission_url && (
-                  <a href={completion.submission_url} target="_blank" rel="noreferrer" style={{ color: t.primary, fontSize: 12, wordBreak: "break-all" }}>
-                    🔗 {completion.submission_url}
+                  <a href={completion.submission_url} target="_blank" rel="noreferrer" style={{ color: t.primary, fontSize: 12, wordBreak: "break-all", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    <Link2 size={12} /> {completion.submission_url}
                   </a>
                 )}
               </div>
@@ -343,7 +344,7 @@ function NewCourseCard({ onCreated }: { onCreated: (courseId: number) => void })
     <div style={s.formCard}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <div style={s.sectionHeading}>➕ Create a course</div>
+          <div style={{ ...s.sectionHeading, display: "flex", alignItems: "center", gap: 7 }}><Plus size={16} /> Create a course</div>
           <p style={{ ...s.sectionDesc, margin: "4px 0 0" }}>
             Start a course from scratch, then add modules, lessons, quizzes and activities below.
           </p>
@@ -424,7 +425,7 @@ function ImportCourseCard({ onImported }: { onImported: (courseId: number) => vo
     <div style={s.formCard}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <div style={s.sectionHeading}>📦 Import course from JSON</div>
+          <div style={{ ...s.sectionHeading, display: "flex", alignItems: "center", gap: 7 }}><Package size={16} /> Import course from JSON</div>
           <p style={{ ...s.sectionDesc, margin: "4px 0 0" }}>
             Paste or upload the course JSON (same format as courseData) — modules, lessons, quizzes and activities import in one go.
           </p>
@@ -520,7 +521,7 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
 
   return (
     <div style={{ ...s.formCard, marginTop: 20 }}>
-      <div style={s.sectionHeading}>✏️ {course.title}</div>
+      <div style={{ ...s.sectionHeading, display: "flex", alignItems: "center", gap: 7 }}><Pencil size={15} /> {course.title}</div>
 
       <div style={s.fieldGroup}>
         <label style={s.label}>Course title</label>
@@ -532,7 +533,7 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button style={s.addBtn} disabled={saving} onClick={saveCourse}>{saving ? "Saving…" : "Save course"}</button>
-        {saved && <span style={s.savedTag}>Saved ✓</span>}
+        {saved && <span style={{ ...s.savedTag, display: "inline-flex", alignItems: "center", gap: 4 }}>Saved <Check size={12} /></span>}
       </div>
 
       <div style={s.detailSectionTitle}>Modules & lessons</div>
@@ -563,7 +564,7 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
                 {lesson.title}
                 <span style={{ color: t.textMuted, fontSize: 11 }}>
                   {" "}· {lesson.lesson_type}{lesson.duration ? ` · ${lesson.duration}` : ""}
-                  {lesson.video_url ? " · 🎬" : ""}{lesson.quiz?.length ? ` · ${lesson.quiz.length}q quiz` : ""}
+                  {lesson.video_url ? <> · <Video size={11} style={{ display: "inline", verticalAlign: "-1px" }} /></> : null}{lesson.quiz?.length ? ` · ${lesson.quiz.length}q quiz` : ""}
                 </span>
               </span>
               <button style={s.ghostBtn} onClick={() => setEditingLesson(editingLesson?.id === lesson.id ? null : lesson)}>
@@ -751,7 +752,7 @@ function QuizBuilder({ quiz, onChange }: { quiz: QuizQuestion[]; onChange: (quiz
                 }}
                 onClick={() => setCorrect(qi, oi)}
               >
-                ✓
+                <Check size={14} style={{ display: "block", margin: "0 auto" }} />
               </button>
               <input style={{ ...s.input, flex: 1 }} placeholder={`Option ${String.fromCharCode(65 + oi)}`} value={opt} onChange={(e) => updateOption(qi, oi, e.target.value)} />
             </div>
@@ -799,7 +800,7 @@ function AnalyticsTab() {
         ))}
       </div>
 
-      <div style={s.detailSectionTitle}>🏆 Top trainees</div>
+      <div style={{ ...s.detailSectionTitle, display: "flex", alignItems: "center", gap: 6 }}><Trophy size={13} color={t.xp} /> Top trainees</div>
       {overview.top_trainees.length === 0 && <p style={s.emptyNote}>No XP earned yet.</p>}
       {overview.top_trainees.map((trainee, i) => (
         <div key={trainee.trainee_id} style={s.tableRow}>
@@ -807,7 +808,7 @@ function AnalyticsTab() {
           <span style={{ flex: 2, color: t.textPrimary, fontWeight: 500 }}>{trainee.name}</span>
           <span style={{ flex: 2, color: t.textMuted, fontSize: 13 }}>{trainee.email}</span>
           <span style={{ flex: 1, textAlign: "center", color: t.xp, fontWeight: 600 }}>{trainee.total_xp} XP</span>
-          <span style={{ flex: 1, textAlign: "right", color: t.textMuted }}>Lv {trainee.level} · {trainee.streak_days} 🔥</span>
+          <span style={{ flex: 1, textAlign: "right", color: t.textMuted, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4 }}>Lv {trainee.level} · {trainee.streak_days} <Flame size={13} color={t.xp} /></span>
         </div>
       ))}
     </div>
@@ -839,7 +840,7 @@ function LegacyTab() {
               <div style={{ fontSize: 14, fontWeight: 600, color: t.textPrimary }}>{link.title}</div>
               <div style={{ fontSize: 12, color: t.textMuted }}>{link.desc}</div>
             </div>
-            <span style={{ color: t.textMuted }}>→</span>
+            <ArrowRight size={15} color={t.textMuted} />
           </div>
         </Link>
       ))}
@@ -858,7 +859,7 @@ const s: Record<string, CSSProperties> = {
   pageTitle: { fontSize: 22, fontWeight: 700, color: t.textPrimary, margin: 0, display: "flex", alignItems: "center", gap: 10 },
   adminBadge: { fontSize: 11, background: "rgba(139,92,246,0.15)", color: "#a78bfa", padding: "2px 8px", borderRadius: 100, fontWeight: 600, border: "1px solid rgba(139,92,246,0.3)" },
   tabs: { display: "flex", gap: 4, borderBottom: `1px solid ${t.border}`, marginBottom: 28, flexWrap: "wrap" },
-  tab: { fontSize: 14, padding: "10px 18px", background: "none", border: "none", borderBottomWidth: 2, borderBottomStyle: "solid", borderBottomColor: "transparent", cursor: "pointer", color: t.textMuted, marginBottom: -1, fontWeight: 500 },
+  tab: { fontSize: 14, padding: "10px 18px", background: "none", border: "none", borderBottomWidth: 2, borderBottomStyle: "solid", borderBottomColor: "transparent", cursor: "pointer", color: t.textMuted, marginBottom: -1, fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 7 },
   tabActive: { color: t.primary, borderBottomColor: t.primary },
   sectionDesc: { fontSize: 13, color: t.textMuted, marginBottom: 16, marginTop: 4 },
   sectionHeading: { fontSize: 15, fontWeight: 700, color: t.textPrimary },
@@ -895,7 +896,7 @@ const s: Record<string, CSSProperties> = {
   lessonAdminRow: { display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", borderTop: `1px solid ${t.border}` },
   lessonEditor: { padding: "14px", borderTop: `1px solid ${t.border}`, background: t.bg, display: "flex", flexDirection: "column", gap: 12 },
   quizEditorCard: { border: `1px solid ${t.border}`, borderRadius: 8, padding: "12px", background: t.surface },
-  correctToggle: { width: 34, borderRadius: 6, border: `1px solid ${t.border}`, cursor: "pointer", fontSize: 13, fontWeight: 700, flexShrink: 0 },
+  correctToggle: { width: 34, borderRadius: 6, border: `1px solid ${t.border}`, cursor: "pointer", fontSize: 13, fontWeight: 700, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" },
   // Analytics
   statsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 8 },
   statCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center" },

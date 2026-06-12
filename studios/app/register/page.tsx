@@ -3,9 +3,16 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Check, Calendar } from "lucide-react"
+import { Eye, EyeOff, Check, Calendar, Code, GraduationCap, ShoppingCart, Ticket, User } from "lucide-react"
 import Image from "next/image"
 import { COUNTRIES, ACCOUNT_TYPES, JAMPASS_SUB_TYPES, ACADEMY_SUB_TYPES } from "@/lib/countries"
+
+const ACCOUNT_TYPE_ICONS: Record<string, React.ReactNode> = {
+  cart: <ShoppingCart className="h-6 w-6" />,
+  code: <Code className="h-6 w-6" />,
+  ticket: <Ticket className="h-6 w-6" />,
+  graduation: <GraduationCap className="h-6 w-6" />,
+}
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -242,7 +249,7 @@ export default function SignupPage() {
                       : "border-slate-300 bg-slate-50 hover:border-cyan-300 dark:border-slate-600 dark:bg-slate-700"
                   }`}
                 >
-                  <div className="text-2xl mb-2">{type.icon}</div>
+                  <div className="mb-2 flex justify-center">{ACCOUNT_TYPE_ICONS[type.icon] ?? <User className="h-6 w-6" />}</div>
                   <p className="font-semibold text-sm text-slate-900 dark:text-white">
                     {type.label}
                   </p>

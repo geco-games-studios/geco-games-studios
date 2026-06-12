@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Check } from "lucide-react"
 import { ArrowRight, Globe, ShieldCheck, Trophy, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
@@ -210,15 +211,15 @@ export default function JampassPage() {
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Convert currency into Jam tokens for in-game economy flows.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Track settlement and platform fee splits with transparent reporting.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Offer rewarded ads and special in-game incentives backed by secure validation.</p>
                 </div>
               </CardContent>
@@ -232,15 +233,15 @@ export default function JampassPage() {
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Buy game items, earn rewards, and track progress in your Jam Wallet.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Compete on live leaderboards with daily, weekly, and all-time rankings.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Join games, clans, and moderated chat rooms with privacy-safe handles.</p>
                 </div>
               </CardContent>
@@ -254,15 +255,15 @@ export default function JampassPage() {
               </CardHeader>
               <CardContent className="grid gap-4 p-6 text-slate-600 text-sm">
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>See revenue, payouts, and current ledger balances in real time.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Moderate community channels and enforce keyword filters automatically.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0">✓</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 flex-shrink-0"><Check className="h-3.5 w-3.5" /></span>
                   <p>Manage leaderboard resets and support developer analytics across games.</p>
                 </div>
               </CardContent>

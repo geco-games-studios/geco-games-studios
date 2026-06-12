@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { BookOpen, Briefcase, Calendar, GraduationCap } from "lucide-react"
 import NewsletterSubscription from "../../components/newsletter-subscription"
 import StudentPortalButton from "../../components/academy/student-portal-button"
 
@@ -134,8 +135,8 @@ export default function AcademyPage() {
                 </div>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">{program.description}</p>
                 <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-6">
-                  <span>📅 {program.duration}</span>
-                  <span>📚 {program.lessons.length} lessons</span>
+                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {program.duration}</span>
+                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> {program.lessons.length} lessons</span>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">What you'll learn:</p>
@@ -183,14 +184,14 @@ export default function AcademyPage() {
             </div>
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">🎓</span>
+                <GraduationCap className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Industry-Ready Skills</h3>
               <p className="text-white/80">Master Game Design, C#, and Web Development for games</p>
             </div>
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">💼</span>
+                <Briefcase className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Career Support</h3>
               <p className="text-white/80">Portfolio development, job placement assistance, and networking</p>

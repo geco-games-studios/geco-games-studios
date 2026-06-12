@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react"
+import { ArrowRight, Flame } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { t } from "@/lib/academy-theme"
 import { LessonTypeIcon, IconBox, CheckIcon } from "@/components/academy/icons"
@@ -88,12 +89,12 @@ export default function AcademyDashboard() {
       <div style={s.container}>
         <div style={s.hero}>
           <div>
-            <h1 style={s.heroTitle}>Welcome back, {userName.split(" ")[0]} 👋</h1>
+            <h1 style={s.heroTitle}>Welcome back, {userName.split(" ")[0]}</h1>
             <p style={s.heroSub}>Keep building. Every lesson gets you closer to shipping your first African game.</p>
           </div>
           {nextLesson && (
             <button style={s.resumeBtn} onClick={() => router.push(`/academy/lessons/${nextLesson.id}`)}>
-              Continue learning →
+              Continue learning <ArrowRight size={16} />
             </button>
           )}
         </div>
@@ -112,7 +113,7 @@ export default function AcademyDashboard() {
             <div style={s.statLabel}>Your level</div>
           </div>
           <div style={s.statCard}>
-            <div style={s.statVal}>{streak} 🔥</div>
+            <div style={{ ...s.statVal, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{streak} <Flame size={18} color={t.xp} /></div>
             <div style={s.statLabel}>Day streak</div>
           </div>
         </div>
@@ -204,7 +205,7 @@ const s: Record<string, CSSProperties> = {
   hero: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 16 },
   heroTitle: { fontSize: 24, fontWeight: 700, color: t.textPrimary, margin: "0 0 6px" },
   heroSub: { fontSize: 14, color: t.textMuted, maxWidth: 460, margin: 0 },
-  resumeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "12px 22px", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" },
+  resumeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "12px 22px", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 8 },
   statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 },
   statCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center" },
   statVal: { fontSize: 22, fontWeight: 700, color: t.textPrimary },

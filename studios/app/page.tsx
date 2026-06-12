@@ -1,6 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, Briefcase, Globe, Layers, Play, Shield, Sparkles, Star, Users } from "lucide-react"
+import { Megaphone, Palette, Rocket } from "lucide-react"
+import { Code } from "lucide-react"
 import NewsletterSubscription from "../components/newsletter-subscription"
 
 const stats = [
@@ -224,7 +226,7 @@ export default function HomePage() {
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800 dark:bg-green-900/20 dark:text-green-300 mb-6">
-              🚀 We're Hiring!
+              <Rocket className="h-4 w-4 mr-2" /> We’re Hiring!
             </div>
             <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl mb-6">Join Our Creative Team</h2>
             <p className="text-lg leading-8 text-slate-600 dark:text-slate-300 mb-8">
@@ -233,7 +235,7 @@ export default function HomePage() {
 
             <div className="grid gap-6 md:grid-cols-3 mb-8">
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="text-3xl mb-4">📣</div>
+                <div className="mb-4"><Megaphone className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
                 <h3 className="text-2xl font-semibold mb-3">Marketing Specialist</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
                   Drive campaigns, grow brand visibility, and support launch strategy. Create marketing content that connects with players.
@@ -249,7 +251,7 @@ export default function HomePage() {
               </div>
 
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="text-3xl mb-4">🎨</div>
+                <div className="mb-4"><Palette className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
                 <h3 className="text-2xl font-semibold mb-3">Graphics Designer</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
                   Design visuals for campaigns, merchandise, and game marketing. Bring our studio’s creative identity to life across digital and print.
@@ -265,7 +267,7 @@ export default function HomePage() {
               </div>
 
               <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="text-3xl mb-4">💻</div>
+                <div className="mb-4"><Code className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
                 <h3 className="text-2xl font-semibold mb-3">Frontend Developer</h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
                   Build polished web experiences for our studio and client projects. Work with Next.js, modern UI, and responsive design.

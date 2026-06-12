@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react"
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, ClipboardList, FileText, Link2, MonitorPlay, Star, XCircle } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { t } from "@/lib/academy-theme"
 import { LessonTypeIcon, IconBox, PlayIcon } from "@/components/academy/icons"
@@ -215,12 +216,12 @@ export default function LessonPlayerPage() {
       {xpToast && <div style={s.toast}>{xpToast}</div>}
 
       <nav style={s.nav}>
-        <button style={s.backBtn} onClick={() => router.push("/academy/dashboard")}>← Back to course</button>
+        <button style={s.backBtn} onClick={() => router.push("/academy/dashboard")}><ArrowLeft size={14} /> Back to course</button>
         <div style={s.navCenter}>
           <span style={s.navLesson}>{lesson.title}</span>
         </div>
         <div style={s.navXp}>
-          <span style={s.xpLabel}>⭐ {xp} XP</span>
+          <span style={s.xpLabel}><Star size={13} fill="currentColor" /> {xp} XP</span>
           <span style={s.levelLabel}>Lv {level}</span>
         </div>
       </nav>
@@ -259,7 +260,7 @@ export default function LessonPlayerPage() {
                         <LessonTypeIcon type={l.type} size={28} />
                         <div>
                           <div style={{ ...s.sideTitle, color: active ? t.textPrimary : t.textSecondary }}>
-                            {l.title} {completed.has(l.id) ? "✓" : ""}
+                            {l.title}{completed.has(l.id) && <Check size={11} color={t.primary} style={{ display: "inline", marginLeft: 4, verticalAlign: "-1px" }} />}
                           </div>
                           <div style={s.sideMeta}>
                             {l.type}
@@ -300,7 +301,7 @@ export default function LessonPlayerPage() {
 
           {lesson.video_url && (
             <div style={s.videoNote}>
-              📺 Video reference — watch this segment, then complete the {isActivity ? "activity" : quiz ? "quiz" : "lesson"} below.
+              <MonitorPlay size={14} /> Video reference — watch this segment, then complete the {isActivity ? "activity" : quiz ? "quiz" : "lesson"} below.
             </div>
           )}
 
@@ -315,9 +316,9 @@ export default function LessonPlayerPage() {
               </div>
               <div style={s.headerActions}>
                 {done ? (
-                  <span style={s.completedBadge}>✓ Completed</span>
+                  <span style={s.completedBadge}><Check size={14} /> Completed</span>
                 ) : isPureVideo ? (
-                  <button style={s.completeBtn} onClick={handleMarkComplete}>Mark complete ✓</button>
+                  <button style={s.completeBtn} onClick={handleMarkComplete}>Mark complete <Check size={14} /></button>
                 ) : null}
               </div>
             </div>
@@ -342,7 +343,7 @@ export default function LessonPlayerPage() {
 
             {activeTab === "quiz" && quiz && (
               <div style={s.tabContent}>
-                {done && !quizPassed && <div style={s.alreadyDone}>✓ You&apos;ve already passed this lesson.</div>}
+                {done && !quizPassed && <div style={s.alreadyDone}><Check size={14} /> You&apos;ve already passed this lesson.</div>}
                 {quiz.map((q, qi) => {
                   const selected = selectedAnswers[qi]
                   return (
@@ -397,9 +398,12 @@ export default function LessonPlayerPage() {
 
                 {quizSubmitted && (
                   <div style={{ ...s.quizResult, background: quizPassed ? t.successBg : t.dangerBg, color: quizPassed ? t.success : t.danger }}>
-                    {quizPassed
-                      ? `✅ Passed! ${quizScore.correct}/${quizScore.total} correct — well done.`
-                      : `❌ Score: ${quizScore.correct}/${quizScore.total}. You need 80% to pass. Review the video segment and try again.`}
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                      {quizPassed ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                      {quizPassed
+                        ? `Passed! ${quizScore.correct}/${quizScore.total} correct — well done.`
+                        : `Score: ${quizScore.correct}/${quizScore.total}. You need 80% to pass. Review the video segment and try again.`}
+                    </span>
                     {!quizPassed && (
                       <button style={s.retryBtn} onClick={handleQuizRetry}>Try again</button>
                     )}
@@ -412,18 +416,18 @@ export default function LessonPlayerPage() {
               <div style={s.tabContent}>
                 {lesson.activity_instructions && (
                   <div style={s.activityInstructions}>
-                    <div style={s.activityInstructionsTitle}>📋 Instructions</div>
+                    <div style={s.activityInstructionsTitle}><ClipboardList size={14} /> Instructions</div>
                     <pre style={s.activityInstructionsPre}>{lesson.activity_instructions}</pre>
                   </div>
                 )}
 
                 {done && existingSubmission && !resubmitting ? (
                   <div style={s.submittedBox}>
-                    <div style={s.submittedTitle}>✅ Activity submitted! Great work.</div>
+                    <div style={s.submittedTitle}><CheckCircle2 size={15} /> Activity submitted! Great work.</div>
                     {existingSubmission.submission_text && <p style={s.submittedText}>{existingSubmission.submission_text}</p>}
                     {existingSubmission.submission_url && (
                       <a href={existingSubmission.submission_url} target="_blank" rel="noreferrer" style={s.submittedLink}>
-                        🔗 {existingSubmission.submission_url}
+                        <Link2 size={13} /> {existingSubmission.submission_url}
                       </a>
                     )}
                     <button
@@ -472,7 +476,7 @@ export default function LessonPlayerPage() {
               <div style={s.tabContent}>
                 {lesson.resources.map((r, i) => (
                   <a key={i} href={r.url || "#"} style={s.resourceRow} target="_blank" rel="noreferrer">
-                    <span style={{ fontSize: 16 }}>{r.icon || "📄"}</span>
+                    <FileText size={16} color={t.textMuted} />
                     <span style={{ flex: 1, fontSize: 14, color: t.textPrimary }}>{r.label}</span>
                     <span style={{ fontSize: 12, color: t.textMuted }}>↗</span>
                   </a>
@@ -486,14 +490,14 @@ export default function LessonPlayerPage() {
                 disabled={!prevLesson}
                 onClick={() => prevLesson && router.push(`/academy/lessons/${prevLesson.id}`)}
               >
-                ← Previous
+                <ArrowLeft size={14} /> Previous
               </button>
               <button
                 style={{ ...s.navBtn, ...s.navBtnPrimary, opacity: nextLesson ? 1 : 0.3 }}
                 disabled={!nextLesson}
                 onClick={() => nextLesson && router.push(`/academy/lessons/${nextLesson.id}`)}
               >
-                Next lesson →
+                Next lesson <ArrowRight size={14} />
               </button>
             </div>
           </div>
@@ -506,11 +510,11 @@ export default function LessonPlayerPage() {
 const s: Record<string, CSSProperties> = {
   root: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary },
   nav: { background: t.surface, borderBottom: `1px solid ${t.border}`, height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", position: "sticky", top: 0, zIndex: 20 },
-  backBtn: { background: "none", border: "none", fontSize: 13, color: t.textMuted, cursor: "pointer", fontWeight: 500 },
+  backBtn: { background: "none", border: "none", fontSize: 13, color: t.textMuted, cursor: "pointer", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 5 },
   navCenter: { flex: 1, textAlign: "center" },
   navLesson: { fontSize: 14, fontWeight: 600, color: t.textPrimary },
   navXp: { display: "flex", alignItems: "center", gap: 8 },
-  xpLabel: { fontSize: 13, fontWeight: 500, color: t.xp },
+  xpLabel: { fontSize: 13, fontWeight: 500, color: t.xp, display: "inline-flex", alignItems: "center", gap: 5 },
   levelLabel: { fontSize: 12, background: "rgba(239,159,39,0.15)", color: t.xp, padding: "2px 8px", borderRadius: 100, fontWeight: 600 },
   layout: { display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "calc(100vh - 56px)" },
   sidebar: { display: "flex", flexDirection: "column", background: t.surface, borderRight: `1px solid ${t.border}`, overflowY: "auto", maxHeight: "calc(100vh - 56px)", position: "sticky", top: 56 },
@@ -531,16 +535,16 @@ const s: Record<string, CSSProperties> = {
   videoPlaceholder: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, color: "#fff" },
   videoPlaceholderText: { fontSize: 16, fontWeight: 600 },
   videoPlaceholderSub: { fontSize: 12, color: t.textMuted, textAlign: "center", maxWidth: 280 },
-  videoNote: { background: t.primaryBg, borderBottom: `1px solid ${t.primary}22`, padding: "8px 20px", fontSize: 12, color: t.primary },
+  videoNote: { background: t.primaryBg, borderBottom: `1px solid ${t.primary}22`, padding: "8px 20px", fontSize: 12, color: t.primary, display: "flex", alignItems: "center", gap: 6 },
   body: { padding: "24px 28px", flex: 1, background: t.bg },
   lessonHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16, gap: 16, flexWrap: "wrap" },
   lessonTitle: { fontSize: 20, fontWeight: 700, color: t.textPrimary, margin: "0 0 4px" },
   lessonMeta: { fontSize: 13, color: t.textMuted },
   headerActions: { flexShrink: 0 },
-  completeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
-  completedBadge: { background: t.primaryBg, color: t.primary, border: `1px solid ${t.primary}`, borderRadius: t.radius, padding: "9px 18px", fontSize: 13, fontWeight: 600 },
+  completeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 },
+  completedBadge: { background: t.primaryBg, color: t.primary, border: `1px solid ${t.primary}`, borderRadius: t.radius, padding: "9px 18px", fontSize: 13, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6 },
   pureVideoNote: { fontSize: 12, color: t.textMuted, marginBottom: 16, fontStyle: "italic" },
-  alreadyDone: { background: t.primaryBg, color: t.primary, borderRadius: t.radius, padding: "10px 14px", fontSize: 13, marginBottom: 16 },
+  alreadyDone: { background: t.primaryBg, color: t.primary, borderRadius: t.radius, padding: "10px 14px", fontSize: 13, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 },
   tabs: { display: "flex", borderBottom: `1px solid ${t.border}`, marginBottom: 20 },
   tab: { fontSize: 13, padding: "8px 16px", background: "none", border: "none", borderBottomWidth: 2, borderBottomStyle: "solid", borderBottomColor: "transparent", cursor: "pointer", color: t.textMuted, marginBottom: -1 },
   tabActive: { color: t.primary, borderBottomColor: t.primary, fontWeight: 500 },
@@ -555,20 +559,20 @@ const s: Record<string, CSSProperties> = {
   quizResult: { marginTop: 16, padding: "14px 18px", borderRadius: t.radius, fontSize: 14, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 },
   retryBtn: { fontSize: 12, padding: "6px 16px", background: t.dangerBg, color: t.danger, border: `1px solid ${t.dangerBorder}`, borderRadius: 6, cursor: "pointer", fontWeight: 600 },
   activityInstructions: { background: t.surfaceHigh, border: `1px solid ${t.border}`, borderRadius: t.radius, padding: "16px 20px", marginBottom: 20 },
-  activityInstructionsTitle: { fontSize: 13, fontWeight: 700, color: t.textSecondary, marginBottom: 10 },
+  activityInstructionsTitle: { fontSize: 13, fontWeight: 700, color: t.textSecondary, marginBottom: 10, display: "flex", alignItems: "center", gap: 6 },
   activityInstructionsPre: { fontSize: 13, color: t.textSecondary, lineHeight: 1.8, whiteSpace: "pre-wrap", margin: 0, fontFamily: "inherit" },
   activityForm: { display: "flex", flexDirection: "column", gap: 10 },
   activityLabel: { fontSize: 12, fontWeight: 600, color: t.textMuted, textTransform: "uppercase", letterSpacing: "0.04em" },
   activityTextarea: { padding: "10px 14px", border: `1px solid ${t.borderStrong}`, borderRadius: t.radius, fontSize: 14, fontFamily: "inherit", resize: "vertical", outline: "none", background: t.surfaceHigh, color: t.textPrimary },
   activityInput: { padding: "10px 14px", border: `1px solid ${t.borderStrong}`, borderRadius: t.radius, fontSize: 14, outline: "none", background: t.surfaceHigh, color: t.textPrimary },
   submittedBox: { background: t.primaryBg, border: `1px solid ${t.primary}44`, borderRadius: t.radius, padding: "20px", display: "flex", flexDirection: "column", gap: 10 },
-  submittedTitle: { fontSize: 14, fontWeight: 600, color: t.primary },
+  submittedTitle: { fontSize: 14, fontWeight: 600, color: t.primary, display: "flex", alignItems: "center", gap: 6 },
   submittedText: { fontSize: 13, color: t.textSecondary, whiteSpace: "pre-wrap", margin: 0 },
-  submittedLink: { fontSize: 13, color: t.primary, wordBreak: "break-all" },
+  submittedLink: { fontSize: 13, color: t.primary, wordBreak: "break-all", display: "inline-flex", alignItems: "center", gap: 5 },
   resubmitBtn: { alignSelf: "flex-start", fontSize: 12, padding: "6px 14px", background: t.surfaceHigh, border: `1px solid ${t.border}`, borderRadius: 6, cursor: "pointer", color: t.textSecondary },
   resourceRow: { display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", border: `1px solid ${t.border}`, borderRadius: t.radius, marginBottom: 8, textDecoration: "none", background: t.surface },
   navRow: { display: "flex", justifyContent: "space-between", paddingTop: 20, borderTop: `1px solid ${t.border}` },
-  navBtn: { fontSize: 13, padding: "9px 18px", border: `1px solid ${t.border}`, borderRadius: t.radius, background: t.surfaceHigh, color: t.textSecondary, cursor: "pointer" },
+  navBtn: { fontSize: 13, padding: "9px 18px", border: `1px solid ${t.border}`, borderRadius: t.radius, background: t.surfaceHigh, color: t.textSecondary, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 },
   navBtnPrimary: { background: t.primary, borderColor: t.primary, color: "#fff" },
   toast: { position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", background: t.primary, color: "#fff", padding: "10px 20px", borderRadius: 100, fontSize: 13, fontWeight: 500, zIndex: 100, boxShadow: `0 4px 24px ${t.primaryGlow}` },
 }
