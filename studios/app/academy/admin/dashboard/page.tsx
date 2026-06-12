@@ -7,7 +7,7 @@ import { t } from "@/lib/academy-theme"
 import type { QuizQuestion } from "@/lib/academy-api"
 import {
   fetchTrainees, fetchTraineeDetail, enrollTrainee, unenrollTrainee,
-  fetchAdminCourses, updateAdminCourse, deleteAdminCourse,
+  fetchAdminCourses, createCourse, updateAdminCourse, deleteAdminCourse,
   fetchAdminModules, createAdminModule, updateAdminModule, deleteAdminModule,
   fetchAdminLessons, createAdminLesson, updateAdminLesson, deleteAdminLesson,
   importCourse, fetchOverview, extractYouTubeId, parseTime, buildEmbedUrl,
@@ -277,6 +277,7 @@ function CoursesTab() {
 
   return (
     <div>
+      <NewCourseCard onCreated={(id) => reload(id)} />
       <ImportCourseCard onImported={(id) => reload(id)} />
 
       <div style={s.detailSectionTitle}>Courses</div>
@@ -305,6 +306,76 @@ function CoursesTab() {
       {courses.length === 0 && <p style={s.emptyNote}>No courses yet — import one above to get started.</p>}
 
       {activeCourse && <CourseEditor course={activeCourse} onChanged={() => reload(activeCourse.id)} />}
+    </div>
+  )
+}
+
+function NewCourseCard({ onCreated }: { onCreated: (courseId: number) => void }) {
+  const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState("")
+  const [subtitle, setSubtitle] = useState("")
+  const [durationWeeks, setDurationWeeks] = useState("24")
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleCreate() {
+    if (!title.trim()) return
+    setBusy(true)
+    setError(null)
+    try {
+      const res = await createCourse({
+        title: title.trim(),
+        subtitle: subtitle.trim() || undefined,
+        durationWeeks: Number(durationWeeks) || 24,
+      })
+      setTitle("")
+      setSubtitle("")
+      setOpen(false)
+      onCreated(res.course_id)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create course.")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div style={s.formCard}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={s.sectionHeading}>➕ Create a course</div>
+          <p style={{ ...s.sectionDesc, margin: "4px 0 0" }}>
+            Start a course from scratch, then add modules, lessons, quizzes and activities below.
+          </p>
+        </div>
+        <button style={s.ghostBtn} onClick={() => setOpen(!open)}>{open ? "Hide" : "Open"}</button>
+      </div>
+      {open && (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 2fr 1fr", gap: 10 }}>
+            <div style={s.fieldGroup}>
+              <label style={s.label}>Title</label>
+              <input style={s.input} placeholder="e.g. Unity Fundamentals" value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div style={s.fieldGroup}>
+              <label style={s.label}>Subtitle</label>
+              <input style={s.input} placeholder="Short description" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+            </div>
+            <div style={s.fieldGroup}>
+              <label style={s.label}>Weeks</label>
+              <input style={s.input} type="number" value={durationWeeks} onChange={(e) => setDurationWeeks(e.target.value)} />
+            </div>
+          </div>
+          {error && <div style={{ color: t.danger, fontSize: 13 }}>{error}</div>}
+          <button
+            style={{ ...s.addBtn, alignSelf: "flex-start", opacity: title.trim() ? 1 : 0.5 }}
+            disabled={!title.trim() || busy}
+            onClick={handleCreate}
+          >
+            {busy ? "Creating…" : "Create course"}
+          </button>
+        </>
+      )}
     </div>
   )
 }

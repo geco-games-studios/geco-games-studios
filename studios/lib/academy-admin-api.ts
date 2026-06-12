@@ -131,6 +131,11 @@ export const unenrollTrainee = (id: number, courseId: number) =>
 
 // Courses / modules / lessons
 export const fetchAdminCourses = () => request<AdminCourse[]>("/api/academy/admin/courses")
+export const createCourse = (data: { title: string; subtitle?: string; code?: string; durationWeeks?: number }) =>
+  request<{ course_id: number; code: string; title: string }>("/api/academy/admin/courses/quick_create", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
 export const updateAdminCourse = (id: number, data: Partial<AdminCourse>) =>
   request<AdminCourse>(`/api/academy/admin/courses/${id}`, { method: "PATCH", body: JSON.stringify(data) })
 export const deleteAdminCourse = (id: number) =>

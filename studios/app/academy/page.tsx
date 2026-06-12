@@ -1,5 +1,6 @@
 import Link from "next/link"
 import NewsletterSubscription from "../../components/newsletter-subscription"
+import StudentPortalButton from "../../components/academy/student-portal-button"
 
 export default function AcademyPage() {
   return (
@@ -18,9 +19,9 @@ export default function AcademyPage() {
                 Our comprehensive academy offers specialized courses covering game development, programming, and web development skills taught by industry professionals.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
-                <Link href="/login?type=student" className="inline-flex items-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600">
+                <StudentPortalButton className="inline-flex items-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600">
                   Student Dashboard
-                </Link>
+                </StudentPortalButton>
                 <Link href="#programs" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   Explore courses
                 </Link>
