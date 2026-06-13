@@ -125,7 +125,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-8 animate-fade-in">
             <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/50 hover:scale-110 transition-transform duration-300">
               <video
-                src="/animated logo .mp4"
+                src={encodeURI("/logoAnimation1 .mp4")}
                 aria-label="GECO animated logo"
                 autoPlay
                 loop

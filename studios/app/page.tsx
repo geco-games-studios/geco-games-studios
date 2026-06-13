@@ -1,16 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Briefcase, Globe, Layers, Play, Shield, Sparkles, Star, Users } from "lucide-react"
+import { ArrowRight, Globe, Layers, Play, Shield, Sparkles, Star } from "lucide-react"
 import { Megaphone, Palette, Rocket } from "lucide-react"
 import { Code } from "lucide-react"
 import NewsletterSubscription from "../components/newsletter-subscription"
-
-const stats = [
-  { label: "Years in business", value: "6+", icon: Briefcase },
-  { label: "Games launched", value: "28", icon: Star },
-  { label: "Global players", value: "150K+", icon: Users },
-  { label: "Studio partners", value: "12", icon: Globe },
-]
 
 const services = [
   {
@@ -81,7 +74,6 @@ const featuredGames = [
     title: "Kopala Survival",
     image: "/Kopala.jpg",
     description: "An atmospheric survival adventure built for tense exploration and emergent gameplay.",
-    status: "coming-soon",
   },
 ]
 
@@ -167,7 +159,7 @@ export default function HomePage() {
               <div className="mt-10 flex flex-wrap items-center gap-4 text-sm text-slate-200">
                 <div className="flex items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
                   <video
-                    src={encodeURI("/animated logo .mp4")}
+                    src={encodeURI("/logoAnimation1 .mp4")}
                     aria-label="Geco Games Studios animated logo"
                     autoPlay
                     loop
@@ -208,22 +200,6 @@ export default function HomePage() {
                 </div>
                 <h3 className="mt-6 text-xl font-semibold">{service.title}</h3>
                 <p className="mt-4 text-slate-600 dark:text-slate-400">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 px-6 lg:px-8 bg-white dark:bg-slate-950">
-        <div className="container mx-auto">
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {stats.map((item) => (
-              <div key={item.label} className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <p className="mt-6 text-3xl font-semibold">{item.value}</p>
-                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{item.label}</p>
               </div>
             ))}
           </div>
@@ -369,27 +345,6 @@ export default function HomePage() {
                 <div className="p-6">
                   <h3 className="text-2xl font-semibold">{game.title}</h3>
                   <p className="mt-4 text-slate-600 dark:text-slate-400">{game.description}</p>
-                  <div className="mt-6 flex gap-3 flex-wrap">
-                    {game.status === "coming-soon" ? (
-                      <span className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
-                        Coming Soon
-                      </span>
-                    ) : (
-                      <>
-                        <a
-                          href="https://play.google.com/store/apps/dev?id=5105347513801222490"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-                        >
-                          Download on Google Play
-                        </a>
-                        <span className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
-                          iOS Coming Soon
-                        </span>
-                      </>
-                    )}
-                  </div>
                 </div>
               </div>
             ))}

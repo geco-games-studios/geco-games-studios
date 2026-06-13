@@ -132,7 +132,7 @@ export default function Navigation() {
           <Link href="/" className="flex flex-col items-center gap-1">
             <div className="relative h-10 w-10 overflow-hidden rounded-2xl bg-white shadow-lg">
               <video
-                src={encodeURI("/animated logo .mp4")}
+                src={encodeURI("/logoAnimation1 .mp4")}
                 aria-label="Geco Games Studios animated logo"
                 autoPlay
                 loop

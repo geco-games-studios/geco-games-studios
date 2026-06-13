@@ -60,7 +60,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-3xl bg-white shadow-sm">
                 <video
-                  src={encodeURI("/animated logo .mp4")}
+                  src={encodeURI("/logoAnimation1 .mp4")}
                   aria-label="Geco Games Studios animated logo"
                   autoPlay
                   loop
