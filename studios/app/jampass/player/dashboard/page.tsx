@@ -25,6 +25,7 @@ interface Community {
   description: string
   member_count: number
   is_joined: boolean
+  game?: number
 }
 
 interface GameStats {
@@ -98,6 +99,36 @@ export default function PlayerDashboardPage() {
       const statsData = await fetchJson<PlayerStats>("jampass/player/stats/")
       setStats(statsData)
 
+      // Fetch available player communities
+      try {
+        const rawCommunities = await fetchJson<unknown>("jampass/communities/")
+        const normalizedCommunities = Array.isArray(rawCommunities)
+          ? rawCommunities
+          : Array.isArray((rawCommunities as any).results)
+          ? (rawCommunities as any).results
+          : Array.isArray((rawCommunities as any).data)
+          ? (rawCommunities as any).data
+          : Array.isArray((rawCommunities as any).communities)
+          ? (rawCommunities as any).communities
+          : []
+
+        const mappedCommunities: Community[] = normalizedCommunities
+          .map((community: any) => ({
+            id: community.id ?? community.community_id ?? 0,
+            name: community.name ?? community.community_name ?? "Community",
+            description: community.description ?? community.community_description ?? "",
+            member_count: community.member_count ?? community.members ?? 0,
+            is_joined: community.is_joined ?? community.joined ?? false,
+            game: community.game ?? community.game_id ?? undefined,
+          }))
+          .filter((community) => community.id !== 0)
+
+        setCommunities(mappedCommunities)
+        setJoinedCommunities(mappedCommunities.filter((community) => community.is_joined))
+      } catch (err) {
+        console.warn("Unable to fetch player communities list:", err)
+      }
+
       // Fetch recent community posts
       const postsData = await fetchJson<Post[]>("jampass/player/community/posts/")
       setPosts(postsData)
@@ -110,9 +141,28 @@ export default function PlayerDashboardPage() {
     }
   }
 
-  const handleJoinCommunity = async (communityId: number) => {
+  const ensureGameConnected = async (gameId?: number) => {
+    if (!gameId) {
+      return true
+    }
+
     try {
-      await postJson(`jampass/communities/${communityId}/join/`, {})
+      const connectRes = await postJson<any>(`/api/developer/games/${gameId}/connect/`, {})
+      return connectRes?.status === "connected" || connectRes?.session?.is_connected === true
+    } catch (err) {
+      console.error("Error connecting to game:", err)
+      return false
+    }
+  }
+
+  const handleJoinCommunity = async (communityId: number, gameId?: number) => {
+    try {
+      const connected = await ensureGameConnected(gameId)
+      if (!connected) {
+        throw new Error("Please connect to the game before joining the community.")
+      }
+
+      await postJson(`/api/developer/communities/${communityId}/join/`, {})
       // Refresh data
       await fetchDashboardData()
     } catch (err) {
@@ -122,7 +172,7 @@ export default function PlayerDashboardPage() {
 
   const handleLeaveCommunity = async (communityId: number) => {
     try {
-      await postJson(`jampass/communities/${communityId}/leave/`, {})
+      await postJson(`/api/developer/communities/${communityId}/leave/`, {})
       // Refresh data
       await fetchDashboardData()
     } catch (err) {
@@ -412,7 +462,7 @@ export default function PlayerDashboardPage() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleJoinCommunity(community.id)}
+                          onClick={() => handleJoinCommunity(community.id, community.game)}
                           className="px-3 py-1 text-sm bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500"
                         >
                           Join

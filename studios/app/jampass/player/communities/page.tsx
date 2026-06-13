@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Users, Search, Filter, Crown } from "lucide-react"
-import { fetchJson } from "@/lib/api"
+import { Users, Search, Filter, Crown, RefreshCw } from "lucide-react"
+import { fetchJson, postJson } from "@/lib/api"
 
 interface Community {
   id: number | string
@@ -28,7 +28,14 @@ export default function CommunitiesPage() {
   const [communities, setCommunities] = useState<Community[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [newCommunityName, setNewCommunityName] = useState("")
+  const [newCommunityDescription, setNewCommunityDescription] = useState("")
+  const [newCommunityPost, setNewCommunityPost] = useState("")
+  const [isCreating, setIsCreating] = useState(false)
+  const [createMessage, setCreateMessage] = useState("")
+  const [createError, setCreateError] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
 
@@ -36,6 +43,9 @@ export default function CommunitiesPage() {
 
   useEffect(() => {
     fetchCommunities()
+    // Set up an interval to refresh communities periodically (for game connections)
+    const interval = setInterval(fetchCommunities, 5000)
+    return () => clearInterval(interval)
   }, [router])
 
   const fetchCommunities = async () => {
@@ -57,21 +67,41 @@ export default function CommunitiesPage() {
         return
       }
 
-      const postsData = await fetchJson<CommunityPost[]>("jampass/player/community/posts/")
       const communityMap = new Map<number | string, Community>()
 
-      postsData?.forEach((post) => {
-        const key = post.community_id ?? post.community_name ?? `unknown-${post.id}`
-        if (!communityMap.has(key)) {
-          communityMap.set(key, {
-            id: key,
-            name: post.community_name ?? "Community",
-            description: post.community_description ?? "A player community",
-            member_count: post.member_count ?? 0,
-            category: "gaming",
+      // Fetch joined communities from game connections
+      try {
+        const joinedCommunitiesData = await fetchJson<Community[]>("jampass/player/communities/")
+        if (Array.isArray(joinedCommunitiesData)) {
+          joinedCommunitiesData.forEach((community) => {
+            const key = community.id ?? community.name
+            if (!communityMap.has(key)) {
+              communityMap.set(key, community)
+            }
           })
         }
-      })
+      } catch (err) {
+        console.warn("Could not fetch joined communities:", err)
+      }
+
+      // Fetch communities from player posts
+      try {
+        const postsData = await fetchJson<CommunityPost[]>("jampass/player/community/posts/")
+        postsData?.forEach((post) => {
+          const key = post.community_id ?? post.community_name ?? `unknown-${post.id}`
+          if (!communityMap.has(key)) {
+            communityMap.set(key, {
+              id: key,
+              name: post.community_name ?? "Community",
+              description: post.community_description ?? "A player community",
+              member_count: post.member_count ?? 0,
+              category: "gaming",
+            })
+          }
+        })
+      } catch (err) {
+        console.warn("Could not fetch community posts:", err)
+      }
 
       const communitiesData = Array.from(communityMap.values())
       setCommunities(communitiesData)
@@ -80,6 +110,46 @@ export default function CommunitiesPage() {
       console.error("Error fetching communities:", err)
       setError(`Failed to load communities: ${err instanceof Error ? err.message : "Unknown error"}`)
       setIsLoading(false)
+    }
+  }
+
+  const handleCreateCommunity = async () => {
+    if (!newCommunityName.trim() || !newCommunityDescription.trim() || !newCommunityPost.trim()) {
+      setCreateMessage("")
+      setCreateError("Please provide a community name, description, and first post.")
+      return
+    }
+
+    setIsCreating(true)
+    setCreateMessage("")
+    setCreateError("")
+
+    try {
+      await postJson("jampass/player/community/posts/", {
+        content: newCommunityPost,
+        community_name: newCommunityName,
+        community_description: newCommunityDescription,
+      })
+
+      setCreateMessage("Community created successfully.")
+      setNewCommunityName("")
+      setNewCommunityDescription("")
+      setNewCommunityPost("")
+      await fetchCommunities()
+    } catch (err) {
+      console.error("Error creating player community:", err)
+      setCreateError("Unable to create community. Please try again.")
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
+  const handleRefreshCommunities = async () => {
+    setIsRefreshing(true)
+    try {
+      await fetchCommunities()
+    } finally {
+      setIsRefreshing(false)
     }
   }
 
@@ -128,10 +198,75 @@ export default function CommunitiesPage() {
   return (
     <main className="container mx-auto px-4 py-12 lg:px-6">
       <div className="mb-12">
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Communities</h2>
-        <p className="text-slate-600 dark:text-slate-400">
-          Communities are available through your player activity. This section shows the groups you are already part of via your community posts.
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Communities</h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              Communities are available through your player activity. This section shows the groups you are already part of via your community posts.
+            </p>
+          </div>
+          <button
+            onClick={handleRefreshCommunities}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700 disabled:opacity-60 transition"
+            title="Refresh communities from connected games"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+            {isRefreshing ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
+
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-cyan-600 dark:text-cyan-400">Create a new community</p>
+              <h3 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">Build a player community</h3>
+            </div>
+          </div>
+
+          {createMessage ? (
+            <div className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200 mb-4">
+              {createMessage}
+            </div>
+          ) : null}
+          {createError ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-200 mb-4">
+              {createError}
+            </div>
+          ) : null}
+
+          <div className="space-y-4">
+            <input
+              value={newCommunityName}
+              onChange={(e) => setNewCommunityName(e.target.value)}
+              type="text"
+              placeholder="Community name"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-900/40"
+            />
+            <input
+              value={newCommunityDescription}
+              onChange={(e) => setNewCommunityDescription(e.target.value)}
+              type="text"
+              placeholder="Short community description"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-900/40"
+            />
+            <textarea
+              value={newCommunityPost}
+              onChange={(e) => setNewCommunityPost(e.target.value)}
+              placeholder="First post to launch your community"
+              rows={4}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-900/40"
+            />
+            <button
+              type="button"
+              onClick={handleCreateCommunity}
+              disabled={isCreating || !newCommunityName.trim() || !newCommunityDescription.trim() || !newCommunityPost.trim()}
+              className="w-full rounded-full bg-cyan-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isCreating ? "Creating community…" : "Create community"}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-12 lg:grid-cols-4">

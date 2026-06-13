@@ -1,463 +1,233 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
+import { useEffect, useMemo, useState, type CSSProperties } from "react"
+import { ArrowRight, Flame } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { t } from "@/lib/academy-theme"
+import { LessonTypeIcon, IconBox, CheckIcon } from "@/components/academy/icons"
 import {
-  BookOpen,
-  Award,
-  TrendingUp,
-  LogOut,
-  Globe,
-  Zap,
-  CheckCircle,
-  Lock,
-} from "lucide-react"
-
-interface User {
-  email: string
-  type: string
-  name: string
-  userId: string
-}
-
-interface Course {
-  id: number
-  title: string
-  description?: string
-  level?: "Beginner" | "Intermediate" | "Advanced"
-  progress?: number
-  lessons?: number
-  completedLessons?: number
-  icon?: React.ReactNode
-}
-
-interface LeaderboardEntry {
-  rank: number
-  name: string
-  xp: string
-  avatar?: string
-}
-
-interface Stat {
-  label: string
-  value: string | number
-  icon: React.ReactNode
-}
+  fetchCourses,
+  fetchLessons,
+  fetchProgress,
+  groupLessonsByModule,
+  type Course,
+  type Lesson,
+  type Progress,
+} from "@/lib/academy-api"
 
 export default function AcademyDashboard() {
-  const [user, setUser] = useState<User | null>(null)
-  const [courses, setCourses] = useState<Course[]>([])
-  const [stats, setStats] = useState<Stat[]>([])
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState("")
-  const [isClient, setIsClient] = useState(false)
-  const [dataLoaded, setDataLoaded] = useState(false)
   const router = useRouter()
-
-  const isAcademyUser = (parsedUser: any) => {
-    const userType = parsedUser.type || parsedUser.account_type || parsedUser.user_type || parsedUser.role || ""
-    const academySubType = parsedUser.academy_sub_type || ""
-    return ["student", "academy", "trainee", "developer", "jampass"].includes(userType) ||
-           ["student", "academy", "trainee", "developer", "jampass"].includes(academySubType) ||
-           ["student", "academy", "trainee", "developer", "jampass"].includes(parsedUser.account_type)
-  }
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const [userName, setUserName] = useState("Student")
+  const [courses, setCourses] = useState<Course[]>([])
+  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [progress, setProgress] = useState<Progress | null>(null)
+  const [activeCourseId, setActiveCourseId] = useState<number | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if user is logged in
     const userData = localStorage.getItem("currentUser")
     if (!userData) {
-      router.push("/login")
+      router.push("/login?type=student")
       return
     }
-
-    const parsedUser = JSON.parse(userData)
-
-    // Redirect admin users to admin dashboard
-    if (parsedUser.type === "admin" || parsedUser.academy_sub_type === "admin" || parsedUser.is_staff === true) {
+    const parsed = JSON.parse(userData)
+    if (parsed.type === "admin" || parsed.academy_sub_type === "admin" || parsed.is_staff === true) {
       router.push("/academy/admin/dashboard")
       return
     }
+    setUserName(parsed.first_name || parsed.name || parsed.email?.split("@")[0] || "Student")
 
-    // Allow academy-related roles to access the academy dashboard
-    if (!isAcademyUser(parsedUser)) {
-      router.push("/login")
-      return
-    }
-
-    setUser(parsedUser)
-    fetchDashboardData()
+    Promise.all([fetchCourses(), fetchLessons(), fetchProgress()])
+      .then(([coursesData, lessonsData, progressData]) => {
+        setCourses(coursesData)
+        setLessons(lessonsData)
+        setProgress(progressData)
+        const firstWithLessons = coursesData.find((c) => lessonsData.some((l) => l.course_id === c.id))
+        setActiveCourseId((firstWithLessons ?? coursesData[0])?.id ?? null)
+      })
+      .catch((e) => {
+        if (e.message !== "Not authenticated") setError("Could not load your courses. Please try again.")
+      })
+      .finally(() => setLoading(false))
   }, [router])
 
-  const fetchDashboardData = async () => {
-    try {
-      const accessToken = localStorage.getItem("accessToken")
-      if (!accessToken) {
-        setError("No access token. Please login again.")
-        setIsLoading(false)
-        setDataLoaded(true)
-        return
-      }
+  const completed = useMemo(() => new Set(progress?.completed_lesson_ids ?? []), [progress])
+  const activeCourse = courses.find((c) => c.id === activeCourseId) ?? null
+  const courseLessons = useMemo(
+    () => lessons.filter((l) => l.course_id === activeCourseId),
+    [lessons, activeCourseId]
+  )
+  const byModule = useMemo(() => groupLessonsByModule(courseLessons), [courseLessons])
 
-      // Fetch courses using the academy proxy endpoint
-      const coursesRes = await fetch("/api/academy/courses", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+  const totalLessons = courseLessons.length
+  const completedCount = courseLessons.filter((l) => completed.has(l.id)).length
+  const progressPct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
+  const nextLesson = courseLessons.find((l) => !completed.has(l.id)) ?? null
+  const xp = progress?.total_xp ?? 0
+  const level = progress?.level ?? 1
+  const streak = progress?.streak_days ?? 0
 
-      let coursesList: any[] = []
-      if (coursesRes.ok) {
-        const coursesData = await coursesRes.json()
-        coursesList = Array.isArray(coursesData) ? coursesData : coursesData.results || []
-        setCourses(coursesList.map((course: any) => ({
-          id: course.id,
-          title: course.title || course.name,
-          description: course.description,
-          level: course.level || "Beginner",
-          progress: course.progress || 0,
-          lessons: course.lessons || 0,
-          completedLessons: course.completed_lessons || 0,
-        })))
-      }
-
-      // Fetch leaderboard data
-      const leaderboardRes = await fetch("/api/academy/leaderboard", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-
-      if (leaderboardRes.ok) {
-        const leaderboardData = await leaderboardRes.json()
-        const leaderboardList = Array.isArray(leaderboardData) ? leaderboardData : leaderboardData.results || []
-        setLeaderboard(leaderboardList.map((entry: any, index: number) => ({
-          rank: entry.rank || index + 1,
-          name: entry.name || entry.username || entry.email,
-          xp: entry.xp || `${entry.points || 0} XP`,
-          avatar: entry.avatar || "👤",
-        })))
-      } else {
-        // Fallback to empty leaderboard initially - will be updated after user data loads
-        setLeaderboard([])
-      }
-
-      // Fetch user stats
-      const statsRes = await fetch("/api/academy/stats", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-
-      let userStats: any = {}
-      if (statsRes.ok) {
-        userStats = await statsRes.json()
-      }
-
-      // Update stats based on fetched data
-      const defaultStats = [
-        {
-          label: "Total XP Earned",
-          value: userStats.totalXp ? `${userStats.totalXp.toLocaleString()} XP` : "0 XP",
-          icon: <Award className="h-6 w-6 text-yellow-500" />,
-        },
-        {
-          label: "Courses Enrolled",
-          value: coursesList?.length || 0,
-          icon: <BookOpen className="h-6 w-6 text-cyan-500" />,
-        },
-        {
-          label: "Lessons Completed",
-          value: userStats.lessonsCompleted || 0,
-          icon: <CheckCircle className="h-6 w-6 text-green-500" />,
-        },
-        {
-          label: "Streak Days",
-          value: userStats.streakDays ? `${userStats.streakDays} Days` : "0 Days",
-          icon: <TrendingUp className="h-6 w-6 text-orange-500" />,
-        },
-      ]
-      setStats(defaultStats)
-
-      setIsLoading(false)
-      setDataLoaded(true)
-    } catch (err) {
-      console.error("Error fetching dashboard data:", err)
-      setError("Failed to load dashboard data")
-      setIsLoading(false)
-      setDataLoaded(true)
-    }
-  }
-
-  let coursesList: any[] = []
-
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser")
-    router.push("/login")
-  }
-
-  if (isLoading || !dataLoaded) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="text-center">
-          <div className="h-12 w-12 rounded-full border-4 border-cyan-200 border-t-cyan-600 animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400">Loading dashboard...</p>
-        </div>
+      <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <span style={{ color: t.textMuted, fontSize: 14 }}>Loading your dashboard…</span>
       </div>
     )
   }
 
-  if (!user) return null
-
-  const displayCourses: Course[] = courses.length > 0 ? courses : []
+  if (error) {
+    return (
+      <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <span style={{ color: t.danger, fontSize: 14 }}>{error}</span>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
-        <div className="container mx-auto px-4 lg:px-6">
-          <div className="py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                GECO Academy
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Welcome back, {user.name}!
-              </p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
+    <div style={s.page}>
+      <div style={s.container}>
+        <div style={s.hero}>
+          <div>
+            <h1 style={s.heroTitle}>Welcome back, {userName.split(" ")[0]}</h1>
+            <p style={s.heroSub}>Keep building. Every lesson gets you closer to shipping your first African game.</p>
+          </div>
+          {nextLesson && (
+            <button style={s.resumeBtn} onClick={() => router.push(`/academy/lessons/${nextLesson.id}`)}>
+              Continue learning <ArrowRight size={16} />
             </button>
-          </div>
+          )}
+        </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-1 border-t border-slate-200 dark:border-slate-800 pt-4 pb-0 -mb-px overflow-x-auto">
-            <Link
-              href="/academy/dashboard"
-              className="px-4 py-3 border-b-2 border-cyan-600 text-cyan-600 font-semibold dark:border-cyan-400 dark:text-cyan-400 text-sm"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/academy/profile"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Profile
-            </Link>
-            <Link
-              href="/academy/courses"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Courses
-            </Link>
-            <Link
-              href="/academy/modules"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Modules
-            </Link>
-            <Link
-              href="/academy/tasks"
-              className="px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm transition"
-            >
-              Tasks
-            </Link>
+        <div style={s.statsRow}>
+          <div style={s.statCard}>
+            <div style={s.statVal}>{completedCount}</div>
+            <div style={s.statLabel}>Lessons complete</div>
+          </div>
+          <div style={s.statCard}>
+            <div style={{ ...s.statVal, color: t.xp }}>{xp}</div>
+            <div style={s.statLabel}>Total XP</div>
+          </div>
+          <div style={s.statCard}>
+            <div style={s.statVal}>Level {level}</div>
+            <div style={s.statLabel}>Your level</div>
+          </div>
+          <div style={s.statCard}>
+            <div style={{ ...s.statVal, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{streak} <Flame size={18} color={t.xp} /></div>
+            <div style={s.statLabel}>Day streak</div>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 lg:px-6">
-        {/* Stats Grid */}
-        <div className="mb-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {stat.label}
-                  </p>
-                  <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-                    {stat.value}
-                  </p>
-                </div>
-                <div className="text-3xl">{stat.icon}</div>
+        <div style={s.progressWrap}>
+          <div style={s.progressHeader}>
+            <span style={s.progressLabel}>Overall progress</span>
+            <span style={s.progressLabel}>{completedCount} / {totalLessons} lessons · {progressPct}%</span>
+          </div>
+          <div style={s.progressTrack}>
+            <div style={{ ...s.progressFill, width: `${progressPct}%` }} />
+          </div>
+        </div>
+
+        {courses.length > 1 && (
+          <div style={s.courseTabs}>
+            {courses.map((c) => (
+              <button
+                key={c.id}
+                style={{ ...s.courseTab, ...(c.id === activeCourseId ? s.courseTabActive : {}) }}
+                onClick={() => setActiveCourseId(c.id)}
+              >
+                {c.title}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {activeCourse && (
+          <div style={s.courseHeader}>
+            <div>
+              <h2 style={s.sectionTitle}>{activeCourse.title}</h2>
+              <p style={s.sectionSub}>{activeCourse.description}</p>
+            </div>
+          </div>
+        )}
+
+        {totalLessons === 0 && (
+          <div style={s.emptyBox}>
+            No lessons in this course yet. Check back soon — your instructors are preparing content.
+          </div>
+        )}
+
+        {(activeCourse?.modules ?? []).map((module) => {
+          const moduleLessons = byModule.get(module.id) ?? []
+          if (moduleLessons.length === 0) return null
+          return (
+            <div key={module.id} style={s.moduleCard}>
+              <div style={s.moduleTitle}>{module.title}</div>
+              <div style={s.lessonList}>
+                {moduleLessons.map((lesson) => {
+                  const done = completed.has(lesson.id)
+                  const isNext = lesson.id === nextLesson?.id
+                  return (
+                    <div
+                      key={lesson.id}
+                      style={{ ...s.lessonRow, cursor: "pointer", background: isNext ? t.primaryBg : "transparent" }}
+                      onClick={() => router.push(`/academy/lessons/${lesson.id}`)}
+                    >
+                      <LessonTypeIcon type={lesson.type} size={34} />
+                      <div style={s.lessonInfo}>
+                        <div style={{ ...s.lessonName, color: isNext ? t.textPrimary : t.textSecondary }}>{lesson.title}</div>
+                        <div style={s.lessonMeta}>
+                          {lesson.type}
+                          {lesson.duration ? ` · ${lesson.duration}` : ""}
+                        </div>
+                      </div>
+                      {done && (
+                        <IconBox size={26} radius={6} style={{ background: t.primaryBg, border: `1px solid ${t.primary}44` }}>
+                          <CheckIcon size={13} color={t.primary} />
+                        </IconBox>
+                      )}
+                      {isNext && !done && <span style={s.nextBadge}>Up next</span>}
+                    </div>
+                  )
+                })}
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Courses Section */}
-        <div className="mb-12">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
-              Courses
-            </h2>
-            <Link
-              href="#"
-              className="text-sm font-semibold text-cyan-600 transition hover:text-cyan-700 dark:text-cyan-400"
-            >
-              View all →
-            </Link>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {displayCourses.length > 0 ? (
-              displayCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-800"
-                >
-                  {/* Course Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-400">
-                      {course.icon}
-                    </div>
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                        course.level === "Beginner"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                          : course.level === "Intermediate"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                      }`}
-                    >
-                      {course.level}
-                    </span>
-                  </div>
-
-                  {/* Course Details */}
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                    {course.description}
-                  </p>
-
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="mb-2 flex justify-between text-xs">
-                      <span className="text-slate-600 dark:text-slate-400">
-                        Progress
-                      </span>
-                      <span className="font-semibold text-slate-900 dark:text-white">
-                        {course.progress}%
-                      </span>
-                    </div>
-                    <div className="mb-2">
-                      <progress
-                        value={course.progress ?? 0}
-                        max={100}
-                        className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 accent-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Lesson Count */}
-                  <div className="mb-6 flex justify-between text-sm text-slate-600 dark:text-slate-400">
-                    <span>
-                      {course.completedLessons} of {course.lessons} lessons
-                    </span>
-                    <span className="font-semibold">
-                      {course.completedLessons}/{course.lessons}
-                    </span>
-                  </div>
-
-                  {/* Continue Button */}
-                  <Link
-                    href="#"
-                    className="block rounded-lg bg-cyan-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500"
-                  >
-                    Continue Learning
-                  </Link>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <BookOpen className="h-16 w-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
-                  No courses enrolled yet
-                </h3>
-                <p className="text-slate-500 dark:text-slate-500 mb-6">
-                  Start your learning journey by enrolling in a course.
-                </p>
-                <Link
-                  href="/academy/courses"
-                  className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500"
-                >
-                  Browse Courses
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Leaderboard Section */}
-        <div className="rounded-2xl bg-white p-8 shadow-sm dark:bg-slate-800">
-          <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
-            Leaderboard
-          </h2>
-
-          <div className="space-y-3">
-            {leaderboard.length > 0 ? (
-              leaderboard.map((entry) => (
-                <div
-                  key={entry.rank}
-                  className={`flex items-center justify-between rounded-lg p-4 transition ${
-                    entry.name === user?.name
-                      ? "bg-cyan-50 dark:bg-cyan-900"
-                      : "bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600"
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 font-bold text-slate-900 dark:bg-slate-600 dark:text-white">
-                      {entry.rank}
-                    </span>
-                    <span className="text-2xl">{entry.avatar}</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
-                      {entry.name}
-                    </span>
-                  </div>
-                  <span className="font-bold text-cyan-600 dark:text-cyan-400">
-                    {entry.xp}
-                  </span>
-                </div>
-              ))
-            ) : isClient && user ? (
-              <div className="flex items-center justify-between rounded-lg p-4 bg-cyan-50 dark:bg-cyan-900">
-                <div className="flex items-center gap-4">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 font-bold text-slate-900 dark:bg-slate-600 dark:text-white">
-                    1
-                  </span>
-                  <span className="text-2xl">👤</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    {user.name}
-                  </span>
-                </div>
-                <span className="font-bold text-cyan-600 dark:text-cyan-400">
-                  0 XP
-                </span>
-              </div>
-            ) : (
-              <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                <p>Loading leaderboard...</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </main>
+          )
+        })}
+      </div>
     </div>
   )
+}
+
+const s: Record<string, CSSProperties> = {
+  page: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary },
+  container: { maxWidth: 760, margin: "0 auto", padding: "32px 24px" },
+  hero: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 16 },
+  heroTitle: { fontSize: 24, fontWeight: 700, color: t.textPrimary, margin: "0 0 6px" },
+  heroSub: { fontSize: 14, color: t.textMuted, maxWidth: 460, margin: 0 },
+  resumeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "12px 22px", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 8 },
+  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 },
+  statCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center" },
+  statVal: { fontSize: 22, fontWeight: 700, color: t.textPrimary },
+  statLabel: { fontSize: 12, color: t.textMuted, marginTop: 4 },
+  progressWrap: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px 20px", marginBottom: 28 },
+  progressHeader: { display: "flex", justifyContent: "space-between", marginBottom: 10 },
+  progressLabel: { fontSize: 13, color: t.textMuted },
+  progressTrack: { height: 6, background: t.surfaceHigh, borderRadius: 3, overflow: "hidden" },
+  progressFill: { height: "100%", background: t.primary, borderRadius: 3, transition: "width 0.4s" },
+  courseTabs: { display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" },
+  courseTab: { fontSize: 13, color: t.textSecondary, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 100, padding: "6px 16px", cursor: "pointer" },
+  courseTabActive: { color: t.primary, background: t.primaryBg, border: `1px solid ${t.primary}` },
+  courseHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 },
+  sectionTitle: { fontSize: 18, fontWeight: 700, color: t.textPrimary, margin: "0 0 4px" },
+  sectionSub: { fontSize: 13, color: t.textMuted, margin: 0 },
+  emptyBox: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "28px", textAlign: "center", color: t.textMuted, fontSize: 14 },
+  moduleCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, marginBottom: 12, overflow: "hidden" },
+  moduleTitle: { fontSize: 11, fontWeight: 700, color: t.textMuted, padding: "10px 20px", background: t.surfaceHigh, borderBottom: `1px solid ${t.border}`, textTransform: "uppercase", letterSpacing: "0.06em" },
+  lessonList: { padding: "4px 0" },
+  lessonRow: { display: "flex", alignItems: "center", gap: 14, padding: "12px 20px", transition: "background 0.15s" },
+  lessonInfo: { flex: 1 },
+  lessonName: { fontSize: 14, fontWeight: 500 },
+  lessonMeta: { fontSize: 12, color: t.textMuted, marginTop: 2 },
+  nextBadge: { fontSize: 11, background: t.primaryBg, color: t.primary, border: `1px solid ${t.primary}`, padding: "2px 10px", borderRadius: 100, fontWeight: 500 },
 }

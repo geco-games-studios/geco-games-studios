@@ -37,6 +37,7 @@ export default function DeveloperCommunitiesPage() {
   const [newCommunityName, setNewCommunityName] = useState("")
   const [newCommunityDescription, setNewCommunityDescription] = useState("")
   const [newCommunityCategory, setNewCommunityCategory] = useState("")
+  const [newCommunityGameId, setNewCommunityGameId] = useState<number | string>("")
   const [createMessage, setCreateMessage] = useState("")
   const [createError, setCreateError] = useState("")
   const [error, setError] = useState("")
@@ -64,9 +65,9 @@ export default function DeveloperCommunitiesPage() {
 
     try {
       const [communitiesData, membershipData, gamesData] = await Promise.all([
-        fetchJson<Community[]>("developer/communities/"),
-        fetchJson<Membership[]>("developer/community-members/"),
-        fetchJson<unknown>("developer/games/"),
+        fetchJson<Community[]>("/api/developer/communities/"),
+        fetchJson<Membership[]>("/api/developer/community-members/"),
+        fetchJson<unknown>("/api/developer/games/"),
       ])
 
       const gamesList = Array.isArray(gamesData)
@@ -87,7 +88,7 @@ export default function DeveloperCommunitiesPage() {
   const handleJoinCommunity = async (communityId: number) => {
     setIsActionLoading(true)
     try {
-      await postJson(`developer/communities/${communityId}/join/`, {})
+      await postJson(`/api/developer/communities/${communityId}/join/`, {})
       await fetchAllData()
     } catch (err) {
       console.error("Error joining community:", err)
@@ -100,7 +101,7 @@ export default function DeveloperCommunitiesPage() {
   const handleLeaveCommunity = async (communityId: number) => {
     setIsActionLoading(true)
     try {
-      await postJson(`developer/communities/${communityId}/leave/`, {})
+      await postJson(`/api/developer/communities/${communityId}/leave/`, {})
       await fetchAllData()
     } catch (err) {
       console.error("Error leaving community:", err)
@@ -117,22 +118,30 @@ export default function DeveloperCommunitiesPage() {
       return
     }
 
+    if (!newCommunityGameId) {
+      setCreateMessage("")
+      setCreateError("Please attach the community to one of your games.")
+      return
+    }
+
     setIsCreateLoading(true)
     setCreateMessage("")
     setCreateError("")
     setError("")
 
     try {
-      await postJson("developer/communities/", {
+      await postJson("/api/developer/communities/", {
         name: newCommunityName,
         description: newCommunityDescription,
         category: newCommunityCategory || "General",
+        game: Number(newCommunityGameId),
       })
       setCreateMessage("Community created successfully.")
       setCreateError("")
       setNewCommunityName("")
       setNewCommunityDescription("")
       setNewCommunityCategory("")
+      setNewCommunityGameId("")
       await fetchAllData()
     } catch (err) {
       console.error("Error creating community:", err)
@@ -309,6 +318,18 @@ export default function DeveloperCommunitiesPage() {
                       placeholder="Community name"
                       className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-900/40"
                     />
+                    <select
+                      value={newCommunityGameId}
+                      onChange={(event) => setNewCommunityGameId(event.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-900/40"
+                    >
+                      <option value="">Attach to a game</option>
+                      {games.map((game) => (
+                        <option key={game.id} value={game.id}>
+                          {game.title}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       value={newCommunityCategory}
                       onChange={(event) => setNewCommunityCategory(event.target.value)}

@@ -60,25 +60,25 @@ export const ACCOUNT_TYPES = [
     value: "market",
     label: "Market",
     description: "Shop GECO merchandise",
-    icon: "🛒",
+    icon: "cart",
   },
   {
     value: "developer",
     label: "Developer",
     description: "Game development tools & resources",
-    icon: "👨‍💻",
+    icon: "code",
   },
   {
     value: "jampass",
     label: "JamPass",
     description: "Access live events & matches",
-    icon: "🎫",
+    icon: "ticket",
   },
   {
     value: "academy",
     label: "Academy",
     description: "Game development training",
-    icon: "🎓",
+    icon: "graduation",
   },
 ]
 

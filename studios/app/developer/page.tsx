@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { BookOpen, Calendar, Gamepad2, Palette, Rocket, TrendingUp } from "lucide-react"
+import { Smartphone } from "lucide-react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import NewsletterSubscription from "../../components/newsletter-subscription"
@@ -148,8 +150,8 @@ export default function DeveloperPage() {
                 </div>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">{program.description}</p>
                 <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-6">
-                  <span>📅 {program.duration}</span>
-                  <span>📚 {program.lessons.length} tips</span>
+                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {program.duration}</span>
+                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> {program.lessons.length} tips</span>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">What you'll manage:</p>
@@ -190,21 +192,21 @@ export default function DeveloperPage() {
           <div className="grid gap-8 lg:grid-cols-3 mb-12">
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">🚀</span>
+                <Rocket className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Fast Submissions</h3>
               <p className="text-white/80">Submit your game details quickly and keep your page updated.</p>
             </div>
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">🎮</span>
+                <Gamepad2 className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Player Reach</h3>
               <p className="text-white/80">Connect with our community across mobile, PC, and web.</p>
             </div>
             <div className="text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">📈</span>
+                <TrendingUp className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Growth Insights</h3>
               <p className="text-white/80">Track early interest and optimize your launch strategy.</p>
@@ -284,7 +286,7 @@ export default function DeveloperPage() {
               <div className="grid gap-4 mb-8">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
-                    <span className="text-lg">🎮</span>
+                    <Gamepad2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white">Gameplay Focus</h4>
@@ -293,7 +295,7 @@ export default function DeveloperPage() {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
-                    <span className="text-lg">🎨</span>
+                    <Palette className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white">Visual Quality</h4>
@@ -302,7 +304,7 @@ export default function DeveloperPage() {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0">
-                    <span className="text-lg">📱</span>
+                    <Smartphone className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white">Multi-Platform</h4>
@@ -312,7 +314,7 @@ export default function DeveloperPage() {
               </div>
 
               <div className="inline-flex items-center rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300 mb-8">
-                🚀 Coming Soon
+                <Rocket className="h-4 w-4 mr-2" /> Coming Soon
               </div>
 
               <p className="text-slate-600 dark:text-slate-400 mb-8">

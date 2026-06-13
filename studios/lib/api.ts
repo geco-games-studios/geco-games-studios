@@ -4,10 +4,20 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://sys
 export const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL ?? "https://system.gecogames.com/"
 
 export function getApiUrl(path: string) {
-  const base = API_BASE_URL.replace(/\/+$|^\s+|\s+$/g, "")
+  const base = API_BASE_URL.replace(/(^['"]|['"]$)/g, "").replace(/\/+$|^\s+|\s+$/g, "")
   const trimmedPath = path.replace(/^\/+/, "")
 
   return `${base}/${trimmedPath}`
+}
+
+export function getRequestUrl(path: string) {
+  const trimmed = path.trim()
+
+  if (trimmed.startsWith("/api/")) {
+    return trimmed
+  }
+
+  return getApiUrl(trimmed)
 }
 
 export function getMediaUrl(path: string) {
@@ -62,7 +72,7 @@ function createApiError(response: Response, data: unknown) {
 }
 
 export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "POST",
     headers: getAuthHeaders(null),
     body: formData,
@@ -80,7 +90,7 @@ export async function postFormData<T = unknown>(path: string, formData: FormData
 }
 
 export async function putFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(null),
     body: formData,
@@ -98,7 +108,7 @@ export async function putFormData<T = unknown>(path: string, formData: FormData,
 }
 
 export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "GET",
     headers: getAuthHeaders(),
     ...init,
@@ -116,7 +126,7 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
 }
 
 export async function postJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -134,7 +144,7 @@ export async function postJson<T = unknown>(path: string, payload: unknown, init
 }
 
 export async function putJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -152,7 +162,7 @@ export async function putJson<T = unknown>(path: string, payload: unknown, init?
 }
 
 export async function patchJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -170,7 +180,7 @@ export async function patchJson<T = unknown>(path: string, payload: unknown, ini
 }
 
 export async function deleteJson<T = unknown>(path: string, init?: Omit<RequestInit, "method">) {
-  const response = await fetch(getApiUrl(path), {
+  const response = await fetch(getRequestUrl(path), {
     method: "DELETE",
     headers: getAuthHeaders(),
     ...init,

@@ -3,9 +3,16 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Check, Calendar } from "lucide-react"
+import { Eye, EyeOff, Check, Calendar, Code, GraduationCap, Lock, ShoppingCart, Ticket, User } from "lucide-react"
 import Image from "next/image"
 import { COUNTRIES, ACCOUNT_TYPES, JAMPASS_SUB_TYPES, ACADEMY_SUB_TYPES } from "@/lib/countries"
+
+const ACCOUNT_TYPE_ICONS: Record<string, React.ReactNode> = {
+  cart: <ShoppingCart className="h-6 w-6" />,
+  code: <Code className="h-6 w-6" />,
+  ticket: <Ticket className="h-6 w-6" />,
+  graduation: <GraduationCap className="h-6 w-6" />,
+}
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -21,6 +28,7 @@ export default function SignupPage() {
     country: "ZM",
     date_of_birth: "",
     nrc_number: "",
+    admin_key: "",
     agreeTerms: false,
   })
 
@@ -30,6 +38,9 @@ export default function SignupPage() {
   const [selectedType, setSelectedType] = useState("jampass")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+
+  // Academy admins register with just name/email/password + an 8-digit key.
+  const isAcademyAdmin = selectedType === "academy" && formData.academy_sub_type === "admin"
 
   const validatePassword = (password: string) => {
     const requirements = {
@@ -103,24 +114,31 @@ export default function SignupPage() {
       return
     }
 
-    if (!formData.phone_number.trim()) {
-      setError("Phone number is required")
-      return
-    }
+    if (isAcademyAdmin) {
+      if (!/^\d{8}$/.test(formData.admin_key.trim())) {
+        setError("Enter the 8-digit admin key to create an admin account")
+        return
+      }
+    } else {
+      if (!formData.phone_number.trim()) {
+        setError("Phone number is required")
+        return
+      }
 
-    if (!formData.country) {
-      setError("Please select a country")
-      return
-    }
+      if (!formData.country) {
+        setError("Please select a country")
+        return
+      }
 
-    if (!formData.date_of_birth) {
-      setError("Date of birth is required")
-      return
-    }
+      if (!formData.date_of_birth) {
+        setError("Date of birth is required")
+        return
+      }
 
-    if (!formData.nrc_number.trim()) {
-      setError("NRC number is required")
-      return
+      if (!formData.nrc_number.trim()) {
+        setError("NRC number is required")
+        return
+      }
     }
 
     if (!formData.agreeTerms) {
@@ -131,20 +149,31 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      // Prepare payload for backend
-      const payload = {
-        email: formData.email,
-        password: formData.password,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        account_type: formData.account_type,
-        country: formData.country,
-        phone_number: formData.phone_number,
-        nrc_number: formData.nrc_number,
-        date_of_birth: formData.date_of_birth,
-        ...(formData.account_type === "jampass" && { jampass_sub_type: formData.jampass_sub_type }),
-        ...(formData.account_type === "academy" && { academy_sub_type: formData.academy_sub_type }),
-      }
+      // Prepare payload for backend. Academy admins send only name/email/password
+      // plus their 8-digit key; everyone else sends the full profile.
+      const payload = isAcademyAdmin
+        ? {
+            email: formData.email,
+            password: formData.password,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            account_type: "academy",
+            academy_sub_type: "admin",
+            admin_key: formData.admin_key.trim(),
+          }
+        : {
+            email: formData.email,
+            password: formData.password,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            account_type: formData.account_type,
+            country: formData.country,
+            phone_number: formData.phone_number,
+            nrc_number: formData.nrc_number,
+            date_of_birth: formData.date_of_birth,
+            ...(formData.account_type === "jampass" && { jampass_sub_type: formData.jampass_sub_type }),
+            ...(formData.account_type === "academy" && { academy_sub_type: formData.academy_sub_type }),
+          }
 
       // Call backend API for registration
       const response = await fetch("/api/register", {
@@ -244,7 +273,7 @@ export default function SignupPage() {
                       : "border-slate-300 bg-slate-50 hover:border-cyan-300 dark:border-slate-600 dark:bg-slate-700"
                   }`}
                 >
-                  <div className="text-2xl mb-2">{type.icon}</div>
+                  <div className="mb-2 flex justify-center">{ACCOUNT_TYPE_ICONS[type.icon] ?? <User className="h-6 w-6" />}</div>
                   <p className="font-semibold text-sm text-slate-900 dark:text-white">
                     {type.label}
                   </p>
@@ -298,6 +327,28 @@ export default function SignupPage() {
             </div>
           )}
 
+          {/* Admin registration key gate */}
+          {isAcademyAdmin && (
+            <div className="mb-6 rounded-xl border-2 border-amber-300 bg-amber-50 p-4 dark:border-amber-700/60 dark:bg-amber-900/20">
+              <label className="flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-300 mb-2">
+                <Lock className="h-4 w-4" /> Admin Registration Key
+              </label>
+              <input
+                type="text"
+                name="admin_key"
+                inputMode="numeric"
+                maxLength={8}
+                value={formData.admin_key}
+                onChange={handleInputChange}
+                className="w-full rounded-lg border border-amber-300 bg-white px-4 py-3 tracking-[0.4em] text-center text-lg font-semibold text-slate-900 placeholder:tracking-normal placeholder:text-slate-400 focus:border-amber-500 focus:outline-none dark:border-amber-700 dark:bg-slate-700 dark:text-white"
+                placeholder="8-digit key"
+              />
+              <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+                Admin accounts require a one-time key for first registration. You won&apos;t need it again — afterwards you sign in with just your email and password.
+              </p>
+            </div>
+          )}
+
           {/* Signup Form */}
           <form onSubmit={handleSignup} className="space-y-5">
             {/* First Name */}
@@ -348,75 +399,76 @@ export default function SignupPage() {
               />
             </div>
 
-            {/* Country */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                Country
-              </label>
-              <select
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                required
-              >
-                {COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Profile fields — not needed for academy admins */}
+            {!isAcademyAdmin && (
+              <>
+                {/* Country */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Country
+                  </label>
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                  >
+                    {COUNTRIES.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* Phone Number */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                placeholder="+260978516926"
-                required
-              />
-            </div>
+                {/* Phone Number */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                    placeholder="+260978516926"
+                  />
+                </div>
 
-            {/* Date of Birth */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                Date of Birth
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  name="date_of_birth"
-                  value={formData.date_of_birth}
-                  onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                  required
-                />
-                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
-              </div>
-            </div>
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Date of Birth
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      name="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                    />
+                    <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
 
-            {/* NRC Number */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                NRC Number
-              </label>
-              <input
-                type="text"
-                name="nrc_number"
-                value={formData.nrc_number}
-                onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                placeholder="468133/74/1"
-                required
-              />
-            </div>
+                {/* NRC Number */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    NRC Number
+                  </label>
+                  <input
+                    type="text"
+                    name="nrc_number"
+                    value={formData.nrc_number}
+                    onChange={handleInputChange}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                    placeholder="468133/74/1"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Password */}
             <div>
