@@ -395,66 +395,68 @@ export default function SignupPage() {
               />
             </div>
 
-            {/* Country and Phone Number */}
-            <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
-              <div>
-                <label htmlFor="country" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  Country
-                </label>
-                <select
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                  required
-                >
-                  {COUNTRIES.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.name} ({country.prefix})
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {!isAcademyAdmin && (
+              <>
+                {/* Country and Phone Number */}
+                <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
+                  <div>
+                    <label htmlFor="country" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                      Country
+                    </label>
+                    <select
+                      id="country"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                      required
+                    >
+                      {COUNTRIES.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.name} ({country.prefix})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-              <div>
-                <label htmlFor="phone_number" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  Phone Number
-                </label>
-                <input
-                  id="phone_number"
-                  type="tel"
-                  name="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                  placeholder="+260 978 516 926"
-                  required
-                />
-                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                  Use the selected country code and enter the full phone number.
-                </p>
-              </div>
-            </div>
+                  <div>
+                    <label htmlFor="phone_number" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phone_number"
+                      type="tel"
+                      name="phone_number"
+                      value={formData.phone_number}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                      placeholder="+260 978 516 926"
+                      required
+                    />
+                    <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                      Use the selected country code and enter the full phone number.
+                    </p>
+                  </div>
+                </div>
 
-            {/* Date of Birth */}
-            <div>
-              <label htmlFor="date_of_birth" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                Date of Birth
-              </label>
-              <div className="relative">
-                <input
-                  id="date_of_birth"
-                  type="date"
-                  name="date_of_birth"
-                  value={formData.date_of_birth}
-                  onChange={handleInputChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                  required
-                />
-                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
-              </div>
-            </div>
+                {/* Date of Birth */}
+                <div>
+                  <label htmlFor="date_of_birth" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Date of Birth
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="date_of_birth"
+                      type="date"
+                      name="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                      required
+                    />
+                    <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
 
                 {/* NRC Number */}
                 <div>
