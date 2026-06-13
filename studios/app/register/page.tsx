@@ -58,22 +58,23 @@ export default function SignupPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }))
 
-    // Auto-update phone prefix when country changes
-    if (name === "country") {
-      const selectedCountry = COUNTRIES.find(c => c.code === value)
-      if (selectedCountry) {
-        setFormData((prev) => ({
-          ...prev,
-          phone_number: selectedCountry.prefix,
-        }))
+    setFormData((prev) => {
+      const nextState = {
+        ...prev,
+        [name]:
+          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
       }
-    }
+
+      if (name === "country") {
+        const selectedCountry = COUNTRIES.find((c) => c.code === value)
+        if (selectedCountry) {
+          nextState.phone_number = selectedCountry.prefix
+        }
+      }
+
+      return nextState
+    })
   }
 
   const handleAccountTypeChange = (accountType: string) => {
@@ -213,17 +214,10 @@ export default function SignupPage() {
           }
 
       localStorage.setItem("currentUser", JSON.stringify(currentUser))
-
-      // Redirect to appropriate dashboard
-      const dashboardMap: { [key: string]: string } = {
-        market: "/marketplace",
-        developer: "/academy",
-        jampass: "/jampass",
-        academy: "/academy",
-      }
+      localStorage.setItem("pendingPhoneVerification", formData.phone_number)
 
       setIsLoading(false)
-      router.push(dashboardMap[selectedType] || "/")
+      router.push("/register/verify")
     } catch (err) {
       setError("Network error. Please check your connection and try again.")
       setIsLoading(false)
@@ -288,10 +282,11 @@ export default function SignupPage() {
           {/* Sub-type Selection for JamPass */}
           {selectedType === "jampass" && (
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+              <label htmlFor="jampass_sub_type" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 JamPass Type
               </label>
               <select
+                id="jampass_sub_type"
                 name="jampass_sub_type"
                 value={formData.jampass_sub_type}
                 onChange={handleInputChange}
@@ -309,10 +304,11 @@ export default function SignupPage() {
           {/* Sub-type Selection for Academy */}
           {selectedType === "academy" && (
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+              <label htmlFor="academy_sub_type" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Academy Role
               </label>
               <select
+                id="academy_sub_type"
                 name="academy_sub_type"
                 value={formData.academy_sub_type}
                 onChange={handleInputChange}
@@ -399,59 +395,66 @@ export default function SignupPage() {
               />
             </div>
 
-            {/* Profile fields — not needed for academy admins */}
-            {!isAcademyAdmin && (
-              <>
-                {/* Country */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Country
-                  </label>
-                  <select
-                    name="country"
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                  >
-                    {COUNTRIES.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            {/* Country and Phone Number */}
+            <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
+              <div>
+                <label htmlFor="country" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Country
+                </label>
+                <select
+                  id="country"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                  required
+                >
+                  {COUNTRIES.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name} ({country.prefix})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Phone Number */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleInputChange}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                    placeholder="+260978516926"
-                  />
-                </div>
+              <div>
+                <label htmlFor="phone_number" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  id="phone_number"
+                  type="tel"
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleInputChange}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                  placeholder="+260 978 516 926"
+                  required
+                />
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  Use the selected country code and enter the full phone number.
+                </p>
+              </div>
+            </div>
 
-                {/* Date of Birth */}
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Date of Birth
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      name="date_of_birth"
-                      value={formData.date_of_birth}
-                      onChange={handleInputChange}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                    />
-                    <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
-                  </div>
-                </div>
+            {/* Date of Birth */}
+            <div>
+              <label htmlFor="date_of_birth" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  id="date_of_birth"
+                  type="date"
+                  name="date_of_birth"
+                  value={formData.date_of_birth}
+                  onChange={handleInputChange}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-cyan-600 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                  required
+                />
+                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 dark:text-slate-400 pointer-events-none" />
+              </div>
+            </div>
 
                 {/* NRC Number */}
                 <div>
@@ -586,6 +589,7 @@ export default function SignupPage() {
             {/* Terms & Conditions */}
             <div className="flex items-start gap-3">
               <input
+                id="agreeTerms"
                 type="checkbox"
                 name="agreeTerms"
                 checked={formData.agreeTerms}
@@ -593,7 +597,7 @@ export default function SignupPage() {
                 className="mt-1 h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-600"
                 required
               />
-              <label className="text-sm text-slate-600 dark:text-slate-400">
+              <label htmlFor="agreeTerms" className="text-sm text-slate-600 dark:text-slate-400">
                 I agree to the{" "}
                 <Link
                   href="#"
