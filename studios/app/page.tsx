@@ -164,7 +164,15 @@ export default function HomePage() {
 
               <div className="mt-10 flex flex-wrap items-center gap-4 text-sm text-slate-200">
                 <div className="flex items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
-                  <Image src="/logo-dark.png" alt="Geco Games Studios logo" width={32} height={32} className="object-contain" />
+                  <video
+                    src={encodeURI("/animated logo .mp4")}
+                    aria-label="Geco Games Studios animated logo"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-8 w-8 object-contain"
+                  />
                   <span>Studio brand identity</span>
                 </div>
                 <div className="rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">

@@ -209,12 +209,14 @@ export default function SignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <div className="relative h-12 w-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg">
-              <Image
-                src="/logo-dark.png"
-                alt="GECO"
-                width={40}
-                height={40}
-                className="object-contain"
+              <video
+                src={encodeURI("/animated logo .mp4")}
+                aria-label="GECO animated logo"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-contain"
               />
             </div>
           </div>

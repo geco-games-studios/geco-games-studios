@@ -4,7 +4,6 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react"
-import Image from "next/image"
 
 function decodeJwt(token: string) {
   try {
@@ -124,13 +123,15 @@ export default function LoginPage() {
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl dark:bg-slate-800/50 dark:border-slate-700/50 transition-all duration-300 hover:shadow-cyan-500/20">
           {/* Logo Section */}
           <div className="flex justify-center mb-8 animate-fade-in">
-            <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/50 hover:scale-110 transition-transform duration-300">
-              <Image
-                src="/logo-dark.png"
-                alt="GECO"
-                width={48}
-                height={48}
-                className="object-contain filter brightness-0 invert"
+            <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/50 hover:scale-110 transition-transform duration-300">
+              <video
+                src="/animated logo .mp4"
+                aria-label="GECO animated logo"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
               />
             </div>
           </div>

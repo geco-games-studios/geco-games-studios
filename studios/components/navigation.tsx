@@ -131,7 +131,15 @@ export default function Navigation() {
         <div className="container mx-auto flex items-center justify-between px-4 py-4 lg:px-6">
           <Link href="/" className="flex flex-col items-center gap-1">
             <div className="relative h-10 w-10 overflow-hidden rounded-2xl bg-white shadow-lg">
-              <Image src="/logo-dark.png" alt="Geco Games Studios logo" width={40} height={40} className="object-contain" />
+              <video
+                src={encodeURI("/animated logo .mp4")}
+                aria-label="Geco Games Studios animated logo"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-contain"
+              />
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">Creative Game Studio</p>
           </Link>

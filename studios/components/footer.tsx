@@ -59,7 +59,15 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-3xl bg-white shadow-sm">
-                <Image src="/logo-dark.png" alt="Geco Games Studios logo" width={48} height={48} className="object-contain" />
+                <video
+                  src={encodeURI("/animated logo .mp4")}
+                  aria-label="Geco Games Studios animated logo"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
                 <p className="text-lg font-semibold">Geco Games Studios</p>
