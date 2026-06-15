@@ -54,6 +54,25 @@ export default function SignupPage() {
 
   const passwordRequirements = validatePassword(formData.password)
 
+  const getRegistrationError = (data: any) => {
+    if (typeof data?.message === "string") return data.message
+    if (typeof data?.detail === "string") return data.detail
+
+    if (data && typeof data === "object") {
+      for (const [field, value] of Object.entries(data)) {
+        if (Array.isArray(value) && value.length > 0) {
+          return `${field}: ${value.join(", ")}`
+        }
+
+        if (typeof value === "string") {
+          return `${field}: ${value}`
+        }
+      }
+    }
+
+    return "Registration failed. Please try again."
+  }
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -193,7 +212,7 @@ export default function SignupPage() {
       }
 
       if (!response.ok) {
-        setError(data?.message || "Registration failed. Please try again.")
+        setError(getRegistrationError(data))
         setIsLoading(false)
         return
       }
@@ -214,9 +233,15 @@ export default function SignupPage() {
           }
 
       localStorage.setItem("currentUser", JSON.stringify(currentUser))
-      localStorage.setItem("pendingPhoneVerification", formData.phone_number)
 
       setIsLoading(false)
+      if (isAcademyAdmin) {
+        localStorage.removeItem("pendingPhoneVerification")
+        router.push("/login")
+        return
+      }
+
+      localStorage.setItem("pendingPhoneVerification", formData.phone_number)
       router.push("/register/verify")
     } catch (err) {
       setError("Network error. Please check your connection and try again.")

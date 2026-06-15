@@ -14,19 +14,28 @@ export async function POST(request: Request) {
       phone_number,
       nrc_number,
       date_of_birth,
+      academy_sub_type,
+      admin_key,
     } = body
 
-    if (
-      !first_name ||
-      !last_name ||
-      !email ||
-      !password ||
-      !account_type ||
-      !country ||
-      !phone_number ||
-      !nrc_number ||
-      !date_of_birth
-    ) {
+    const isAcademyAdmin =
+      account_type === "academy" && academy_sub_type === "admin"
+
+    if (!first_name || !last_name || !email || !password || !account_type) {
+      return NextResponse.json(
+        { message: "All fields are required." },
+        { status: 400 }
+      )
+    }
+
+    if (isAcademyAdmin) {
+      if (!/^\d{8}$/.test(String(admin_key || "").trim())) {
+        return NextResponse.json(
+          { message: "Enter the 8-digit admin key to create an admin account." },
+          { status: 400 }
+        )
+      }
+    } else if (!country || !phone_number || !nrc_number || !date_of_birth) {
       return NextResponse.json(
         { message: "All fields are required." },
         { status: 400 }
