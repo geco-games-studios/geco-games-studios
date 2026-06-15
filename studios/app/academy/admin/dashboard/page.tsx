@@ -456,6 +456,25 @@ function ImportCourseCard({ onImported }: { onImported: (courseId: number) => vo
   )
 }
 
+function getLessonVideoTimes(videoUrl: string | null) {
+  if (!videoUrl) return { start: "", end: "" }
+  try {
+    const url = new URL(videoUrl)
+    return {
+      start: url.searchParams.get("start") ?? "",
+      end: url.searchParams.get("end") ?? "",
+    }
+  } catch {
+    return { start: "", end: "" }
+  }
+}
+
+function getCourseVideoFromLessons(lessons: AdminLesson[]) {
+  const lessonVideo = lessons.find((lesson) => lesson.video_url)?.video_url ?? ""
+  const videoId = extractYouTubeId(lessonVideo)
+  return videoId ? `https://www.youtube.com/watch?v=${videoId}` : lessonVideo
+}
+
 function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: () => void }) {
   const [title, setTitle] = useState(course.title)
   const [description, setDescription] = useState(course.description)
@@ -464,6 +483,7 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
 
   const [modules, setModules] = useState<AdminModule[]>([])
   const [lessons, setLessons] = useState<AdminLesson[]>([])
+  const [courseVideoInput, setCourseVideoInput] = useState("")
   const [editingLesson, setEditingLesson] = useState<AdminLesson | null>(null)
   const [addingLessonTo, setAddingLessonTo] = useState<number | null>(null)
   const [newModuleTitle, setNewModuleTitle] = useState("")
@@ -472,12 +492,18 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
 
   const reloadContent = useCallback(() => {
     fetchAdminModules(course.id).then(setModules).catch(() => undefined)
-    fetchAdminLessons(course.id).then(setLessons).catch(() => undefined)
+    fetchAdminLessons(course.id)
+      .then((items) => {
+        setLessons(items)
+        setCourseVideoInput((current) => current || getCourseVideoFromLessons(items))
+      })
+      .catch(() => undefined)
   }, [course.id])
 
   useEffect(() => {
     setTitle(course.title)
     setDescription(course.description)
+    setCourseVideoInput("")
     reloadContent()
   }, [course, reloadContent])
 
@@ -531,6 +557,18 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
         <label style={s.label}>Subtitle / description</label>
         <input style={s.input} value={description} onChange={(e) => setDescription(e.target.value)} />
       </div>
+      <div style={s.courseVideoPanel}>
+        <div>
+          <label style={s.label}>Course YouTube video URL</label>
+          <div style={s.helpText}>Use one video for the whole course. Each lesson below only sets the start and end time for its segment.</div>
+        </div>
+        <input
+          style={s.input}
+          placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+          value={courseVideoInput}
+          onChange={(e) => setCourseVideoInput(e.target.value)}
+        />
+      </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button style={s.addBtn} disabled={saving} onClick={saveCourse}>{saving ? "Saving…" : "Save course"}</button>
         {saved && <span style={{ ...s.savedTag, display: "inline-flex", alignItems: "center", gap: 4 }}>Saved <Check size={12} /></span>}
@@ -581,12 +619,14 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
             <LessonEditor
               key={editingLesson.id}
               lesson={editingLesson}
+              courseVideoUrl={courseVideoInput}
               onDone={() => { setEditingLesson(null); reloadContent() }}
             />
           )}
 
           {addingLessonTo === module.id && (
             <LessonEditor
+              courseVideoUrl={courseVideoInput}
               lesson={{
                 id: 0, module: module.id, title: "", lesson_type: "video", duration: "",
                 video_url: "", notes: "", resources: [], quiz: null, activity_instructions: "",
@@ -611,20 +651,22 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
 // Lesson editor with video + quiz builder
 // ────────────────────────────────────────────────────────────────────────────
 
-function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; isNew?: boolean; onDone: () => void }) {
+function LessonEditor({ lesson, courseVideoUrl, isNew = false, onDone }: { lesson: AdminLesson; courseVideoUrl: string; isNew?: boolean; onDone: () => void }) {
   const [form, setForm] = useState({ ...lesson })
-  const [videoInput, setVideoInput] = useState(lesson.video_url ?? "")
-  const [startTime, setStartTime] = useState("")
-  const [endTime, setEndTime] = useState("")
+  const savedTimes = getLessonVideoTimes(lesson.video_url)
+  const [startTime, setStartTime] = useState(savedTimes.start)
+  const [endTime, setEndTime] = useState(savedTimes.end)
+  const videoInput = courseVideoUrl
+  const setVideoInput = (_value: string) => undefined
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const set = (key: keyof AdminLesson, value: unknown) => setForm((f) => ({ ...f, [key]: value }))
 
   function applyVideo() {
-    const id = extractYouTubeId(videoInput)
+    const id = extractYouTubeId(courseVideoUrl)
     if (!id) {
-      set("video_url", videoInput || null)
+      setError("Add the course YouTube video URL above before applying lesson times.")
       return
     }
     set("video_url", buildEmbedUrl(id, parseTime(startTime), parseTime(endTime)))
@@ -632,6 +674,8 @@ function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; 
 
   async function save() {
     if (!form.title.trim()) { setError("Lesson title is required."); return }
+    const id = extractYouTubeId(courseVideoUrl)
+    const nextVideoUrl = id ? buildEmbedUrl(id, parseTime(startTime), parseTime(endTime)) : form.video_url || null
     setSaving(true)
     setError(null)
     const payload = {
@@ -639,7 +683,7 @@ function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; 
       title: form.title.trim(),
       lesson_type: form.lesson_type,
       duration: form.duration || null,
-      video_url: form.video_url || null,
+      video_url: nextVideoUrl,
       notes: form.notes || null,
       resources: form.resources ?? [],
       quiz: form.quiz?.length ? form.quiz : null,
@@ -686,8 +730,8 @@ function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; 
       <div style={s.fieldGroup}>
         <div style={s.videoLinkHeader}>
           <div>
-            <label style={s.label}>YouTube video link and lesson segment</label>
-            <div style={s.helpText}>Paste the YouTube video, then set where this lesson should start. End time is optional.</div>
+            <label style={s.label}>Lesson video segment</label>
+            <div style={s.helpText}>This lesson uses the course video above. Set only the start and end time for this lesson.</div>
           </div>
           {form.video_url ? (
             <span style={s.videoLinkedBadge}><Video size={12} /> Video linked</span>
@@ -695,12 +739,26 @@ function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; 
             <span style={s.videoMissingBadge}><Video size={12} /> Required for video lessons</span>
           )}
         </div>
-        <label style={s.subLabel}>YouTube URL or video ID</label>
-        <div style={{ display: "flex", gap: 8 }}>
+        <label style={s.subLabel}>Course video</label>
+        <div style={s.courseVideoReference}>
+          {courseVideoUrl || "Add the course YouTube video URL above before setting lesson times."}
+        </div>
+        <div style={{ display: "none" }}>
           <input style={{ ...s.input, flex: 2 }} placeholder="https://youtube.com/watch?v=…" value={videoInput} onChange={(e) => setVideoInput(e.target.value)} />
           <input style={{ ...s.input, width: 90 }} placeholder="start 0:00" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
           <input style={{ ...s.input, width: 90 }} placeholder="end 5:30" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
           <button style={s.ghostBtn} onClick={applyVideo}>Apply</button>
+        </div>
+        <div style={s.lessonSegmentGrid}>
+          <div style={s.fieldGroup}>
+            <label style={s.subLabel}>Lesson start time</label>
+            <input style={s.input} placeholder="0:00" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+          </div>
+          <div style={s.fieldGroup}>
+            <label style={s.subLabel}>Lesson end time</label>
+            <input style={s.input} placeholder="5:30" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+          </div>
+          <button style={s.ghostBtn} onClick={applyVideo}>Preview segment</button>
         </div>
         {form.video_url && <div style={{ fontSize: 11, color: t.textMuted, fontFamily: "monospace", wordBreak: "break-all" }}>{form.video_url}</div>}
       </div>
@@ -905,11 +963,14 @@ const s: Record<string, CSSProperties> = {
   submissionBox: { marginTop: 6, padding: "8px 10px", background: t.surfaceHigh, borderRadius: 6, fontSize: 12, color: t.textSecondary, display: "flex", flexDirection: "column", gap: 4 },
   // Courses
   courseRow: { display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: t.surface, borderRadius: 10, marginBottom: 8 },
+  courseVideoPanel: { border: `1px solid ${t.primary}33`, background: t.primaryBg, borderRadius: 10, padding: 12, display: "flex", flexDirection: "column", gap: 8 },
   moduleBlock: { border: `1px solid ${t.border}`, borderRadius: 10, marginBottom: 10, overflow: "hidden" },
   moduleHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 14px", background: t.surfaceHigh },
   lessonAdminRow: { display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", borderTop: `1px solid ${t.border}` },
   lessonEditor: { padding: "14px", borderTop: `1px solid ${t.border}`, background: t.bg, display: "flex", flexDirection: "column", gap: 12 },
   videoLinkHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap", border: `1px solid ${t.primary}33`, background: t.primaryBg, borderRadius: 10, padding: 12, marginBottom: 8 },
+  courseVideoReference: { border: `1px solid ${t.border}`, background: t.surface, borderRadius: 8, padding: "9px 10px", fontSize: 12, color: t.textSecondary, wordBreak: "break-all" },
+  lessonSegmentGrid: { display: "grid", gridTemplateColumns: "minmax(120px, 160px) minmax(120px, 160px) auto", gap: 8, alignItems: "end", marginTop: 8 },
   helpText: { fontSize: 11, color: t.textMuted, marginTop: 3 },
   subLabel: { fontSize: 11, color: t.textMuted, fontWeight: 700 },
   videoLinkedBadge: { display: "inline-flex", alignItems: "center", gap: 4, border: `1px solid ${t.primary}55`, background: t.primaryBg, color: t.primary, borderRadius: 100, padding: "4px 8px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" },
