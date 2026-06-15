@@ -567,6 +567,9 @@ function CourseEditor({ course, onChanged }: { course: AdminCourse; onChanged: (
                   {lesson.video_url ? <> · <Video size={11} style={{ display: "inline", verticalAlign: "-1px" }} /></> : null}{lesson.quiz?.length ? ` · ${lesson.quiz.length}q quiz` : ""}
                 </span>
               </span>
+              <span style={lesson.video_url ? s.videoLinkedBadge : s.videoMissingBadge}>
+                <Video size={12} /> {lesson.video_url ? "Video linked" : "No video link"}
+              </span>
               <button style={s.ghostBtn} onClick={() => setEditingLesson(editingLesson?.id === lesson.id ? null : lesson)}>
                 {editingLesson?.id === lesson.id ? "Close" : "Edit"}
               </button>
@@ -681,7 +684,18 @@ function LessonEditor({ lesson, isNew = false, onDone }: { lesson: AdminLesson; 
       </div>
 
       <div style={s.fieldGroup}>
-        <label style={s.label}>Video (YouTube URL or video ID)</label>
+        <div style={s.videoLinkHeader}>
+          <div>
+            <label style={s.label}>YouTube video link and lesson segment</label>
+            <div style={s.helpText}>Paste the YouTube video, then set where this lesson should start. End time is optional.</div>
+          </div>
+          {form.video_url ? (
+            <span style={s.videoLinkedBadge}><Video size={12} /> Video linked</span>
+          ) : (
+            <span style={s.videoMissingBadge}><Video size={12} /> Required for video lessons</span>
+          )}
+        </div>
+        <label style={s.subLabel}>YouTube URL or video ID</label>
         <div style={{ display: "flex", gap: 8 }}>
           <input style={{ ...s.input, flex: 2 }} placeholder="https://youtube.com/watch?v=…" value={videoInput} onChange={(e) => setVideoInput(e.target.value)} />
           <input style={{ ...s.input, width: 90 }} placeholder="start 0:00" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
@@ -895,6 +909,11 @@ const s: Record<string, CSSProperties> = {
   moduleHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 14px", background: t.surfaceHigh },
   lessonAdminRow: { display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", borderTop: `1px solid ${t.border}` },
   lessonEditor: { padding: "14px", borderTop: `1px solid ${t.border}`, background: t.bg, display: "flex", flexDirection: "column", gap: 12 },
+  videoLinkHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap", border: `1px solid ${t.primary}33`, background: t.primaryBg, borderRadius: 10, padding: 12, marginBottom: 8 },
+  helpText: { fontSize: 11, color: t.textMuted, marginTop: 3 },
+  subLabel: { fontSize: 11, color: t.textMuted, fontWeight: 700 },
+  videoLinkedBadge: { display: "inline-flex", alignItems: "center", gap: 4, border: `1px solid ${t.primary}55`, background: t.primaryBg, color: t.primary, borderRadius: 100, padding: "4px 8px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" },
+  videoMissingBadge: { display: "inline-flex", alignItems: "center", gap: 4, border: `1px solid ${t.danger}44`, background: `${t.danger}10`, color: t.danger, borderRadius: 100, padding: "4px 8px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" },
   quizEditorCard: { border: `1px solid ${t.border}`, borderRadius: 8, padding: "12px", background: t.surface },
   correctToggle: { width: 34, borderRadius: 6, border: `1px solid ${t.border}`, cursor: "pointer", fontSize: 13, fontWeight: 700, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" },
   // Analytics

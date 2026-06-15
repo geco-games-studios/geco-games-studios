@@ -177,7 +177,7 @@ export default function AcademyDashboard() {
                       <div style={s.lessonInfo}>
                         <div style={{ ...s.lessonName, color: isNext ? t.textPrimary : t.textSecondary }}>{lesson.title}</div>
                         <div style={s.lessonMeta}>
-                          {lesson.type}
+                          {lesson.type}{lesson.video_url ? " with YouTube segment" : ""}
                           {lesson.duration ? ` · ${lesson.duration}` : ""}
                         </div>
                       </div>
