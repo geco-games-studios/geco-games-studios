@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ClipboardList, FileText, Link2, MonitorPlay, Star, XCircle } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { t } from "@/lib/academy-theme"
@@ -40,6 +40,10 @@ export default function LessonPlayerPage() {
 
   const [activeTab, setActiveTab] = useState("notes")
   const [xpToast, setXpToast] = useState<string | null>(null)
+  const [lessonFinished, setLessonFinished] = useState(false)
+  const [completing, setCompleting] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const playerRef = useRef<any>(null)
 
   useEffect(() => {
     if (!localStorage.getItem("currentUser")) {
@@ -82,6 +86,8 @@ export default function LessonPlayerPage() {
   const quiz = lesson?.quiz && lesson.quiz.length > 0 ? lesson.quiz : null
   const isActivity = lesson?.type === "activity"
   const isPureVideo = lesson?.type === "video" && !quiz && !isActivity
+  const videoSrc = lesson?.video_url ? withYouTubeApi(lesson.video_url, done) : null
+  const canCompleteLesson = !lesson?.video_url || lessonFinished || done
 
   // Reset state when navigating between lessons
   useEffect(() => {
@@ -92,9 +98,58 @@ export default function LessonPlayerPage() {
     setActivityText("")
     setActivityUrl("")
     setResubmitting(false)
+    setLessonFinished(false)
+    setCompleting(false)
     setActiveTab(isActivity ? "activity" : quiz ? "quiz" : "notes")
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonId, loading])
+
+  useEffect(() => {
+    if (!lesson || done || !lesson.video_url || lesson.type !== "video") {
+      setLessonFinished(true)
+      return
+    }
+
+    let cancelled = false
+    let cleanupPlayer: (() => void) | null = null
+
+    const initPlayer = () => {
+      const YT = (window as any).YT
+      if (cancelled || !iframeRef.current || !YT?.Player) return
+      playerRef.current?.destroy?.()
+      playerRef.current = new YT.Player(iframeRef.current, {
+        events: {
+          onStateChange: (event: { data: number }) => {
+            if (event.data === YT.PlayerState.ENDED) setLessonFinished(true)
+          },
+        },
+      })
+      cleanupPlayer = () => {
+        playerRef.current?.destroy?.()
+        playerRef.current = null
+      }
+    }
+
+    if ((window as any).YT?.Player) {
+      initPlayer()
+    } else {
+      const previousReady = (window as any).onYouTubeIframeAPIReady
+      ;(window as any).onYouTubeIframeAPIReady = () => {
+        previousReady?.()
+        initPlayer()
+      }
+      if (!document.querySelector("script[src='https://www.youtube.com/iframe_api']")) {
+        const tag = document.createElement("script")
+        tag.src = "https://www.youtube.com/iframe_api"
+        document.body.appendChild(tag)
+      }
+    }
+
+    return () => {
+      cancelled = true
+      cleanupPlayer?.()
+    }
+  }, [lesson, lessonId, done])
 
   if (loading) {
     return (
@@ -140,8 +195,16 @@ export default function LessonPlayerPage() {
     )
   }
 
+  function startNextLesson() {
+    if (!nextLesson) return
+    setTimeout(() => {
+      router.push(`/academy/lessons/${nextLesson.id}?autoplay=1`)
+    }, 1200)
+  }
+
   async function handleQuizSubmit() {
     if (!quiz) return
+    if (!canCompleteLesson) return
     if (!quiz.every((_, i) => selectedAnswers[i] != null)) return
 
     let correct = 0
@@ -158,6 +221,7 @@ export default function LessonPlayerPage() {
       if (!done) {
         const result = await completeLesson(lessonId)
         applyResult(result)
+        startNextLesson()
         showXp(`+${result.xp_awarded} XP — Quiz passed! ${correct}/${total} correct.`)
       }
     }
@@ -172,6 +236,7 @@ export default function LessonPlayerPage() {
 
   async function handleActivitySubmit() {
     if (!activityText.trim()) return
+    if (!canCompleteLesson) return
     setActivitySubmitting(true)
     try {
       const result = await completeLesson(lessonId, {
@@ -179,6 +244,7 @@ export default function LessonPlayerPage() {
         submission_url: activityUrl.trim() || undefined,
       })
       applyResult(result)
+      startNextLesson()
       setProgress((prev) =>
         prev
           ? {
@@ -202,8 +268,12 @@ export default function LessonPlayerPage() {
   }
 
   async function handleMarkComplete() {
+    if (!lessonFinished || completing) return
+    setCompleting(true)
     const result = await completeLesson(lessonId)
     applyResult(result)
+    startNextLesson()
+    setCompleting(false)
     showXp(`+${result.xp_awarded} XP — lesson complete!`)
   }
 
@@ -281,7 +351,8 @@ export default function LessonPlayerPage() {
           <div style={s.videoBox}>
             {lesson.video_url ? (
               <iframe
-                src={lesson.video_url}
+                ref={iframeRef}
+                src={videoSrc ?? lesson.video_url}
                 style={{ width: "100%", height: "100%", border: "none" }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -318,12 +389,26 @@ export default function LessonPlayerPage() {
                 {done ? (
                   <span style={s.completedBadge}><Check size={14} /> Completed</span>
                 ) : isPureVideo ? (
-                  <button style={s.completeBtn} onClick={handleMarkComplete}>Mark complete <Check size={14} /></button>
+                  <button
+                    style={{ ...s.completeBtn, opacity: lessonFinished && !completing ? 1 : 0.45 }}
+                    disabled={!lessonFinished || completing}
+                    onClick={handleMarkComplete}
+                  >
+                    {completing ? "Completing..." : "Mark complete"} <Check size={14} />
+                  </button>
                 ) : null}
               </div>
             </div>
 
             {isPureVideo && !done && (
+              <div style={s.pureVideoNote}>
+                {lessonFinished
+                  ? "Lesson finished - mark it complete to start the next lesson."
+                  : "Watch the video segment to the end to unlock Mark complete."}
+              </div>
+            )}
+
+            {false && isPureVideo && !done && (
               <div style={s.pureVideoNote}>No assessment for this lesson — mark complete when you&apos;re ready to continue.</div>
             )}
 
@@ -388,11 +473,11 @@ export default function LessonPlayerPage() {
 
                 {!quizSubmitted && !done && (
                   <button
-                    style={{ ...s.submitBtn, opacity: quiz.every((_, i) => selectedAnswers[i] != null) ? 1 : 0.5 }}
-                    disabled={!quiz.every((_, i) => selectedAnswers[i] != null)}
+                    style={{ ...s.submitBtn, opacity: canCompleteLesson && quiz.every((_, i) => selectedAnswers[i] != null) ? 1 : 0.5 }}
+                    disabled={!canCompleteLesson || !quiz.every((_, i) => selectedAnswers[i] != null)}
                     onClick={handleQuizSubmit}
                   >
-                    Submit Quiz
+                    {canCompleteLesson ? "Submit Quiz" : "Finish video to unlock quiz"}
                   </button>
                 )}
 
@@ -461,8 +546,8 @@ export default function LessonPlayerPage() {
                       onChange={(e) => setActivityUrl(e.target.value)}
                     />
                     <button
-                      style={{ ...s.submitBtn, opacity: activityText.trim() ? 1 : 0.5 }}
-                      disabled={!activityText.trim() || activitySubmitting}
+                      style={{ ...s.submitBtn, opacity: canCompleteLesson && activityText.trim() ? 1 : 0.5 }}
+                      disabled={!canCompleteLesson || !activityText.trim() || activitySubmitting}
                       onClick={handleActivitySubmit}
                     >
                       {activitySubmitting ? "Saving…" : "Submit Activity"}
@@ -493,11 +578,11 @@ export default function LessonPlayerPage() {
                 <ArrowLeft size={14} /> Previous
               </button>
               <button
-                style={{ ...s.navBtn, ...s.navBtnPrimary, opacity: nextLesson ? 1 : 0.3 }}
-                disabled={!nextLesson}
+                style={{ ...s.navBtn, ...s.navBtnPrimary, opacity: nextLesson && done ? 1 : 0.3 }}
+                disabled={!nextLesson || !done}
                 onClick={() => nextLesson && router.push(`/academy/lessons/${nextLesson.id}`)}
               >
-                Next lesson <ArrowRight size={14} />
+                {done ? "Next lesson" : "Complete to continue"} <ArrowRight size={14} />
               </button>
             </div>
           </div>
@@ -505,6 +590,18 @@ export default function LessonPlayerPage() {
       </div>
     </div>
   )
+}
+
+function withYouTubeApi(src: string, alreadyDone: boolean) {
+  try {
+    const url = new URL(src)
+    url.searchParams.set("enablejsapi", "1")
+    if (!alreadyDone) url.searchParams.set("autoplay", "1")
+    if (typeof window !== "undefined") url.searchParams.set("origin", window.location.origin)
+    return url.toString()
+  } catch {
+    return src
+  }
 }
 
 const s: Record<string, CSSProperties> = {

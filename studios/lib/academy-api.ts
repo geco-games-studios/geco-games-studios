@@ -39,6 +39,18 @@ export interface Course {
   code: string
   duration_weeks: number
   modules: CourseModule[]
+  status?: string
+  level?: string
+  lessons?: number
+  completed_lessons?: number
+  progress?: number
+  is_enrolled?: boolean
+  enrolled?: boolean
+  enrollment_status?: string | null
+  requires_payment?: boolean
+  is_paid?: boolean
+  paid?: boolean
+  price?: string | number | null
 }
 
 export interface Progress {
@@ -77,6 +89,28 @@ async function get<T>(path: string): Promise<T> {
   return res.json()
 }
 
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(body ?? {}),
+  })
+  if (res.status === 401) {
+    if (typeof window !== "undefined") window.location.href = "/login?type=student"
+    throw new Error("Not authenticated")
+  }
+  if (!res.ok) {
+    let detail = `Request failed: ${res.status}`
+    try {
+      const body = await res.json()
+      detail = body.error || body.detail || body.message || JSON.stringify(body).slice(0, 200)
+    } catch { /* keep default */ }
+    throw new Error(detail)
+  }
+  const text = await res.text()
+  return text ? JSON.parse(text) : (undefined as T)
+}
+
 export function fetchCourses(): Promise<Course[]> {
   return get<Course[]>("/api/academy/courses")
 }
@@ -87,6 +121,19 @@ export function fetchLessons(): Promise<Lesson[]> {
 
 export function fetchProgress(): Promise<Progress> {
   return get<Progress>("/api/academy/lessons/my_progress")
+}
+
+export function requestCourseEnrollment(
+  courseId: number,
+  payload?: {
+    course_title?: string
+    requires_payment?: boolean
+    student_id?: string | number | null
+    student_name?: string | null
+    student_email?: string | null
+  }
+): Promise<{ status?: string; message?: string; enrollment_status?: string }> {
+  return post(`/api/academy/courses/${courseId}/enroll`, payload ?? {})
 }
 
 export async function completeLesson(

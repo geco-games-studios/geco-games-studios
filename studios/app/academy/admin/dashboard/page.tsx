@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react"
-import { Archive, ArrowRight, BarChart3, BookOpen, Check, Flame, Link2, Package, Pencil, Plus, Trophy, Users, Video } from "lucide-react"
+import { Archive, ArrowRight, BarChart3, BookOpen, Check, Flame, Inbox, Link2, Package, Pencil, Plus, Trophy, Users, Video, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { t } from "@/lib/academy-theme"
@@ -12,8 +12,9 @@ import {
   fetchAdminModules, createAdminModule, updateAdminModule, deleteAdminModule,
   fetchAdminLessons, createAdminLesson, updateAdminLesson, deleteAdminLesson,
   importCourse, fetchOverview, extractYouTubeId, parseTime, buildEmbedUrl,
+  fetchEnrollmentRequests, updateEnrollmentRequest,
   type TraineeRow, type TraineeDetail, type AdminCourse, type AdminModule,
-  type AdminLesson, type Overview,
+  type AdminLesson, type Overview, type EnrollmentRequest,
 } from "@/lib/academy-admin-api"
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -21,6 +22,7 @@ import {
 // ────────────────────────────────────────────────────────────────────────────
 
 const TABS = [
+  ["requests", "Enrollment Requests", Inbox],
   ["trainees", "Trainees", Users],
   ["courses", "Courses & Lessons", BookOpen],
   ["analytics", "Analytics", BarChart3],
@@ -70,6 +72,7 @@ export default function AdminPanel() {
           ))}
         </div>
 
+        {tab === "requests" && <RequestsTab />}
         {tab === "trainees" && <TraineesTab />}
         {tab === "courses" && <CoursesTab />}
         {tab === "analytics" && <AnalyticsTab />}
@@ -82,6 +85,88 @@ export default function AdminPanel() {
 // ────────────────────────────────────────────────────────────────────────────
 // Trainees
 // ────────────────────────────────────────────────────────────────────────────
+
+function RequestsTab() {
+  const [requests, setRequests] = useState<EnrollmentRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  const reload = useCallback(() => {
+    setLoading(true)
+    fetchEnrollmentRequests()
+      .then(setRequests)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => { reload() }, [reload])
+
+  async function setStatus(id: string, status: EnrollmentRequest["status"]) {
+    setBusyId(id)
+    setError(null)
+    try {
+      const updated = await updateEnrollmentRequest(id, status)
+      setRequests((prev) => prev.map((request) => request.id === id ? updated : request))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not update request.")
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const pendingCount = requests.filter((request) => request.status === "pending").length
+
+  if (loading) return <div style={s.loading}>Loading enrollment requests...</div>
+
+  return (
+    <div>
+      <p style={s.sectionDesc}>
+        {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}. Use the trainee panel to complete enrollment after approval.
+      </p>
+      {error && <div style={{ ...s.loading, color: t.danger, padding: 12 }}>{error}</div>}
+      {requests.length === 0 && <div style={s.loading}>No enrollment requests yet.</div>}
+      {requests.map((request) => (
+        <div key={request.id} style={s.requestRow}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: t.textPrimary }}>{request.student_name}</span>
+              <span style={{
+                ...s.requestStatus,
+                ...(request.status === "pending" ? s.requestPending : request.status === "approved" ? s.requestApproved : s.requestDismissed),
+              }}>
+                {request.status}
+              </span>
+              {request.requires_payment && <span style={s.requestStatus}>Paid course</span>}
+            </div>
+            <div style={{ fontSize: 12, color: t.textMuted, marginTop: 4 }}>
+              {request.student_email} requested {request.course_title}
+            </div>
+            <div style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>
+              {new Date(request.requested_at).toLocaleString()}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <button
+              style={s.addBtn}
+              disabled={busyId === request.id || request.status === "approved"}
+              onClick={() => setStatus(request.id, "approved")}
+            >
+              <Check size={13} /> Approve
+            </button>
+            <button
+              style={s.dangerGhostBtn}
+              disabled={busyId === request.id || request.status === "dismissed"}
+              onClick={() => setStatus(request.id, "dismissed")}
+            >
+              <XCircle size={13} /> Dismiss
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function TraineesTab() {
   const [trainees, setTrainees] = useState<TraineeRow[]>([])
@@ -946,6 +1031,11 @@ const s: Record<string, CSSProperties> = {
   fieldGroup: { display: "flex", flexDirection: "column", gap: 6 },
   label: { fontSize: 12, fontWeight: 600, color: t.textMuted, textTransform: "uppercase", letterSpacing: "0.04em" },
   formCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "20px", display: "flex", flexDirection: "column", gap: 14, marginBottom: 20 },
+  requestRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "14px 16px", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, marginBottom: 8, flexWrap: "wrap" },
+  requestStatus: { fontSize: 11, background: t.surfaceHigh, color: t.textMuted, padding: "3px 8px", borderRadius: 100, border: `1px solid ${t.border}`, fontWeight: 700, textTransform: "capitalize" },
+  requestPending: { background: "rgba(239,159,39,0.14)", color: t.xp, border: "1px solid rgba(239,159,39,0.35)" },
+  requestApproved: { background: t.successBg, color: t.success, border: `1px solid ${t.successBorder}` },
+  requestDismissed: { background: t.dangerBg, color: t.danger, border: `1px solid ${t.dangerBorder}` },
   // Tables
   tableHeader: { display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", fontSize: 11, fontWeight: 700, color: t.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" },
   tableRow: { display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, marginBottom: 6, cursor: "pointer" },

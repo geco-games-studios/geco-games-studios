@@ -1,19 +1,20 @@
 "use client"
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react"
-import { ArrowRight, Flame } from "lucide-react"
+import { ArrowRight, BookOpen, CheckCircle2, Clock3, Flame, LockKeyhole, Send, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { t } from "@/lib/academy-theme"
-import { LessonTypeIcon, IconBox, CheckIcon } from "@/components/academy/icons"
 import {
   fetchCourses,
   fetchLessons,
   fetchProgress,
-  groupLessonsByModule,
+  requestCourseEnrollment,
   type Course,
   type Lesson,
   type Progress,
 } from "@/lib/academy-api"
+
+type CourseActionState = Record<number, "idle" | "busy" | "sent" | "error">
 
 export default function AcademyDashboard() {
   const router = useRouter()
@@ -21,9 +22,10 @@ export default function AcademyDashboard() {
   const [courses, setCourses] = useState<Course[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [progress, setProgress] = useState<Progress | null>(null)
-  const [activeCourseId, setActiveCourseId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [courseActions, setCourseActions] = useState<CourseActionState>({})
+  const [notice, setNotice] = useState<string | null>(null)
 
   useEffect(() => {
     const userData = localStorage.getItem("currentUser")
@@ -43,8 +45,6 @@ export default function AcademyDashboard() {
         setCourses(coursesData)
         setLessons(lessonsData)
         setProgress(progressData)
-        const firstWithLessons = coursesData.find((c) => lessonsData.some((l) => l.course_id === c.id))
-        setActiveCourseId((firstWithLessons ?? coursesData[0])?.id ?? null)
       })
       .catch((e) => {
         if (e.message !== "Not authenticated") setError("Could not load your courses. Please try again.")
@@ -53,25 +53,85 @@ export default function AcademyDashboard() {
   }, [router])
 
   const completed = useMemo(() => new Set(progress?.completed_lesson_ids ?? []), [progress])
-  const activeCourse = courses.find((c) => c.id === activeCourseId) ?? null
-  const courseLessons = useMemo(
-    () => lessons.filter((l) => l.course_id === activeCourseId),
-    [lessons, activeCourseId]
-  )
-  const byModule = useMemo(() => groupLessonsByModule(courseLessons), [courseLessons])
-
-  const totalLessons = courseLessons.length
-  const completedCount = courseLessons.filter((l) => completed.has(l.id)).length
-  const progressPct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
-  const nextLesson = courseLessons.find((l) => !completed.has(l.id)) ?? null
   const xp = progress?.total_xp ?? 0
   const level = progress?.level ?? 1
   const streak = progress?.streak_days ?? 0
+  const totalCompleted = lessons.filter((lesson) => completed.has(lesson.id)).length
+
+  function getCourseLessons(courseId: number) {
+    return lessons.filter((lesson) => lesson.course_id === courseId).sort((a, b) => {
+      if (a.module !== b.module) return a.module - b.module
+      return a.order - b.order
+    })
+  }
+
+  function isPaidCourse(course: Course) {
+    return Boolean(course.requires_payment || course.is_paid || course.paid || course.price)
+  }
+
+  function getEnrollmentStatus(course: Course, courseLessons: Lesson[]) {
+    const explicitStatus = course.enrollment_status || course.status || null
+    const enrolled = course.is_enrolled === true || course.enrolled === true || courseLessons.length > 0
+    if (enrolled) return explicitStatus || "enrolled"
+    if (explicitStatus && ["pending", "requested", "applied", "awaiting_payment"].includes(explicitStatus.toLowerCase())) return explicitStatus
+    return "not_enrolled"
+  }
+
+  function getNextLesson(courseLessons: Lesson[]) {
+    return courseLessons.find((lesson) => !completed.has(lesson.id)) ?? courseLessons[0] ?? null
+  }
+
+  async function handleCourseCard(course: Course) {
+    const courseLessons = getCourseLessons(course.id)
+    const status = getEnrollmentStatus(course, courseLessons).toLowerCase()
+    const nextLesson = getNextLesson(courseLessons)
+
+    if (status === "enrolled" || status === "active" || status === "completed") {
+      if (nextLesson) router.push(`/academy/lessons/${nextLesson.id}`)
+      else setNotice("This course is enrolled, but no lessons have been published yet.")
+      return
+    }
+
+    if (["pending", "requested", "applied", "awaiting_payment"].includes(status)) {
+      setNotice("Your enrollment request is already with the Academy admin team.")
+      return
+    }
+
+    setCourseActions((prev) => ({ ...prev, [course.id]: "busy" }))
+    try {
+      const paid = isPaidCourse(course)
+      const storedUser = JSON.parse(localStorage.getItem("currentUser") || "{}")
+      const result = await requestCourseEnrollment(course.id, {
+        course_title: course.title,
+        requires_payment: paid,
+        student_id: storedUser.id ?? storedUser.userId ?? storedUser.user_id ?? null,
+        student_name: storedUser.name || `${storedUser.first_name || ""} ${storedUser.last_name || ""}`.trim() || null,
+        student_email: storedUser.email || null,
+      })
+      const nextStatus = result.enrollment_status || result.status || (paid ? "pending" : "enrolled")
+      setCourses((prev) =>
+        prev.map((item) =>
+          item.id === course.id
+            ? { ...item, is_enrolled: nextStatus === "enrolled", enrollment_status: nextStatus }
+            : item
+        )
+      )
+      setCourseActions((prev) => ({ ...prev, [course.id]: "sent" }))
+      setNotice(result.message || (paid
+        ? "Application sent to the Academy admin team for approval."
+        : "You are enrolled. The Academy admin dashboard has been notified."
+      ))
+    } catch (err) {
+      console.error("Course enrollment request failed", err)
+      setCourseActions((prev) => ({ ...prev, [course.id]: "error" }))
+      setNotice("Could not send the enrollment request. Please try again or contact the Academy admin.")
+    }
+  }
 
   if (loading) {
     return (
       <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
-        <span style={{ color: t.textMuted, fontSize: 14 }}>Loading your dashboard…</span>
+        <span style={{ color: t.textMuted, fontSize: 14 }}>Loading your dashboard...</span>
       </div>
     )
   }
@@ -89,19 +149,21 @@ export default function AcademyDashboard() {
       <div style={s.container}>
         <div style={s.hero}>
           <div>
-            <h1 style={s.heroTitle}>Welcome back, {userName.split(" ")[0]}</h1>
-            <p style={s.heroSub}>Keep building. Every lesson gets you closer to shipping your first African game.</p>
+            <h1 style={s.heroTitle}>Your enrolled courses</h1>
+            <p style={s.heroSub}>Welcome back, {userName.split(" ")[0]}. Pick up exactly where you left off.</p>
           </div>
-          {nextLesson && (
-            <button style={s.resumeBtn} onClick={() => router.push(`/academy/lessons/${nextLesson.id}`)}>
-              Continue learning <ArrowRight size={16} />
-            </button>
-          )}
         </div>
+
+        {notice && (
+          <div style={s.notice}>
+            <span>{notice}</span>
+            <button style={s.noticeClose} onClick={() => setNotice(null)}>Dismiss</button>
+          </div>
+        )}
 
         <div style={s.statsRow}>
           <div style={s.statCard}>
-            <div style={s.statVal}>{completedCount}</div>
+            <div style={s.statVal}>{totalCompleted}</div>
             <div style={s.statLabel}>Lessons complete</div>
           </div>
           <div style={s.statCard}>
@@ -118,82 +180,77 @@ export default function AcademyDashboard() {
           </div>
         </div>
 
-        <div style={s.progressWrap}>
-          <div style={s.progressHeader}>
-            <span style={s.progressLabel}>Overall progress</span>
-            <span style={s.progressLabel}>{completedCount} / {totalLessons} lessons · {progressPct}%</span>
-          </div>
-          <div style={s.progressTrack}>
-            <div style={{ ...s.progressFill, width: `${progressPct}%` }} />
-          </div>
+        <div style={s.courseGrid}>
+          {courses.map((course) => {
+            const courseLessons = getCourseLessons(course.id)
+            const completedCount = courseLessons.filter((lesson) => completed.has(lesson.id)).length
+            const totalLessons = courseLessons.length || course.lessons || 0
+            const progressPct = course.progress ?? (totalLessons ? Math.round((completedCount / totalLessons) * 100) : 0)
+            const nextLesson = getNextLesson(courseLessons)
+            const rawStatus = getEnrollmentStatus(course, courseLessons)
+            const status = rawStatus.toLowerCase()
+            const enrolled = status === "enrolled" || status === "active" || status === "completed"
+            const pending = ["pending", "requested", "applied", "awaiting_payment"].includes(status)
+            const paid = isPaidCourse(course)
+            const actionState = courseActions[course.id] ?? "idle"
+            const actionLabel = enrolled
+              ? nextLesson ? "Continue learning" : "No lessons yet"
+              : pending || actionState === "sent"
+                ? "Request sent"
+                : paid
+                  ? "Apply to enroll"
+                  : "Enroll now"
+
+            return (
+              <button
+                key={course.id}
+                style={s.courseCard}
+                onClick={() => handleCourseCard(course)}
+                disabled={actionState === "busy"}
+              >
+                <div style={s.cardTop}>
+                  <div style={s.courseIcon}>
+                    {enrolled ? <BookOpen size={22} /> : paid ? <LockKeyhole size={22} /> : <Send size={22} />}
+                  </div>
+                  <span style={{
+                    ...s.statusBadge,
+                    ...(enrolled ? s.statusActive : pending || actionState === "sent" ? s.statusPending : s.statusOpen),
+                  }}>
+                    {enrolled ? "Enrolled" : pending || actionState === "sent" ? "Pending admin" : paid ? "Paid course" : "Open enrollment"}
+                  </span>
+                </div>
+
+                <div style={s.cardTitle}>{course.title}</div>
+                <p style={s.cardDescription}>{course.description || "Course details will appear here once published."}</p>
+
+                <div style={s.cardStats}>
+                  <span><CheckCircle2 size={13} /> {completedCount}/{totalLessons} lessons</span>
+                  <span><Clock3 size={13} /> {course.duration_weeks || "Flexible"} weeks</span>
+                  <span><Star size={13} /> {progressPct}%</span>
+                </div>
+
+                <div style={s.progressTrack}>
+                  <div style={{ ...s.progressFill, width: `${Math.min(progressPct, 100)}%` }} />
+                </div>
+
+                <div style={s.cardFooter}>
+                  <span style={s.nextText}>
+                    {enrolled
+                      ? nextLesson ? `Next: ${nextLesson.title}` : "Lessons are being prepared"
+                      : paid ? "Admin approval required" : "Admin will be notified"}
+                  </span>
+                  <span style={s.cardAction}>
+                    {actionState === "busy" ? "Sending..." : actionLabel} <ArrowRight size={14} />
+                  </span>
+                </div>
+              </button>
+            )
+          })}
         </div>
 
-        {courses.length > 1 && (
-          <div style={s.courseTabs}>
-            {courses.map((c) => (
-              <button
-                key={c.id}
-                style={{ ...s.courseTab, ...(c.id === activeCourseId ? s.courseTabActive : {}) }}
-                onClick={() => setActiveCourseId(c.id)}
-              >
-                {c.title}
-              </button>
-            ))}
-          </div>
+        {courses.length === 0 && (
+          <div style={s.emptyBox}>No Academy courses are available yet. Check back soon.</div>
         )}
-
-        {activeCourse && (
-          <div style={s.courseHeader}>
-            <div>
-              <h2 style={s.sectionTitle}>{activeCourse.title}</h2>
-              <p style={s.sectionSub}>{activeCourse.description}</p>
-            </div>
-          </div>
-        )}
-
-        {totalLessons === 0 && (
-          <div style={s.emptyBox}>
-            No lessons in this course yet. Check back soon — your instructors are preparing content.
-          </div>
-        )}
-
-        {(activeCourse?.modules ?? []).map((module) => {
-          const moduleLessons = byModule.get(module.id) ?? []
-          if (moduleLessons.length === 0) return null
-          return (
-            <div key={module.id} style={s.moduleCard}>
-              <div style={s.moduleTitle}>{module.title}</div>
-              <div style={s.lessonList}>
-                {moduleLessons.map((lesson) => {
-                  const done = completed.has(lesson.id)
-                  const isNext = lesson.id === nextLesson?.id
-                  return (
-                    <div
-                      key={lesson.id}
-                      style={{ ...s.lessonRow, cursor: "pointer", background: isNext ? t.primaryBg : "transparent" }}
-                      onClick={() => router.push(`/academy/lessons/${lesson.id}`)}
-                    >
-                      <LessonTypeIcon type={lesson.type} size={34} />
-                      <div style={s.lessonInfo}>
-                        <div style={{ ...s.lessonName, color: isNext ? t.textPrimary : t.textSecondary }}>{lesson.title}</div>
-                        <div style={s.lessonMeta}>
-                          {lesson.type}{lesson.video_url ? " with YouTube segment" : ""}
-                          {lesson.duration ? ` · ${lesson.duration}` : ""}
-                        </div>
-                      </div>
-                      {done && (
-                        <IconBox size={26} radius={6} style={{ background: t.primaryBg, border: `1px solid ${t.primary}44` }}>
-                          <CheckIcon size={13} color={t.primary} />
-                        </IconBox>
-                      )}
-                      {isNext && !done && <span style={s.nextBadge}>Up next</span>}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )
-        })}
       </div>
     </div>
   )
@@ -201,33 +258,31 @@ export default function AcademyDashboard() {
 
 const s: Record<string, CSSProperties> = {
   page: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary },
-  container: { maxWidth: 760, margin: "0 auto", padding: "32px 24px" },
-  hero: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 16 },
-  heroTitle: { fontSize: 24, fontWeight: 700, color: t.textPrimary, margin: "0 0 6px" },
-  heroSub: { fontSize: 14, color: t.textMuted, maxWidth: 460, margin: 0 },
-  resumeBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "12px 22px", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 8 },
-  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 },
+  container: { maxWidth: 1120, margin: "0 auto", padding: "32px 24px" },
+  hero: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16 },
+  heroTitle: { fontSize: 28, fontWeight: 700, color: t.textPrimary, margin: "0 0 6px" },
+  heroSub: { fontSize: 14, color: t.textMuted, maxWidth: 540, margin: 0 },
+  notice: { background: t.primaryBg, border: `1px solid ${t.primary}44`, color: t.textPrimary, borderRadius: t.radiusLg, padding: "12px 14px", marginBottom: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, fontSize: 13 },
+  noticeClose: { background: "transparent", border: "none", color: t.primary, fontSize: 12, fontWeight: 700, cursor: "pointer" },
+  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 24 },
   statCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center" },
   statVal: { fontSize: 22, fontWeight: 700, color: t.textPrimary },
   statLabel: { fontSize: 12, color: t.textMuted, marginTop: 4 },
-  progressWrap: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px 20px", marginBottom: 28 },
-  progressHeader: { display: "flex", justifyContent: "space-between", marginBottom: 10 },
-  progressLabel: { fontSize: 13, color: t.textMuted },
+  courseGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 },
+  courseCard: { textAlign: "left", background: t.surface, color: t.textPrimary, border: `1px solid ${t.border}`, borderRadius: 8, padding: "18px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 14, minHeight: 280, transition: "border-color 0.15s, transform 0.15s", fontFamily: t.font },
+  cardTop: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 },
+  courseIcon: { width: 44, height: 44, borderRadius: 8, background: t.primaryBg, color: t.primary, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${t.primary}33` },
+  statusBadge: { fontSize: 11, fontWeight: 700, padding: "4px 9px", borderRadius: 100, whiteSpace: "nowrap" },
+  statusActive: { background: t.successBg, color: t.success, border: `1px solid ${t.successBorder}` },
+  statusPending: { background: "rgba(239,159,39,0.14)", color: t.xp, border: "1px solid rgba(239,159,39,0.35)" },
+  statusOpen: { background: t.surfaceHigh, color: t.textMuted, border: `1px solid ${t.border}` },
+  cardTitle: { fontSize: 18, fontWeight: 700, lineHeight: 1.25 },
+  cardDescription: { color: t.textMuted, fontSize: 13, lineHeight: 1.55, margin: 0, minHeight: 62 },
+  cardStats: { display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: t.textMuted },
   progressTrack: { height: 6, background: t.surfaceHigh, borderRadius: 3, overflow: "hidden" },
   progressFill: { height: "100%", background: t.primary, borderRadius: 3, transition: "width 0.4s" },
-  courseTabs: { display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" },
-  courseTab: { fontSize: 13, color: t.textSecondary, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 100, padding: "6px 16px", cursor: "pointer" },
-  courseTabActive: { color: t.primary, background: t.primaryBg, border: `1px solid ${t.primary}` },
-  courseHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: 700, color: t.textPrimary, margin: "0 0 4px" },
-  sectionSub: { fontSize: 13, color: t.textMuted, margin: 0 },
+  cardFooter: { marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderTop: `1px solid ${t.border}`, paddingTop: 14 },
+  nextText: { fontSize: 12, color: t.textMuted, lineHeight: 1.35 },
+  cardAction: { fontSize: 13, fontWeight: 700, color: t.primary, display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" },
   emptyBox: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "28px", textAlign: "center", color: t.textMuted, fontSize: 14 },
-  moduleCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, marginBottom: 12, overflow: "hidden" },
-  moduleTitle: { fontSize: 11, fontWeight: 700, color: t.textMuted, padding: "10px 20px", background: t.surfaceHigh, borderBottom: `1px solid ${t.border}`, textTransform: "uppercase", letterSpacing: "0.06em" },
-  lessonList: { padding: "4px 0" },
-  lessonRow: { display: "flex", alignItems: "center", gap: 14, padding: "12px 20px", transition: "background 0.15s" },
-  lessonInfo: { flex: 1 },
-  lessonName: { fontSize: 14, fontWeight: 500 },
-  lessonMeta: { fontSize: 12, color: t.textMuted, marginTop: 2 },
-  nextBadge: { fontSize: 11, background: t.primaryBg, color: t.primary, border: `1px solid ${t.primary}`, padding: "2px 10px", borderRadius: 100, fontWeight: 500 },
 }

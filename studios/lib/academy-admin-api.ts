@@ -94,6 +94,19 @@ export interface Overview {
   top_trainees: { trainee_id: number; name: string; email: string; total_xp: number; level: number; streak_days: number }[]
 }
 
+export interface EnrollmentRequest {
+  id: string
+  course_id: number
+  course_title: string
+  student_id: string | null
+  student_name: string
+  student_email: string
+  requires_payment: boolean
+  status: "pending" | "approved" | "dismissed"
+  requested_at: string
+  updated_at: string
+}
+
 function authHeaders(): Record<string, string> {
   const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null
   return {
@@ -128,6 +141,9 @@ export const enrollTrainee = (id: number, courseId: number) =>
   request(`/api/academy/admin/trainees/${id}/enroll`, { method: "POST", body: JSON.stringify({ course_id: courseId }) })
 export const unenrollTrainee = (id: number, courseId: number) =>
   request(`/api/academy/admin/trainees/${id}/unenroll`, { method: "POST", body: JSON.stringify({ course_id: courseId }) })
+export const fetchEnrollmentRequests = () => request<EnrollmentRequest[]>("/api/academy/enrollment-requests")
+export const updateEnrollmentRequest = (id: string, status: EnrollmentRequest["status"]) =>
+  request<EnrollmentRequest>("/api/academy/enrollment-requests", { method: "PATCH", body: JSON.stringify({ id, status }) })
 
 // Courses / modules / lessons
 export const fetchAdminCourses = () => request<AdminCourse[]>("/api/academy/admin/courses")
