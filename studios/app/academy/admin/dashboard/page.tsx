@@ -90,7 +90,9 @@ function RequestsTab() {
   const [requests, setRequests] = useState<EnrollmentRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [showHandled, setShowHandled] = useState(false)
 
   const reload = useCallback(() => {
     setLoading(true)
@@ -105,9 +107,11 @@ function RequestsTab() {
   async function setStatus(id: string, status: EnrollmentRequest["status"]) {
     setBusyId(id)
     setError(null)
+    setNotice(null)
     try {
       const updated = await updateEnrollmentRequest(id, status)
       setRequests((prev) => prev.map((request) => request.id === id ? updated : request))
+      setNotice(status === "approved" ? "Request approved and trainee enrolled." : "Request dismissed.")
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not update request.")
     } finally {
@@ -116,17 +120,27 @@ function RequestsTab() {
   }
 
   const pendingCount = requests.filter((request) => request.status === "pending").length
+  const handledCount = requests.length - pendingCount
+  const visibleRequests = showHandled ? requests : requests.filter((request) => request.status === "pending")
 
   if (loading) return <div style={s.loading}>Loading enrollment requests...</div>
 
   return (
     <div>
-      <p style={s.sectionDesc}>
-        {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}. Use the trainee panel to complete enrollment after approval.
-      </p>
+      <div style={{ ...s.pageTitleRow, alignItems: "center", marginBottom: 10 }}>
+        <p style={{ ...s.sectionDesc, margin: 0 }}>
+          {pendingCount} pending request{pendingCount !== 1 ? "s" : ""}.
+        </p>
+        {handledCount > 0 && (
+          <button style={s.ghostBtn} onClick={() => setShowHandled((value) => !value)}>
+            {showHandled ? "Hide handled" : `Show handled (${handledCount})`}
+          </button>
+        )}
+      </div>
       {error && <div style={{ ...s.loading, color: t.danger, padding: 12 }}>{error}</div>}
-      {requests.length === 0 && <div style={s.loading}>No enrollment requests yet.</div>}
-      {requests.map((request) => (
+      {notice && <div style={{ ...s.loading, color: t.success, padding: 12 }}>{notice}</div>}
+      {visibleRequests.length === 0 && <div style={s.loading}>{showHandled ? "No enrollment requests yet." : "No pending enrollment requests."}</div>}
+      {visibleRequests.map((request) => (
         <div key={request.id} style={s.requestRow}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -146,22 +160,24 @@ function RequestsTab() {
               {new Date(request.requested_at).toLocaleString()}
             </div>
           </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            <button
-              style={s.addBtn}
-              disabled={busyId === request.id || request.status === "approved"}
-              onClick={() => setStatus(request.id, "approved")}
-            >
-              <Check size={13} /> Approve
-            </button>
-            <button
-              style={s.dangerGhostBtn}
-              disabled={busyId === request.id || request.status === "dismissed"}
-              onClick={() => setStatus(request.id, "dismissed")}
-            >
-              <XCircle size={13} /> Dismiss
-            </button>
-          </div>
+          {request.status === "pending" && (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <button
+                style={s.addBtn}
+                disabled={busyId === request.id}
+                onClick={() => setStatus(request.id, "approved")}
+              >
+                <Check size={13} /> {busyId === request.id ? "Working..." : "Approve"}
+              </button>
+              <button
+                style={s.dangerGhostBtn}
+                disabled={busyId === request.id}
+                onClick={() => setStatus(request.id, "dismissed")}
+              >
+                <XCircle size={13} /> Dismiss
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
