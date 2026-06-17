@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react"
 import { ArrowRight, BookOpen, CheckCircle2, Clock3, Flame, LockKeyhole, Send, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { t } from "@/lib/academy-theme"
+import { useTheme } from "next-themes"
+import { academyDarkTheme, academyLightTheme, type AcademyTheme } from "@/lib/academy-theme"
 import {
   fetchCourses,
   fetchLessons,
@@ -18,6 +19,10 @@ type CourseActionState = Record<number, "idle" | "busy" | "sent" | "error">
 
 export default function AcademyDashboard() {
   const router = useRouter()
+  const { resolvedTheme } = useTheme()
+  const isLightTheme = resolvedTheme === "light"
+  const t = isLightTheme ? academyLightTheme : academyDarkTheme
+  const s = useMemo(() => createStyles(t, isLightTheme), [t, isLightTheme])
   const [userName, setUserName] = useState("Student")
   const [courses, setCourses] = useState<Course[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
@@ -256,20 +261,31 @@ export default function AcademyDashboard() {
   )
 }
 
-const s: Record<string, CSSProperties> = {
-  page: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary },
-  container: { maxWidth: 1120, margin: "0 auto", padding: "32px 24px" },
+function createStyles(t: AcademyTheme, isLightTheme: boolean): Record<string, CSSProperties> {
+  const cardSurface = isLightTheme ? t.surfaceHigh : t.surface
+
+  return {
+  page: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary, padding: isLightTheme ? "clamp(16px, 4vw, 40px) clamp(12px, 3vw, 20px)" : 0 },
+  container: {
+    maxWidth: 1120,
+    margin: "0 auto",
+    padding: isLightTheme ? "clamp(24px, 4vw, 34px) clamp(18px, 4vw, 36px)" : "32px 24px",
+    background: isLightTheme ? t.surface : "transparent",
+    border: isLightTheme ? `1px solid ${t.border}` : "none",
+    borderRadius: isLightTheme ? 22 : 0,
+    boxShadow: isLightTheme ? "0 28px 80px rgba(7,22,51,0.18)" : "none",
+  },
   hero: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16 },
   heroTitle: { fontSize: 28, fontWeight: 700, color: t.textPrimary, margin: "0 0 6px" },
   heroSub: { fontSize: 14, color: t.textMuted, maxWidth: 540, margin: 0 },
   notice: { background: t.primaryBg, border: `1px solid ${t.primary}44`, color: t.textPrimary, borderRadius: t.radiusLg, padding: "12px 14px", marginBottom: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, fontSize: 13 },
   noticeClose: { background: "transparent", border: "none", color: t.primary, fontSize: 12, fontWeight: 700, cursor: "pointer" },
   statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 24 },
-  statCard: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center" },
+  statCard: { background: cardSurface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "16px", textAlign: "center", boxShadow: isLightTheme ? "none" : `0 16px 40px ${t.primaryGlow}` },
   statVal: { fontSize: 22, fontWeight: 700, color: t.textPrimary },
   statLabel: { fontSize: 12, color: t.textMuted, marginTop: 4 },
   courseGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 },
-  courseCard: { textAlign: "left", background: t.surface, color: t.textPrimary, border: `1px solid ${t.border}`, borderRadius: 8, padding: "18px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 14, minHeight: 280, transition: "border-color 0.15s, transform 0.15s", fontFamily: t.font },
+  courseCard: { textAlign: "left", background: cardSurface, color: t.textPrimary, border: `1px solid ${t.border}`, borderRadius: 8, padding: "18px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 14, minHeight: 280, transition: "border-color 0.15s, transform 0.15s", fontFamily: t.font, boxShadow: isLightTheme ? "none" : `0 18px 46px ${t.primaryGlow}` },
   cardTop: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 },
   courseIcon: { width: 44, height: 44, borderRadius: 8, background: t.primaryBg, color: t.primary, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${t.primary}33` },
   statusBadge: { fontSize: 11, fontWeight: 700, padding: "4px 9px", borderRadius: 100, whiteSpace: "nowrap" },
@@ -285,4 +301,5 @@ const s: Record<string, CSSProperties> = {
   nextText: { fontSize: 12, color: t.textMuted, lineHeight: 1.35 },
   cardAction: { fontSize: 13, fontWeight: 700, color: t.primary, display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" },
   emptyBox: { background: t.surface, border: `1px solid ${t.border}`, borderRadius: t.radiusLg, padding: "28px", textAlign: "center", color: t.textMuted, fontSize: 14 },
+  }
 }
