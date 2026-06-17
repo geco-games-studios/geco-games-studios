@@ -153,6 +153,34 @@ export async function completeLesson(
   return res.json()
 }
 
+export async function uploadActivityFile(file: File): Promise<{ url: string; name: string; type: string; size: number }> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const res = await fetch("/api/academy/activity-upload", {
+    method: "POST",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: formData,
+  })
+
+  if (res.status === 401) {
+    if (typeof window !== "undefined") window.location.href = "/login?type=student"
+    throw new Error("Not authenticated")
+  }
+  if (!res.ok) {
+    let detail = `Upload failed: ${res.status}`
+    try {
+      const body = await res.json()
+      detail = body.error || body.detail || body.message || detail
+    } catch { /* keep default */ }
+    throw new Error(detail)
+  }
+  return res.json()
+}
+
 export function groupLessonsByModule(lessons: Lesson[]): Map<number, Lesson[]> {
   const byModule = new Map<number, Lesson[]>()
   for (const lesson of lessons) {
