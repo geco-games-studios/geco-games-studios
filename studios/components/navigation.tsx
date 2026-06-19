@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, Mail, ChevronDown } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, Mail, ChevronDown, Repeat2 } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
+import { clearAuthSession, getDashboardPathForUser } from "@/lib/auth-session"
 
 interface CurrentUser {
   email: string
@@ -33,43 +34,14 @@ export default function Navigation() {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser")
+    clearAuthSession()
     setUser(null)
     setIsUserDropdownOpen(false)
     router.push("/login")
   }
 
   const getDashboardLink = () => {
-    if (!user) return "/"
-    if (["student", "academy", "admin", "trainee"].includes(user.type)) {
-      return "/academy/dashboard"
-    }
-    if (user.type === "jampass") {
-      const subType = user.sub_user_type || user.jampass_sub_type || ""
-      if (subType === "player") {
-        return "/jampass/player/dashboard"
-      }
-      return "/jampass"
-    }
-    if (user.type === "player") {
-      return "/jampass/player/dashboard"
-    }
-    if (user.type === "outlet") {
-      return "/jampass"
-    }
-    if (user.type === "market") {
-      return "/marketplace"
-    }
-    if (user.type === "developer") {
-      return "/developer/dashboard"
-    }
-    if (user.type === "gamer") {
-      return "/gamer/dashboard"
-    }
-    if (user.type === "customer") {
-      return "/customer/dashboard"
-    }
-    return "/"
+    return getDashboardPathForUser(user)
   }
 
   const navItems = [
@@ -264,6 +236,15 @@ export default function Navigation() {
                     </div>
 
                     <Link
+                      href="/select-service"
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                    >
+                      <Repeat2 className="h-4 w-4" />
+                      Switch Service
+                    </Link>
+
+                    <Link
                       href={getDashboardLink()}
                       className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
                       onClick={() => setIsUserDropdownOpen(false)}
@@ -352,6 +333,13 @@ export default function Navigation() {
           })}
           {user ? (
             <>
+              <Link
+                href="/select-service"
+                className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Switch Service
+              </Link>
               <Link
                 href={getDashboardLink()}
                 className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white"
