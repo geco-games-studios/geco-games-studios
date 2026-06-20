@@ -10,6 +10,7 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 const execFileAsync = promisify(execFile)
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://system.gecogames.com/api/v1/test").replace(/(^['"]|['"]$)/g, "").replace(/\/+$/g, "")
 const MAX_ZIP_BYTES = 350 * 1024 * 1024
 const DEPLOY_ROOT = path.join(process.cwd(), "public", "play")
 const REGISTRY_PATH = path.join(process.cwd(), "data", "webgl-deployments.json")
@@ -163,14 +164,39 @@ async function runExtractor(zipPath: string, stagingDir: string): Promise<Extrac
   throw new Error(lastError instanceof Error ? lastError.message : "Python is required to extract WebGL build zips.")
 }
 
-function requireAuth(request: NextRequest) {
+async function requireDeveloperAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization")
-  return Boolean(authHeader?.startsWith("Bearer "))
+  if (!authHeader?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Missing authorization header" }, { status: 401 })
+  }
+
+  const profileResponse = await fetch(`${API_BASE_URL}/users/me/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader,
+    },
+    cache: "no-store",
+  })
+
+  if (!profileResponse.ok) {
+    return NextResponse.json({ error: "Invalid or expired session." }, { status: 401 })
+  }
+
+  const profile = await profileResponse.json()
+  const accountType = String(profile?.type || profile?.account_type || profile?.service || "").toLowerCase()
+
+  if (accountType !== "developer") {
+    return NextResponse.json({ error: "Developer access is required." }, { status: 403 })
+  }
+
+  return null
 }
 
 export async function GET(request: NextRequest) {
-  if (!requireAuth(request)) {
-    return NextResponse.json({ error: "Missing authorization header" }, { status: 401 })
+  const authError = await requireDeveloperAuth(request)
+  if (authError) {
+    return authError
   }
 
   const deployments = await readRegistry()
@@ -178,8 +204,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!requireAuth(request)) {
-    return NextResponse.json({ error: "Missing authorization header" }, { status: 401 })
+  const authError = await requireDeveloperAuth(request)
+  if (authError) {
+    return authError
   }
 
   const tempRoot = path.join(os.tmpdir(), "geco-webgl-deploy", randomUUID())
