@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react"
 import {
@@ -77,16 +76,12 @@ export default function SelectServicePage() {
       return
     }
 
-    if (card.state !== "active") {
-      router.push(card.service.onboardingPath)
-      return
-    }
-
     setBusyService(card.service.id)
     setNotice("")
 
     try {
-      const response = await fetch(`/api/auth/services/${card.service.id}/select`, {
+      const endpoint = card.state === "active" ? "select" : "enroll"
+      const response = await fetch(`/api/auth/services/${card.service.id}/${endpoint}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -95,11 +90,13 @@ export default function SelectServicePage() {
         body: JSON.stringify({ service_id: card.service.id }),
       })
 
+      const data = await response.json().catch(() => ({}))
       if (response.ok) {
-        const data = await response.json()
         if (data.access || data.user || data.current_user || data.profile) {
           persistAuthSession(data)
         }
+      } else {
+        setNotice(data.message || "Service permissions could not be refreshed from the server. Opening with your saved GECO session.")
       }
     } catch {
       setNotice("Service permissions could not be refreshed from the server. Opening with your saved GECO session.")
@@ -160,7 +157,7 @@ export default function SelectServicePage() {
                           : "bg-slate-700 text-slate-200"
                       }`}
                     >
-                      {card.state === "active" ? "Active profile" : "Onboarding required"}
+                      {card.state === "active" ? "Active profile" : "Available"}
                     </span>
                   </div>
                   <h2 className="text-xl font-bold">{card.service.name}</h2>
@@ -168,23 +165,11 @@ export default function SelectServicePage() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-sm font-semibold text-cyan-200">
-                  <span>{card.state === "active" ? "Enter service" : "Join service"}</span>
+                  <span>Enter service</span>
                   {busyService === card.service.id ? <Loader2 className="h-4 w-4 animate-spin" /> : card.state === "active" ? <CheckCircle2 className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                 </div>
               </>
             )
-
-            if (card.state !== "active") {
-              return (
-                <Link
-                  key={card.service.id}
-                  href={card.service.onboardingPath}
-                  className="flex min-h-56 flex-col justify-between rounded-lg border border-white/15 bg-white/10 p-6 text-left transition hover:border-cyan-300/60 hover:bg-white/15"
-                >
-                  {content}
-                </Link>
-              )
-            }
 
             return (
               <button
