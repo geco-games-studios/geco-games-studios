@@ -11,6 +11,7 @@ const navItems = [
   { href: "/developer/dashboard", label: "Dashboard" },
   { href: "/developer/profile", label: "Profile" },
   { href: "/developer/games", label: "My Games" },
+  { href: "/developer/webgl-deploy", label: "WebGL Deploy" },
   { href: "/developer/analytics", label: "Analytics" },
   { href: "/developer/leaderboards", label: "Leaderboards" },
   { href: "/developer/communities", label: "Communities" },
