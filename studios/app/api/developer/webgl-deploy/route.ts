@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic"
 const execFileAsync = promisify(execFile)
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://system.gecogames.com/api/v1/test").replace(/(^['"]|['"]$)/g, "").replace(/\/+$/g, "")
 const MAX_ZIP_BYTES = 350 * 1024 * 1024
-const DEPLOY_ROOT = path.join(process.cwd(), "public", "play")
+const DEPLOY_ROOT = path.join(process.cwd(), "public", "webgl")
 const REGISTRY_PATH = path.join(process.cwd(), "data", "webgl-deployments.json")
 
 type Deployment = {

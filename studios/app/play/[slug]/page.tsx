@@ -17,7 +17,7 @@ export default async function WebGLPlayerPage({ params }: PageProps) {
   return (
     <main className="fixed inset-0 z-[100] bg-black">
       <iframe
-        src={`/play/${slug}/index.html`}
+        src={`/webgl/${slug}/index.html`}
         title={`${slug} WebGL Player`}
         className="h-full w-full border-0"
         allow="fullscreen; autoplay"
