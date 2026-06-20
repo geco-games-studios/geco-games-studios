@@ -16,6 +16,7 @@ import {
   Loader2,
   UploadCloud,
 } from "lucide-react"
+import { canAccessService } from "@/lib/auth-session"
 
 type Deployment = {
   title: string
@@ -74,7 +75,7 @@ export default function WebGLDeployPage() {
 
     try {
       const parsedUser = JSON.parse(userData)
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }

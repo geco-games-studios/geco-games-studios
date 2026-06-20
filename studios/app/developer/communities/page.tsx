@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Search, Users, PlusCircle, ArrowRight, CheckCircle2, XCircle } from "lucide-react"
 import { fetchJson, postJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 interface Community {
   id: number
@@ -51,7 +52,7 @@ export default function DeveloperCommunitiesPage() {
     }
 
     const parsedUser = JSON.parse(userData)
-    if (parsedUser.type !== "developer") {
+    if (!canAccessService(parsedUser, "developer")) {
       router.push("/login")
       return
     }

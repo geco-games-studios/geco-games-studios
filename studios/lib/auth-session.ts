@@ -224,6 +224,21 @@ export function hasServiceProfile(user: CurrentUser | null, service: GecoService
   })
 }
 
+export function canAccessService(user: CurrentUser | null, serviceId: GecoServiceId) {
+  const service = GECO_SERVICES.find((item) => item.id === serviceId)
+  if (!service || !user) return false
+
+  if (hasServiceProfile(user, service)) return true
+
+  const activeService =
+    typeof window !== "undefined"
+      ? localStorage.getItem("activeGecoService") || user.active_service
+      : user.active_service
+
+  const normalizedActiveService = String(activeService || "").toLowerCase()
+  return [service.id, service.id.replace("-", "_")].includes(normalizedActiveService)
+}
+
 export function getDashboardPathForUser(user: CurrentUser | null) {
   if (!user) return "/"
   if (user.is_staff || user.type === "admin" || user.academy_sub_type === "admin") return "/academy/admin/dashboard"
@@ -232,5 +247,17 @@ export function getDashboardPathForUser(user: CurrentUser | null) {
 }
 
 export function setActiveService(serviceId: GecoServiceId) {
-  if (typeof window !== "undefined") localStorage.setItem("activeGecoService", serviceId)
+  if (typeof window === "undefined") return
+
+  localStorage.setItem("activeGecoService", serviceId)
+
+  const rawUser = localStorage.getItem("currentUser")
+  if (!rawUser) return
+
+  try {
+    const user = JSON.parse(rawUser)
+    localStorage.setItem("currentUser", JSON.stringify({ ...user, active_service: serviceId }))
+  } catch {
+    // Keep the active service marker even if the stored profile is malformed.
+  }
 }

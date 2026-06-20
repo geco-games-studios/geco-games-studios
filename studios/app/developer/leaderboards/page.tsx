@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LogOut, Plus, Trash2, Edit2, CheckCircle, Loader2 } from "lucide-react"
 import { fetchJson, postJson, putJson, deleteJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 interface User {
   type: string
@@ -64,7 +65,7 @@ export default function DeveloperLeaderboardsPage() {
       }
 
       const parsedUser = JSON.parse(userData) as User
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }
