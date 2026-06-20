@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api/v1/test"
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://system.gecogames.com/api/v1/test" //production_test
+import { getApiUrl } from "@/lib/api"
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch current user profile from backend
-    const apiUrl = `${API_BASE_URL}users/me/`
+    const apiUrl = getApiUrl("users/me/")
     console.log("Making request to backend:", apiUrl)
 
     const response = await fetch(apiUrl, {
@@ -73,7 +71,7 @@ export async function PATCH(request: NextRequest) {
     console.log("Update payload:", body)
 
     // Update current user profile on backend
-    const apiUrl = `${API_BASE_URL}users/me/`
+    const apiUrl = getApiUrl("users/me/")
     console.log("Making PATCH request to backend:", apiUrl)
 
     const response = await fetch(apiUrl, {

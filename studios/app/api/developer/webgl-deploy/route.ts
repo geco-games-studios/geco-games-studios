@@ -30,6 +30,16 @@ type ExtractSummary = {
   sizeBytes: number
 }
 
+type ServiceProfileLike = {
+  service?: string
+  service_id?: string
+  id?: string
+  slug?: string
+  status?: string
+  state?: string
+  active?: boolean
+}
+
 const extractorScript = String.raw`
 import json
 import os
@@ -123,6 +133,26 @@ function getBaseUrl(request: NextRequest) {
   return `${proto}://${host}`
 }
 
+function hasDeveloperServiceProfile(profile: any) {
+  const accountType = String(profile?.type || profile?.account_type || profile?.service || "").toLowerCase()
+  if (accountType === "developer") {
+    return true
+  }
+
+  const profileLists = [profile?.services, profile?.service_profiles].filter(Array.isArray) as ServiceProfileLike[][]
+  return profileLists.some((profiles) =>
+    profiles.some((serviceProfile) => {
+      const serviceId = String(
+        serviceProfile?.service || serviceProfile?.service_id || serviceProfile?.id || serviceProfile?.slug || "",
+      ).toLowerCase()
+      const state = String(serviceProfile?.status || serviceProfile?.state || "").toLowerCase()
+      const isActive = serviceProfile?.active === true || state === "active" || state === ""
+
+      return serviceId === "developer" && isActive
+    }),
+  )
+}
+
 async function readRegistry(): Promise<Deployment[]> {
   try {
     const content = await fs.readFile(REGISTRY_PATH, "utf8")
@@ -184,9 +214,8 @@ async function requireDeveloperAuth(request: NextRequest) {
   }
 
   const profile = await profileResponse.json()
-  const accountType = String(profile?.type || profile?.account_type || profile?.service || "").toLowerCase()
 
-  if (accountType !== "developer") {
+  if (!hasDeveloperServiceProfile(profile)) {
     return NextResponse.json({ error: "Developer access is required." }, { status: 403 })
   }
 
