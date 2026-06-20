@@ -151,10 +151,10 @@ export default function UnityLeaderboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#07196d] bg-[linear-gradient(rgba(7,25,109,.84),rgba(0,111,207,.84)),url('/leaderboard-reference.webp')] bg-cover bg-center px-4 py-10 text-white">
-      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[410px_1fr]">
-        <section className="overflow-hidden rounded-[28px] border-8 border-[#061238] bg-gradient-to-b from-[#10a9f6] via-[#096bd0] to-[#052481] shadow-2xl">
-          <header className="grid h-24 grid-cols-[46px_1fr_auto_42px] items-center gap-2 border-b-4 border-[#05206c] bg-gradient-to-b from-[#16c1ff] to-[#0c7adb] px-3 pt-5">
+    <div data-leaderboard-root className="min-h-screen w-full overflow-x-hidden bg-[#07196d] bg-[linear-gradient(rgba(7,25,109,.84),rgba(0,111,207,.84)),url('/leaderboard-reference.webp')] bg-cover bg-center px-0 py-0 text-white sm:px-4 sm:py-10">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-8 lg:mx-auto lg:max-w-6xl lg:grid-cols-[410px_1fr]">
+        <section data-phone-shell className="w-full min-w-0 max-w-full overflow-hidden rounded-none border-0 border-[#061238] bg-gradient-to-b from-[#10a9f6] via-[#096bd0] to-[#052481] shadow-2xl sm:mx-auto sm:max-w-[410px] sm:rounded-[28px] sm:border-8">
+          <header className="grid h-24 min-w-0 grid-cols-[46px_minmax(0,1fr)_auto_42px] items-center gap-2 border-b-4 border-[#05206c] bg-gradient-to-b from-[#16c1ff] to-[#0c7adb] px-3 pt-5">
             <div className="grid h-11 w-11 place-items-center rounded-xl border-2 border-[#29baff] bg-gradient-to-b from-[#1973d0] to-[#083f9f] text-sm font-black shadow-inner">
               LV
             </div>
@@ -173,7 +173,7 @@ export default function UnityLeaderboardPage() {
 
           <div className="m-4 rounded-xl border-4 border-[#18a9ff] bg-gradient-to-b from-[#0744a0]/95 to-[#052480]/95 p-6 text-center">
             <p className="text-lg font-black uppercase [text-shadow:0_3px_#00194f]">Prize Pool</p>
-            <h1 className="my-2 text-5xl font-black leading-none text-[#ffd51d] [text-shadow:0_4px_#8c4c00]">{totalScore} pts</h1>
+            <h1 className="my-2 break-words text-4xl font-black leading-none text-[#ffd51d] [text-shadow:0_4px_#8c4c00] sm:text-5xl">{totalScore} pts</h1>
             <p className="text-sm font-black text-[#ffd51d] [text-shadow:0_2px_#00194f]">{lastMessage}</p>
             <div className="mx-auto mt-3 w-44 rounded-full border-4 border-[#06296e] bg-[linear-gradient(90deg,#58ff24_0_34%,#d9edff_34%)] px-3 py-1 text-sm font-black text-[#061238]">
               LIVE API
@@ -192,13 +192,13 @@ export default function UnityLeaderboardPage() {
                 Reset
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid min-w-0 grid-cols-2 gap-3">
               {buttonPlayers.map((player) => {
                 const currentScore = entries.find((entry) => entry.playerId === player.playerId)?.score ?? 0
 
                 return (
                   <button
-                    className="min-h-36 rounded-xl border-2 border-[#2eafff] bg-gradient-to-b from-[#1d88e8] to-[#053d9a] p-3 text-left shadow-[0_5px_0_#031d66] active:translate-y-1 active:shadow-[0_1px_0_#031d66] disabled:opacity-60"
+                    className="min-h-36 min-w-0 rounded-xl border-2 border-[#2eafff] bg-gradient-to-b from-[#1d88e8] to-[#053d9a] p-3 text-left shadow-[0_5px_0_#031d66] active:translate-y-1 active:shadow-[0_1px_0_#031d66] disabled:opacity-60"
                     disabled={isPosting}
                     key={player.playerId}
                     onClick={() => submitScore(player.playerId, player.playerName, currentScore)}
@@ -214,7 +214,7 @@ export default function UnityLeaderboardPage() {
           </div>
         </section>
 
-        <section className="space-y-5">
+        <section className="mx-auto w-full max-w-[720px] space-y-5 px-3 pb-8 sm:px-0">
           <div className="rounded-xl border-4 border-[#18a9ff] bg-gradient-to-b from-[#0744a0] to-[#052480] p-4 shadow-2xl">
             <div className="mb-3 grid grid-cols-[36px_1fr_36px] items-center gap-3">
               <Link className="grid h-9 w-9 place-items-center rounded-lg border-2 border-[#29baff] bg-[#083f9f] font-black" href="/">
