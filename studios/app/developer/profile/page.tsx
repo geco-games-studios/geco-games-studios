@@ -39,6 +39,11 @@ interface UserProfile {
   type: string
   date_joined?: string
   updated_at?: string
+  studio_name?: string
+  phone?: string
+  country?: string
+  website?: string
+  bio?: string
 }
 
 export default function DeveloperProfilePage() {
@@ -111,13 +116,6 @@ export default function DeveloperProfilePage() {
       if (userData) {
         const parsedUser = JSON.parse(userData)
         setUser(parsedUser)
-        setFormData({
-          name: parsedUser.name || "",
-          phone: parsedUser.phone || "",
-          country: parsedUser.country || "",
-          website: parsedUser.website || "",
-          bio: parsedUser.bio || "",
-        })
         setFormData({
           name: parsedUser.name || "",
           studio_name: parsedUser.studio_name || "",

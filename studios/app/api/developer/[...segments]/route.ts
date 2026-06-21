@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://system.gecogames.com/api/v1/test").replace(/(^['"]|['"]$)/g, "").trim()
 
+type RouteContext = { params: Promise<{ segments: string[] }> }
+
 async function proxyRequest(request: NextRequest, params: Promise<{ segments: string[] }> | any) {
   try {
     const authHeader = request.headers.get("authorization")
@@ -55,22 +57,22 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function GET(request: NextRequest, { params }: RouteContext) {
   return proxyRequest(request, params)
 }
 
-export async function POST(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function POST(request: NextRequest, { params }: RouteContext) {
   return proxyRequest(request, params)
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function PATCH(request: NextRequest, { params }: RouteContext) {
   return proxyRequest(request, params)
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function PUT(request: NextRequest, { params }: RouteContext) {
   return proxyRequest(request, params)
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
   return proxyRequest(request, params)
 }

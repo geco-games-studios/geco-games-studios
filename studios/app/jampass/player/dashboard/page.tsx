@@ -121,7 +121,7 @@ export default function PlayerDashboardPage() {
             is_joined: community.is_joined ?? community.joined ?? false,
             game: community.game ?? community.game_id ?? undefined,
           }))
-          .filter((community) => community.id !== 0)
+          .filter((community: Community) => community.id !== 0)
 
         setCommunities(mappedCommunities)
         setJoinedCommunities(mappedCommunities.filter((community) => community.is_joined))

@@ -9,12 +9,16 @@ import {
   AlertTriangle,
   CheckCircle2,
   Copy,
+  Edit3,
   ExternalLink,
   FileArchive,
   Gamepad2,
   LinkIcon,
   Loader2,
+  Save,
+  Trash2,
   UploadCloud,
+  X,
 } from "lucide-react"
 import { canAccessService } from "@/lib/auth-session"
 
@@ -61,6 +65,11 @@ export default function WebGLDeployPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState<Deployment | null>(null)
   const [copiedUrl, setCopiedUrl] = useState("")
+  const [editingSlug, setEditingSlug] = useState("")
+  const [editTitle, setEditTitle] = useState("")
+  const [editSlug, setEditSlug] = useState("")
+  const [updatingSlug, setUpdatingSlug] = useState("")
+  const [deletingSlug, setDeletingSlug] = useState("")
 
   const generatedSlug = useMemo(() => slugify(title), [title])
 
@@ -178,6 +187,97 @@ export default function WebGLDeployPage() {
     window.setTimeout(() => setCopiedUrl(""), 1600)
   }
 
+  const startEditing = (deployment: Deployment) => {
+    setError("")
+    setEditingSlug(deployment.slug)
+    setEditTitle(deployment.title)
+    setEditSlug(deployment.slug)
+  }
+
+  const cancelEditing = () => {
+    setEditingSlug("")
+    setEditTitle("")
+    setEditSlug("")
+  }
+
+  const handleUpdateDeployment = async (currentSlug: string) => {
+    const cleanSlug = slugify(editSlug)
+    if (!editTitle.trim()) {
+      setError("Enter a game title before saving.")
+      return
+    }
+    if (!cleanSlug) {
+      setError("Enter a valid URL slug before saving.")
+      return
+    }
+
+    try {
+      setError("")
+      setUpdatingSlug(currentSlug)
+      const response = await fetch("/api/developer/webgl-deploy", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ currentSlug, title: editTitle.trim(), nextSlug: cleanSlug }),
+      })
+      const payload = await response.json()
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Failed to update WebGL deployment.")
+      }
+
+      const deployment = payload.deployment as Deployment
+      setDeployments((current) => current.map((item) => (item.slug === currentSlug ? deployment : item)))
+      if (success?.slug === currentSlug) {
+        setSuccess(deployment)
+      }
+      cancelEditing()
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : "Failed to update WebGL deployment.")
+    } finally {
+      setUpdatingSlug("")
+    }
+  }
+
+  const handleDeleteDeployment = async (deployment: Deployment) => {
+    const confirmed = window.confirm(`Delete ${deployment.title}? This removes the published WebGL files for /play/${deployment.slug}.`)
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setError("")
+      setDeletingSlug(deployment.slug)
+      const response = await fetch("/api/developer/webgl-deploy", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ slug: deployment.slug }),
+      })
+      const payload = await response.json()
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Failed to delete WebGL deployment.")
+      }
+
+      setDeployments((current) => current.filter((item) => item.slug !== deployment.slug))
+      if (success?.slug === deployment.slug) {
+        setSuccess(null)
+      }
+      if (editingSlug === deployment.slug) {
+        cancelEditing()
+      }
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Failed to delete WebGL deployment.")
+    } finally {
+      setDeletingSlug("")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <main className="container mx-auto px-4 py-12 lg:px-6">
@@ -189,7 +289,7 @@ export default function WebGLDeployPage() {
             </div>
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">WebGL Deploy</h2>
             <p className="mt-2 max-w-3xl text-slate-600 dark:text-slate-400">
-              Upload a zipped Unity WebGL build and publish it to a reusable GECO Games web player.
+              Upload a zipped Unity WebGL build and publish it to a reusable GECO Games web player. The share URL is controlled by the slug field, not the ZIP filename.
             </p>
           </div>
           <Link
@@ -226,6 +326,9 @@ export default function WebGLDeployPage() {
                     className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-cyan-950"
                     placeholder="word-game"
                   />
+                  <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">
+                    This slug creates /play/{slug} and maps to /webgl/{slug}/index.html.
+                  </span>
                 </label>
               </div>
 
@@ -235,7 +338,7 @@ export default function WebGLDeployPage() {
                   {file ? file.name : "Choose Unity WebGL ZIP"}
                 </span>
                 <span className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  The ZIP must contain index.html, Build, and TemplateData.
+                  The ZIP must contain index.html, Build, and TemplateData. The ZIP filename does not control the share URL.
                 </span>
                 <input
                   type="file"
@@ -305,8 +408,8 @@ export default function WebGLDeployPage() {
                 <p className="mt-1">The deployer checks for index.html, Build, and TemplateData before publishing.</p>
               </div>
               <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-950">
-                <p className="font-semibold text-slate-800 dark:text-slate-100">Overwrite behavior</p>
-                <p className="mt-1">Deploying the same slug replaces the old WebGL files and keeps the share URL stable.</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-100">URL behavior</p>
+                <p className="mt-1">The slug field controls the public link. Deploying the same slug replaces the files and keeps the share URL stable.</p>
               </div>
             </div>
           </aside>
@@ -334,41 +437,111 @@ export default function WebGLDeployPage() {
           ) : (
             <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
               <div className="divide-y divide-slate-200 dark:divide-slate-800">
-                {deployments.map((deployment) => (
-                  <div key={`${deployment.slug}-${deployment.deployedAt}`} className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-semibold text-slate-900 dark:text-white">{deployment.title}</p>
-                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                          /play/{deployment.slug}
-                        </span>
+                {deployments.map((deployment) => {
+                  const isEditing = editingSlug === deployment.slug
+                  const isBusy = updatingSlug === deployment.slug || deletingSlug === deployment.slug
+
+                  return (
+                    <div key={`${deployment.slug}-${deployment.deployedAt}`} className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+                      <div className="min-w-0">
+                        {isEditing ? (
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <label className="block">
+                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Game title</span>
+                              <input
+                                value={editTitle}
+                                onChange={(event) => setEditTitle(event.target.value)}
+                                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-cyan-950"
+                              />
+                            </label>
+                            <label className="block">
+                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Share URL slug</span>
+                              <input
+                                value={editSlug}
+                                onChange={(event) => setEditSlug(slugify(event.target.value))}
+                                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-cyan-950"
+                              />
+                            </label>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-semibold text-slate-900 dark:text-white">{deployment.title}</p>
+                              <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                /play/{deployment.slug}
+                              </span>
+                            </div>
+                            <p className="mt-2 truncate text-sm text-slate-500 dark:text-slate-400">{deployment.url}</p>
+                            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                              {new Date(deployment.deployedAt).toLocaleString()} - {deployment.files} files - {formatBytes(deployment.sizeBytes)}
+                            </p>
+                          </>
+                        )}
                       </div>
-                      <p className="mt-2 truncate text-sm text-slate-500 dark:text-slate-400">{deployment.url}</p>
-                      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                        {new Date(deployment.deployedAt).toLocaleString()} · {deployment.files} files · {formatBytes(deployment.sizeBytes)}
-                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {isEditing ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateDeployment(deployment.slug)}
+                              disabled={isBusy}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                              {updatingSlug === deployment.slug ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              onClick={cancelEditing}
+                              disabled={isBusy}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+                            >
+                              <X className="h-4 w-4" />
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => startEditing(deployment)}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+                            >
+                              <Edit3 className="h-4 w-4" />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => copyLink(deployment.url)}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+                            >
+                              {copiedUrl === deployment.url ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                              {copiedUrl === deployment.url ? "Copied" : "Copy"}
+                            </button>
+                            <a
+                              href={deployment.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              Open
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteDeployment(deployment)}
+                              disabled={deletingSlug === deployment.slug}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-70 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950"
+                            >
+                              {deletingSlug === deployment.slug ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => copyLink(deployment.url)}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
-                      >
-                        {copiedUrl === deployment.url ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        {copiedUrl === deployment.url ? "Copied" : "Copy"}
-                      </button>
-                      <a
-                        href={deployment.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Open
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}

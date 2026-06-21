@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 export const dynamic = "force-dynamic"
 
 type PageProps = {
-  params: Promise<{ slug: string }> | { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export default async function WebGLPlayerPage({ params }: PageProps) {
@@ -15,12 +15,14 @@ export default async function WebGLPlayerPage({ params }: PageProps) {
   }
 
   return (
-    <main className="fixed inset-0 z-[100] bg-black">
+    <main className="fixed inset-0 z-[100] h-dvh w-dvw overflow-hidden bg-black overscroll-none">
       <iframe
         src={`/webgl/${slug}/index.html`}
         title={`${slug} WebGL Player`}
-        className="h-full w-full border-0"
-        allow="fullscreen; autoplay"
+        className="block h-dvh w-dvw border-0"
+        allow="fullscreen; autoplay; gamepad; pointer-lock; screen-wake-lock"
+        allowFullScreen
+        scrolling="no"
       />
     </main>
   )

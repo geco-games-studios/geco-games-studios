@@ -146,7 +146,7 @@ export default function LessonPlayerPage() {
     }
 
     let cancelled = false
-    let pollTimer: ReturnType<typeof window.setInterval> | null = null
+    let pollTimer: number | null = null
     let cleanupPlayer: (() => void) | null = null
 
     const markFinishedIfAtSegmentEnd = () => {

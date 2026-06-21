@@ -69,6 +69,10 @@ export function SubmitGameDialog({
     iap_provider: "",
     has_ads: false,
     ad_provider: "",
+    screenshot_1: "",
+    screenshot_2: "",
+    screenshot_3: "",
+    screenshot_4: "",
   })
   const [fileInputs, setFileInputs] = useState<{
     game_image_file: File | null
@@ -107,6 +111,10 @@ export function SubmitGameDialog({
         iap_provider: "",
         has_ads: false,
         ad_provider: "",
+        screenshot_1: "",
+        screenshot_2: "",
+        screenshot_3: "",
+        screenshot_4: "",
       })
       setFileInputs({
         game_image_file: null,
@@ -130,6 +138,10 @@ export function SubmitGameDialog({
         iap_provider: editGame.iap_provider || "",
         has_ads: editGame.has_ads,
         ad_provider: editGame.ad_provider || "",
+        screenshot_1: editGame.screenshot_1 || "",
+        screenshot_2: editGame.screenshot_2 || "",
+        screenshot_3: editGame.screenshot_3 || "",
+        screenshot_4: editGame.screenshot_4 || "",
       })
     }
   }, [open, studioName, editGame])

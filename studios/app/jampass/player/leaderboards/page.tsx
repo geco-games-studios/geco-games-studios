@@ -135,7 +135,7 @@ export default function LeaderboardsPage() {
     [games, selectedGameId]
   )
 
-  const haveEntry = leaderboard?.leaderboard?.length > 0
+  const haveEntry = (leaderboard?.leaderboard?.length ?? 0) > 0
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white">

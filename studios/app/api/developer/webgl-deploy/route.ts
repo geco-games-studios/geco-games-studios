@@ -171,6 +171,31 @@ async function writeRegistry(deployments: Deployment[]) {
   await fs.writeFile(REGISTRY_PATH, `${JSON.stringify(deployments, null, 2)}\n`, "utf8")
 }
 
+function resolveDeployDir(slug: string) {
+  const deployRootResolved = path.resolve(DEPLOY_ROOT)
+  const deployDir = path.join(DEPLOY_ROOT, slug)
+  const deployDirResolved = path.resolve(deployDir)
+
+  if (deployDirResolved !== deployRootResolved && !deployDirResolved.startsWith(deployRootResolved + path.sep)) {
+    throw new Error("Invalid deployment path.")
+  }
+
+  return deployDir
+}
+
+function createDeploymentRecord(request: NextRequest, title: string, slug: string, summary: ExtractSummary): Deployment {
+  const baseUrl = getBaseUrl(request)
+  return {
+    title,
+    slug,
+    url: `${baseUrl}/play/${slug}`,
+    indexUrl: `${baseUrl}/webgl/${slug}/index.html`,
+    deployedAt: new Date().toISOString(),
+    files: summary.files,
+    sizeBytes: summary.sizeBytes,
+  }
+}
+
 async function runExtractor(zipPath: string, stagingDir: string): Promise<ExtractSummary> {
   const candidates = process.platform === "win32" ? ["python", "py"] : ["python3", "python"]
   let lastError: unknown
@@ -269,11 +294,10 @@ export async function POST(request: NextRequest) {
     await fs.writeFile(uploadPath, Buffer.from(await file.arrayBuffer()))
 
     const summary = await runExtractor(uploadPath, stagingDir)
-    const deployDir = path.join(DEPLOY_ROOT, slug)
-    const deployRootResolved = path.resolve(DEPLOY_ROOT)
-    const deployDirResolved = path.resolve(deployDir)
-
-    if (!deployDirResolved.startsWith(deployRootResolved + path.sep)) {
+    let deployDir: string
+    try {
+      deployDir = resolveDeployDir(slug)
+    } catch (pathError) {
       return NextResponse.json({ error: "Invalid deployment path." }, { status: 400 })
     }
 
@@ -281,17 +305,9 @@ export async function POST(request: NextRequest) {
     await fs.rm(deployDir, { recursive: true, force: true })
     await fs.rename(stagingDir, deployDir)
 
-    const baseUrl = getBaseUrl(request)
-    const deployedAt = new Date().toISOString()
-    const deployment: Deployment = {
-      title,
-      slug,
-      url: `${baseUrl}/play/${slug}`,
-      indexUrl: `${baseUrl}/play/${slug}/index.html`,
-      deployedAt,
-      files: summary.files,
-      sizeBytes: summary.sizeBytes,
-    }
+
+    const deployment = createDeploymentRecord(request, title, slug, summary)
+
 
     const deployments = await readRegistry()
     const nextDeployments = [deployment, ...deployments.filter((item) => item.slug !== slug)]
@@ -304,5 +320,102 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 })
   } finally {
     await fs.rm(tempRoot, { recursive: true, force: true }).catch(() => undefined)
+  }
+}
+export async function PATCH(request: NextRequest) {
+  const authError = await requireDeveloperAuth(request)
+  if (authError) {
+    return authError
+  }
+
+  try {
+    const body = await request.json()
+    const currentSlug = sanitizeSlug(String(body?.currentSlug || body?.slug || ""))
+    const title = String(body?.title || "").trim()
+    const nextSlug = sanitizeSlug(String(body?.nextSlug || body?.slug || currentSlug))
+
+    if (!currentSlug) {
+      return NextResponse.json({ error: "Deployment slug is required." }, { status: 400 })
+    }
+
+    if (!title) {
+      return NextResponse.json({ error: "Game title is required." }, { status: 400 })
+    }
+
+    if (!nextSlug) {
+      return NextResponse.json({ error: "A valid URL slug is required." }, { status: 400 })
+    }
+
+    const deployments = await readRegistry()
+    const existing = deployments.find((deployment) => deployment.slug === currentSlug)
+
+    if (!existing) {
+      return NextResponse.json({ error: "Deployment was not found." }, { status: 404 })
+    }
+
+    if (nextSlug !== currentSlug && deployments.some((deployment) => deployment.slug === nextSlug)) {
+      return NextResponse.json({ error: "Another deployment already uses that slug." }, { status: 409 })
+    }
+
+    if (nextSlug !== currentSlug) {
+      const fromDir = resolveDeployDir(currentSlug)
+      const toDir = resolveDeployDir(nextSlug)
+      await fs.mkdir(DEPLOY_ROOT, { recursive: true })
+      await fs.rm(toDir, { recursive: true, force: true })
+      await fs.rename(fromDir, toDir)
+    }
+
+    const baseUrl = getBaseUrl(request)
+    const updated: Deployment = {
+      ...existing,
+      title,
+      slug: nextSlug,
+      url: `${baseUrl}/play/${nextSlug}`,
+      indexUrl: `${baseUrl}/webgl/${nextSlug}/index.html`,
+    }
+
+    const nextDeployments = deployments.map((deployment) =>
+      deployment.slug === currentSlug ? updated : deployment,
+    )
+    await writeRegistry(nextDeployments)
+
+    return NextResponse.json({ ok: true, deployment: updated })
+  } catch (error) {
+    console.error("WebGL deployment update failed:", error)
+    const message = error instanceof Error ? error.message : "Failed to update WebGL deployment."
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const authError = await requireDeveloperAuth(request)
+  if (authError) {
+    return authError
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}))
+    const slugFromQuery = request.nextUrl.searchParams.get("slug") || ""
+    const slug = sanitizeSlug(String(body?.slug || slugFromQuery))
+
+    if (!slug) {
+      return NextResponse.json({ error: "Deployment slug is required." }, { status: 400 })
+    }
+
+    const deployments = await readRegistry()
+    const existing = deployments.find((deployment) => deployment.slug === slug)
+
+    if (!existing) {
+      return NextResponse.json({ error: "Deployment was not found." }, { status: 404 })
+    }
+
+    await fs.rm(resolveDeployDir(slug), { recursive: true, force: true })
+    await writeRegistry(deployments.filter((deployment) => deployment.slug !== slug))
+
+    return NextResponse.json({ ok: true, slug })
+  } catch (error) {
+    console.error("WebGL deployment delete failed:", error)
+    const message = error instanceof Error ? error.message : "Failed to delete WebGL deployment."
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

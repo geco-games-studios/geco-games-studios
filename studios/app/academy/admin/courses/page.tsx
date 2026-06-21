@@ -24,6 +24,7 @@ interface Course {
   description: string
   code: string
   duration_weeks: number
+  duration?: string
   department?: string
   level: "Beginner" | "Intermediate" | "Advanced"
   instructor?: string

@@ -53,6 +53,7 @@ interface User {
   first_name: string
   last_name: string
   email: string
+  account_type?: string
 }
 
 interface TaskSubmission {
@@ -68,6 +69,8 @@ interface TaskSubmission {
   status: "submitted" | "reviewed" | "approved" | "rejected"
   grade?: number
   feedback?: string
+  assigned_by_name?: string
+  submission_text?: string
 }
 
 export default function AdminTasksPage() {
@@ -606,7 +609,7 @@ export default function AdminTasksPage() {
                   <button
                     onClick={() => openSubmissionsModal(task)}
                     className={`flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg transition
-                      ${task.pending_reviews > 0
+                      ${(task.pending_reviews || 0) > 0
                         ? 'bg-yellow-400 text-yellow-900 animate-pulse border-2 border-yellow-600 shadow-lg hover:bg-yellow-500 dark:bg-yellow-300 dark:text-yellow-900 dark:border-yellow-500'
                         : 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800'}
                     `}

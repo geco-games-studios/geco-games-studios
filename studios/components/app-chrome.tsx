@@ -8,12 +8,13 @@ import Footer from "@/components/footer"
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isUnityLeaderboard = pathname === "/unity-leaderboard"
+  const isFullscreenExperience = isUnityLeaderboard || pathname.startsWith("/play")
 
   return (
     <>
-      {!isUnityLeaderboard ? <Navigation /> : null}
+      {!isFullscreenExperience ? <Navigation /> : null}
       <main>{children}</main>
-      {!isUnityLeaderboard ? <Footer /> : null}
+      {!isFullscreenExperience ? <Footer /> : null}
     </>
   )
 }
