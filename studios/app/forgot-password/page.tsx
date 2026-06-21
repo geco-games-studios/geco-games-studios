@@ -8,12 +8,14 @@ import Image from "next/image"
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
+  const [notRegistered, setNotRegistered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setNotRegistered(false)
     setIsLoading(true)
 
     try {
@@ -35,6 +37,9 @@ export default function ForgotPasswordPage() {
       }
 
       if (!response.ok) {
+        if (data.code === "not_registered" || data.action === "register") {
+          setNotRegistered(true)
+        }
         setError(data.message || "Failed to process reset request. Please try again.")
         setIsLoading(false)
         return
@@ -139,9 +144,17 @@ export default function ForgotPasswordPage() {
                 {error && (
                   <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-4 flex items-start gap-3 animate-shake">
                     <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-red-200">
-                      {error}
-                    </p>
+                    <div className="text-sm text-red-200">
+                      <p>{error}</p>
+                      {notRegistered && (
+                        <Link
+                          href={`/register?email=${encodeURIComponent(email)}`}
+                          className="mt-3 inline-flex rounded-lg border border-red-300/40 px-3 py-2 text-xs font-bold text-red-100 transition hover:bg-red-400/10"
+                        >
+                          Proceed to Registration
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 )}
 
