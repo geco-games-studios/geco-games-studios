@@ -43,10 +43,49 @@ type ServiceProfileLike = {
 const extractorScript = String.raw`
 import json
 import os
+import re
 import shutil
 import sys
 import zipfile
 from pathlib import PurePosixPath
+
+def safe_asset_name(name):
+    safe = re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-")
+    return safe or name
+
+def unique_parts(parts, used_paths):
+    if len(parts) < 1:
+        return parts
+
+    base = safe_asset_name(parts[-1])
+    candidate = list(parts[:-1]) + [base]
+    candidate_key = "/".join(candidate).lower()
+
+    if candidate_key not in used_paths:
+        used_paths.add(candidate_key)
+        return candidate
+
+    stem, extension = os.path.splitext(base)
+    index = 2
+    while True:
+        numbered = f"{stem}-{index}{extension}"
+        candidate = list(parts[:-1]) + [numbered]
+        candidate_key = "/".join(candidate).lower()
+        if candidate_key not in used_paths:
+            used_paths.add(candidate_key)
+            return candidate
+        index += 1
+
+def rewrite_index_file(destination, replacements):
+    index_path = os.path.join(destination, "index.html")
+    with open(index_path, "r", encoding="utf-8") as source:
+        content = source.read()
+
+    for old, new in sorted(replacements.items(), key=lambda item: len(item[0]), reverse=True):
+        content = content.replace(old, new)
+
+    with open(index_path, "w", encoding="utf-8") as output:
+        output.write(content)
 
 zip_path = sys.argv[1]
 destination = sys.argv[2]
@@ -87,11 +126,20 @@ with zipfile.ZipFile(zip_path) as archive:
             strip_top = True
 
     entries = []
+    replacements = {}
+    used_paths = set()
     for info, parts in normalized:
         output_parts = parts[1:] if strip_top else parts
         if not output_parts:
             continue
-        entries.append((info, output_parts))
+        safe_parts = unique_parts(output_parts, used_paths)
+        entries.append((info, safe_parts))
+
+        old_rel = "/".join(output_parts)
+        new_rel = "/".join(safe_parts)
+        if old_rel != new_rel:
+            replacements[old_rel] = new_rel
+            replacements[output_parts[-1]] = safe_parts[-1]
 
     names = {"/".join(parts) for _, parts in entries}
     if "index.html" not in names:
@@ -113,6 +161,9 @@ with zipfile.ZipFile(zip_path) as archive:
         os.makedirs(os.path.dirname(target), exist_ok=True)
         with archive.open(info) as source, open(target, "wb") as output:
             shutil.copyfileobj(source, output)
+
+    if replacements:
+        rewrite_index_file(destination, replacements)
 
     print(json.dumps({"files": len(entries), "sizeBytes": total}))
 `
