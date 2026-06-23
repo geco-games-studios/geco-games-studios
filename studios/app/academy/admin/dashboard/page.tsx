@@ -328,12 +328,12 @@ function TraineePanel({ traineeId }: { traineeId: number }) {
               {completion.lesson_title}
               <span style={{ color: t.textMuted, fontSize: 11 }}> · {completion.module_title} · {completion.lesson_type}</span>
             </div>
-            {completion.submission_text && (
+            {(completion.submission_text || completion.submission_url) && (
               <div style={s.submissionBox}>
-                <div style={{ whiteSpace: "pre-wrap" }}>{completion.submission_text}</div>
+                {completion.submission_text && <div style={{ whiteSpace: "pre-wrap" }}>{completion.submission_text}</div>}
                 {completion.submission_url && (
                   <a href={completion.submission_url} target="_blank" rel="noreferrer" style={{ color: t.primary, fontSize: 12, wordBreak: "break-all", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    <Link2 size={12} /> {completion.submission_url}
+                    <Link2 size={12} /> View uploaded file
                   </a>
                 )}
               </div>

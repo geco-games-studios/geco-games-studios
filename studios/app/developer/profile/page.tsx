@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LogOut, Mail, User, Phone, Globe, CheckCircle, XCircle, Clock, Award } from "lucide-react"
 import { fetchJson, putJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
@@ -76,7 +77,7 @@ export default function DeveloperProfilePage() {
       const parsedUser = JSON.parse(userData)
 
       // Only allow developer users
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }

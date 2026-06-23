@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ClipboardList, FileText, Link2, MonitorPlay, Star, XCircle } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { t } from "@/lib/academy-theme"
+import { useTheme } from "next-themes"
+import { academyDarkTheme, academyLightTheme, type AcademyTheme } from "@/lib/academy-theme"
 import { LessonTypeIcon, IconBox, PlayIcon } from "@/components/academy/icons"
 import {
   completeLesson,
@@ -11,6 +12,7 @@ import {
   fetchLessons,
   fetchProgress,
   groupLessonsByModule,
+  uploadActivityFile,
   type Course,
   type Lesson,
   type Progress,
@@ -20,6 +22,9 @@ export default function LessonPlayerPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const lessonId = Number(params.id)
+  const { resolvedTheme, theme: selectedTheme } = useTheme()
+  const t = (resolvedTheme ?? selectedTheme) === "light" ? academyLightTheme : academyDarkTheme
+  const s = useMemo(() => createStyles(t), [t])
 
   const [courses, setCourses] = useState<Course[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
@@ -34,16 +39,19 @@ export default function LessonPlayerPage() {
 
   // Activity state
   const [activityText, setActivityText] = useState("")
-  const [activityUrl, setActivityUrl] = useState("")
+  const [activityFile, setActivityFile] = useState<File | null>(null)
+  const [activityFileError, setActivityFileError] = useState<string | null>(null)
   const [activitySubmitting, setActivitySubmitting] = useState(false)
   const [resubmitting, setResubmitting] = useState(false)
 
   const [activeTab, setActiveTab] = useState("notes")
   const [xpToast, setXpToast] = useState<string | null>(null)
   const [lessonFinished, setLessonFinished] = useState(false)
+  const [videoRestartNonce, setVideoRestartNonce] = useState(0)
   const [completing, setCompleting] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const playerRef = useRef<any>(null)
+  const autoCompletingRef = useRef(false)
 
   useEffect(() => {
     if (!localStorage.getItem("currentUser")) {
@@ -85,8 +93,10 @@ export default function LessonPlayerPage() {
 
   const quiz = lesson?.quiz && lesson.quiz.length > 0 ? lesson.quiz : null
   const isActivity = lesson?.type === "activity"
-  const isPureVideo = lesson?.type === "video" && !quiz && !isActivity
+  const isAutoCompletableVideo = Boolean(lesson?.video_url) && !quiz && !isActivity
   const videoSrc = lesson?.video_url ? withYouTubeApi(lesson.video_url, done) : null
+  const videoEndSeconds = lesson?.video_url ? getYouTubeEndSeconds(lesson.video_url) : null
+  const showActivityPause = isActivity && Boolean(lesson?.video_url) && lessonFinished && !done
   const canCompleteLesson = !lesson?.video_url || lessonFinished || done
 
   // Reset state when navigating between lessons
@@ -96,22 +106,57 @@ export default function LessonPlayerPage() {
     setQuizPassed(false)
     setQuizScore({ correct: 0, total: 0 })
     setActivityText("")
-    setActivityUrl("")
+    setActivityFile(null)
+    setActivityFileError(null)
     setResubmitting(false)
     setLessonFinished(false)
+    setVideoRestartNonce(0)
     setCompleting(false)
+    autoCompletingRef.current = false
     setActiveTab(isActivity ? "activity" : quiz ? "quiz" : "notes")
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonId, loading])
 
+  async function finishVideoLesson() {
+    setLessonFinished(true)
+    if (isActivity) {
+      playerRef.current?.stopVideo?.()
+      playerRef.current?.pauseVideo?.()
+      setActiveTab("activity")
+    }
+    if (!isAutoCompletableVideo || done || autoCompletingRef.current) return
+
+    autoCompletingRef.current = true
+    setCompleting(true)
+    try {
+      const result = await completeLesson(lessonId)
+      applyResult(result)
+      if (result.xp_awarded > 0) showXp(`+${result.xp_awarded} XP - lesson complete!`)
+      else showXp("Lesson complete.")
+      startNextLesson()
+    } finally {
+      setCompleting(false)
+    }
+  }
+
   useEffect(() => {
-    if (!lesson || done || !lesson.video_url || lesson.type !== "video") {
+    if (!lesson || done || !lesson.video_url) {
       setLessonFinished(true)
       return
     }
 
     let cancelled = false
+    let pollTimer: ReturnType<typeof window.setInterval> | null = null
     let cleanupPlayer: (() => void) | null = null
+
+    const markFinishedIfAtSegmentEnd = () => {
+      if (!videoEndSeconds || autoCompletingRef.current) return
+      const player = playerRef.current
+      const currentTime = Number(player?.getCurrentTime?.())
+      if (Number.isFinite(currentTime) && currentTime >= videoEndSeconds - 1) {
+        void finishVideoLesson()
+      }
+    }
 
     const initPlayer = () => {
       const YT = (window as any).YT
@@ -119,12 +164,20 @@ export default function LessonPlayerPage() {
       playerRef.current?.destroy?.()
       playerRef.current = new YT.Player(iframeRef.current, {
         events: {
+          onReady: () => {
+            pollTimer = window.setInterval(markFinishedIfAtSegmentEnd, 1000)
+          },
           onStateChange: (event: { data: number }) => {
-            if (event.data === YT.PlayerState.ENDED) setLessonFinished(true)
+            if (event.data === YT.PlayerState.ENDED) {
+              void finishVideoLesson()
+            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.BUFFERING) {
+              markFinishedIfAtSegmentEnd()
+            }
           },
         },
       })
       cleanupPlayer = () => {
+        if (pollTimer) window.clearInterval(pollTimer)
         playerRef.current?.destroy?.()
         playerRef.current = null
       }
@@ -147,9 +200,16 @@ export default function LessonPlayerPage() {
 
     return () => {
       cancelled = true
+      if (pollTimer) window.clearInterval(pollTimer)
       cleanupPlayer?.()
     }
-  }, [lesson, lessonId, done])
+  }, [lesson, lessonId, done, videoEndSeconds, videoRestartNonce])
+
+  function handleRestartVideo() {
+    autoCompletingRef.current = false
+    setLessonFinished(false)
+    setVideoRestartNonce((nonce) => nonce + 1)
+  }
 
   if (loading) {
     return (
@@ -219,7 +279,9 @@ export default function LessonPlayerPage() {
     if (pct >= 80) {
       setQuizPassed(true)
       if (!done) {
-        const result = await completeLesson(lessonId)
+        const result = await completeLesson(lessonId, {
+          submission_text: formatQuizSubmission(quiz, selectedAnswers),
+        })
         applyResult(result)
         startNextLesson()
         showXp(`+${result.xp_awarded} XP — Quiz passed! ${correct}/${total} correct.`)
@@ -235,13 +297,19 @@ export default function LessonPlayerPage() {
   }
 
   async function handleActivitySubmit() {
-    if (!activityText.trim()) return
+    if (!activityFile) {
+      setActivityFileError("Upload a PDF or video file before submitting the activity.")
+      return
+    }
     if (!canCompleteLesson) return
     setActivitySubmitting(true)
+    setActivityFileError(null)
     try {
+      const upload = await uploadActivityFile(activityFile)
+      const submissionText = activityText.trim()
       const result = await completeLesson(lessonId, {
-        submission_text: activityText.trim(),
-        submission_url: activityUrl.trim() || undefined,
+        submission_text: submissionText || undefined,
+        submission_url: upload.url,
       })
       applyResult(result)
       startNextLesson()
@@ -252,19 +320,36 @@ export default function LessonPlayerPage() {
               submissions: {
                 ...prev.submissions,
                 [String(lessonId)]: {
-                  submission_text: activityText.trim(),
-                  submission_url: activityUrl.trim() || null,
+                  submission_text: submissionText || null,
+                  submission_url: upload.url,
                 },
               },
             }
           : prev
       )
       setResubmitting(false)
+      setActivityFile(null)
       if (result.xp_awarded > 0) showXp(`+${result.xp_awarded} XP — Activity submitted!`)
       else showXp("Submission updated.")
+    } catch (error) {
+      setActivityFileError(error instanceof Error ? error.message : "Activity upload failed.")
     } finally {
       setActivitySubmitting(false)
     }
+  }
+
+  function handleActivityFile(file: File | null) {
+    setActivityFile(file)
+    if (!file) {
+      setActivityFileError("Upload a PDF or video file before submitting the activity.")
+      return
+    }
+    if (!(file.type === "application/pdf" || file.type.startsWith("video/"))) {
+      setActivityFile(null)
+      setActivityFileError("Only PDF and video files are accepted.")
+      return
+    }
+    setActivityFileError(null)
   }
 
   async function handleMarkComplete() {
@@ -327,7 +412,7 @@ export default function LessonPlayerPage() {
                         onClick={() => router.push(`/academy/lessons/${l.id}`)}
                       >
                         {active && <div style={s.activeBar} />}
-                        <LessonTypeIcon type={l.type} size={28} />
+                        <LessonTypeIcon type={l.type} size={28} theme={t} />
                         <div>
                           <div style={{ ...s.sideTitle, color: active ? t.textPrimary : t.textSecondary }}>
                             {l.title}{completed.has(l.id) && <Check size={11} color={t.primary} style={{ display: "inline", marginLeft: 4, verticalAlign: "-1px" }} />}
@@ -351,6 +436,7 @@ export default function LessonPlayerPage() {
           <div style={s.videoBox}>
             {lesson.video_url ? (
               <iframe
+                key={`${lesson.id}-${videoRestartNonce}`}
                 ref={iframeRef}
                 src={videoSrc ?? lesson.video_url}
                 style={{ width: "100%", height: "100%", border: "none" }}
@@ -361,11 +447,19 @@ export default function LessonPlayerPage() {
               />
             ) : (
               <div style={s.videoPlaceholder}>
-                <IconBox size={64} radius={16} style={{ background: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(255,255,255,0.12)" }}>
-                  <PlayIcon size={26} />
+                <IconBox size={64} radius={16} theme={t} style={s.videoPlaceholderIcon}>
+                  <PlayIcon size={26} color={t.textPrimary} />
                 </IconBox>
                 <div style={s.videoPlaceholderText}>{lesson.title}</div>
                 <div style={s.videoPlaceholderSub}>Video coming soon — your instructor will add it shortly</div>
+              </div>
+            )}
+            {showActivityPause && (
+              <div style={s.activityVideoOverlay}>
+                <div style={s.activityVideoOverlayTitle}>Lesson Pause - Do the Activity below</div>
+                <button style={s.restartVideoBtn} onClick={handleRestartVideo}>
+                  Restart Video
+                </button>
               </div>
             )}
           </div>
@@ -388,7 +482,7 @@ export default function LessonPlayerPage() {
               <div style={s.headerActions}>
                 {done ? (
                   <span style={s.completedBadge}><Check size={14} /> Completed</span>
-                ) : isPureVideo ? (
+                ) : isAutoCompletableVideo ? (
                   <button
                     style={{ ...s.completeBtn, opacity: lessonFinished && !completing ? 1 : 0.45 }}
                     disabled={!lessonFinished || completing}
@@ -400,7 +494,7 @@ export default function LessonPlayerPage() {
               </div>
             </div>
 
-            {isPureVideo && !done && (
+            {isAutoCompletableVideo && !done && (
               <div style={s.pureVideoNote}>
                 {lessonFinished
                   ? "Lesson finished - mark it complete to start the next lesson."
@@ -408,7 +502,7 @@ export default function LessonPlayerPage() {
               </div>
             )}
 
-            {false && isPureVideo && !done && (
+            {false && isAutoCompletableVideo && !done && (
               <div style={s.pureVideoNote}>No assessment for this lesson — mark complete when you&apos;re ready to continue.</div>
             )}
 
@@ -519,7 +613,8 @@ export default function LessonPlayerPage() {
                       style={s.resubmitBtn}
                       onClick={() => {
                         setActivityText(existingSubmission.submission_text || "")
-                        setActivityUrl(existingSubmission.submission_url || "")
+                        setActivityFile(null)
+                        setActivityFileError(null)
                         setResubmitting(true)
                       }}
                     >
@@ -528,29 +623,35 @@ export default function LessonPlayerPage() {
                   </div>
                 ) : (
                   <div style={s.activityForm}>
-                    <label style={s.activityLabel}>Describe what you built or paste your notes here *</label>
+                    <label style={s.activityLabel}>Describe what you built or paste your notes here</label>
                     <textarea
                       style={s.activityTextarea}
-                      placeholder="Write about your implementation, what worked, what you learned..."
+                      placeholder="Optional notes about your implementation, what worked, or what you learned..."
                       value={activityText}
                       onChange={(e) => setActivityText(e.target.value)}
                       rows={6}
                     />
                     <label style={s.activityLabel}>
-                      Project link <span style={{ fontWeight: 400, color: t.textMuted }}>(GitHub, Google Drive, screenshot…)</span>
+                      Activity file <span style={{ fontWeight: 400, color: t.textMuted }}>(required PDF or video)</span>
                     </label>
                     <input
-                      style={s.activityInput}
-                      placeholder="https://github.com/... or a shared file link"
-                      value={activityUrl}
-                      onChange={(e) => setActivityUrl(e.target.value)}
+                      style={s.activityFileInput}
+                      type="file"
+                      accept="application/pdf,video/*"
+                      onChange={(e) => handleActivityFile(e.target.files?.[0] ?? null)}
                     />
+                    {activityFile && (
+                      <div style={s.activityFileSelected}>
+                        {activityFile.name} · {formatFileSize(activityFile.size)}
+                      </div>
+                    )}
+                    {activityFileError && <div style={s.activityFileError}>{activityFileError}</div>}
                     <button
-                      style={{ ...s.submitBtn, opacity: canCompleteLesson && activityText.trim() ? 1 : 0.5 }}
-                      disabled={!canCompleteLesson || !activityText.trim() || activitySubmitting}
+                      style={{ ...s.submitBtn, opacity: canCompleteLesson && activityFile ? 1 : 0.5 }}
+                      disabled={!canCompleteLesson || !activityFile || activitySubmitting}
                       onClick={handleActivitySubmit}
                     >
-                      {activitySubmitting ? "Saving…" : "Submit Activity"}
+                      {activitySubmitting ? "Uploading…" : "Submit Activity"}
                     </button>
                   </div>
                 )}
@@ -604,9 +705,41 @@ function withYouTubeApi(src: string, alreadyDone: boolean) {
   }
 }
 
-const s: Record<string, CSSProperties> = {
+function getYouTubeEndSeconds(src: string) {
+  try {
+    const end = Number(new URL(src).searchParams.get("end"))
+    return Number.isFinite(end) && end > 0 ? end : null
+  } catch {
+    return null
+  }
+}
+
+function formatFileSize(size: number) {
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function formatQuizSubmission(quiz: NonNullable<Lesson["quiz"]>, selectedAnswers: (number | null)[]) {
+  return quiz.map((question, index) => {
+    const selected = selectedAnswers[index]
+    const selectedLabel = selected != null ? question.options[selected] : "No answer"
+    const correctLabel = question.options[question.correct] ?? "Unknown"
+    const result = selected === question.correct ? "Correct" : "Incorrect"
+    return [
+      `Q${index + 1}: ${question.question}`,
+      `Answer: ${selectedLabel}`,
+      `Correct answer: ${correctLabel}`,
+      `Result: ${result}`,
+    ].join("\n")
+  }).join("\n\n")
+}
+
+function createStyles(t: AcademyTheme): Record<string, CSSProperties> {
+  const isLight = t === academyLightTheme
+  return {
   root: { minHeight: "100vh", background: t.bg, fontFamily: t.font, color: t.textPrimary },
-  nav: { background: t.surface, borderBottom: `1px solid ${t.border}`, height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", position: "sticky", top: 0, zIndex: 20 },
+  nav: { background: isLight ? "rgba(255,255,255,0.94)" : t.surface, borderBottom: `1px solid ${t.border}`, height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", position: "sticky", top: 0, zIndex: 20, boxShadow: isLight ? "0 8px 24px rgba(15,23,42,0.08)" : undefined, backdropFilter: isLight ? "blur(14px)" : undefined },
   backBtn: { background: "none", border: "none", fontSize: 13, color: t.textMuted, cursor: "pointer", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 5 },
   navCenter: { flex: 1, textAlign: "center" },
   navLesson: { fontSize: 14, fontWeight: 600, color: t.textPrimary },
@@ -614,7 +747,7 @@ const s: Record<string, CSSProperties> = {
   xpLabel: { fontSize: 13, fontWeight: 500, color: t.xp, display: "inline-flex", alignItems: "center", gap: 5 },
   levelLabel: { fontSize: 12, background: "rgba(239,159,39,0.15)", color: t.xp, padding: "2px 8px", borderRadius: 100, fontWeight: 600 },
   layout: { display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "calc(100vh - 56px)" },
-  sidebar: { display: "flex", flexDirection: "column", background: t.surface, borderRight: `1px solid ${t.border}`, overflowY: "auto", maxHeight: "calc(100vh - 56px)", position: "sticky", top: 56 },
+  sidebar: { display: "flex", flexDirection: "column", background: isLight ? "rgba(255,255,255,0.92)" : t.surface, borderRight: `1px solid ${t.border}`, overflowY: "auto", maxHeight: "calc(100vh - 56px)", position: "sticky", top: 56, boxShadow: isLight ? "14px 0 30px rgba(15,23,42,0.08)" : undefined, backdropFilter: isLight ? "blur(12px)" : undefined },
   sidebarHeader: { padding: "16px", borderBottom: `1px solid ${t.border}`, flexShrink: 0 },
   courseTitle: { fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 },
   progressRow: { display: "flex", justifyContent: "space-between" },
@@ -628,12 +761,16 @@ const s: Record<string, CSSProperties> = {
   sideTitle: { fontSize: 13, lineHeight: 1.3 },
   sideMeta: { fontSize: 11, color: t.textMuted, marginTop: 1 },
   main: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 56px)" },
-  videoBox: { background: "#050508", aspectRatio: "16/9", width: "100%", maxHeight: "55vh", overflow: "hidden" },
+  videoBox: { position: "relative", background: isLight ? "#071633" : "#050508", aspectRatio: "16/9", width: "100%", maxHeight: "55vh", overflow: "hidden" },
   videoPlaceholder: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, color: "#fff" },
+  videoPlaceholderIcon: { background: isLight ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.06)", border: isLight ? `1.5px solid ${t.borderStrong}` : "1.5px solid rgba(255,255,255,0.12)" },
   videoPlaceholderText: { fontSize: 16, fontWeight: 600 },
   videoPlaceholderSub: { fontSize: 12, color: t.textMuted, textAlign: "center", maxWidth: 280 },
+  activityVideoOverlay: { position: "absolute", inset: 0, zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20, padding: 24, textAlign: "center", background: isLight ? "linear-gradient(135deg, rgba(255,255,255,0.96), rgba(230,247,255,0.94))" : "rgba(5,5,8,0.94)", color: t.textPrimary },
+  activityVideoOverlayTitle: { maxWidth: 720, fontSize: "clamp(28px, 4vw, 54px)", lineHeight: 1.08, fontWeight: 800 },
+  restartVideoBtn: { background: t.primary, color: "#fff", border: "none", borderRadius: t.radius, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: `0 10px 28px ${t.primaryGlow}` },
   videoNote: { background: t.primaryBg, borderBottom: `1px solid ${t.primary}22`, padding: "8px 20px", fontSize: 12, color: t.primary, display: "flex", alignItems: "center", gap: 6 },
-  body: { padding: "24px 28px", flex: 1, background: t.bg },
+  body: { padding: "24px 28px", flex: 1, background: isLight ? "rgba(255,255,255,0.92)" : t.bg, boxShadow: isLight ? "inset 0 1px 0 rgba(255,255,255,0.65)" : undefined },
   lessonHeader: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16, gap: 16, flexWrap: "wrap" },
   lessonTitle: { fontSize: 20, fontWeight: 700, color: t.textPrimary, margin: "0 0 4px" },
   lessonMeta: { fontSize: 13, color: t.textMuted },
@@ -662,6 +799,9 @@ const s: Record<string, CSSProperties> = {
   activityLabel: { fontSize: 12, fontWeight: 600, color: t.textMuted, textTransform: "uppercase", letterSpacing: "0.04em" },
   activityTextarea: { padding: "10px 14px", border: `1px solid ${t.borderStrong}`, borderRadius: t.radius, fontSize: 14, fontFamily: "inherit", resize: "vertical", outline: "none", background: t.surfaceHigh, color: t.textPrimary },
   activityInput: { padding: "10px 14px", border: `1px solid ${t.borderStrong}`, borderRadius: t.radius, fontSize: 14, outline: "none", background: t.surfaceHigh, color: t.textPrimary },
+  activityFileInput: { padding: "12px 14px", border: `1px solid ${t.borderStrong}`, borderRadius: t.radius, fontSize: 14, outline: "none", background: t.surfaceHigh, color: t.textPrimary, cursor: "pointer" },
+  activityFileSelected: { fontSize: 13, color: t.textSecondary, background: t.primaryBg, border: `1px solid ${t.primary}44`, borderRadius: t.radius, padding: "9px 12px" },
+  activityFileError: { fontSize: 13, color: t.danger, background: t.dangerBg, border: `1px solid ${t.dangerBorder}`, borderRadius: t.radius, padding: "9px 12px" },
   submittedBox: { background: t.primaryBg, border: `1px solid ${t.primary}44`, borderRadius: t.radius, padding: "20px", display: "flex", flexDirection: "column", gap: 10 },
   submittedTitle: { fontSize: 14, fontWeight: 600, color: t.primary, display: "flex", alignItems: "center", gap: 6 },
   submittedText: { fontSize: 13, color: t.textSecondary, whiteSpace: "pre-wrap", margin: 0 },
@@ -672,4 +812,5 @@ const s: Record<string, CSSProperties> = {
   navBtn: { fontSize: 13, padding: "9px 18px", border: `1px solid ${t.border}`, borderRadius: t.radius, background: t.surfaceHigh, color: t.textSecondary, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 },
   navBtnPrimary: { background: t.primary, borderColor: t.primary, color: "#fff" },
   toast: { position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", background: t.primary, color: "#fff", padding: "10px 20px", borderRadius: 100, fontSize: 13, fontWeight: 500, zIndex: 100, boxShadow: `0 4px 24px ${t.primaryGlow}` },
+  }
 }

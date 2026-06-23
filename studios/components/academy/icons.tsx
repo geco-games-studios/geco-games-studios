@@ -1,31 +1,35 @@
 // Academy icon set — dark rounded-square container with white line icons,
 // matching the GECO Academy brand style.
 import type { CSSProperties, ReactNode } from "react"
-import { t } from "@/lib/academy-theme"
+import { academyDarkTheme, type AcademyTheme } from "@/lib/academy-theme"
 
 export function IconBox({
   size = 40,
   radius = 10,
   children,
   style = {},
+  theme = academyDarkTheme,
 }: {
   size?: number
   radius?: number
   children?: ReactNode
   style?: CSSProperties
+  theme?: AcademyTheme
 }) {
+  const isLight = theme.bg.includes("gradient")
   return (
     <div
       style={{
         width: size,
         height: size,
         borderRadius: radius,
-        background: "#0d0f1a",
-        border: `1px solid ${t.border}`,
+        background: isLight ? "#ffffff" : "#0d0f1a",
+        border: `1px solid ${theme.border}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
+        boxShadow: isLight ? "0 4px 12px rgba(15,23,42,0.08)" : undefined,
         ...style,
       }}
     >
@@ -78,18 +82,19 @@ export function LockIcon({ size = 18, color = "#fff" }: { size?: number; color?:
   )
 }
 
-export function LessonTypeIcon({ type, size = 34 }: { type: string; size?: number }) {
+export function LessonTypeIcon({ type, size = 34, theme = academyDarkTheme }: { type: string; size?: number; theme?: AcademyTheme }) {
   const inner = Math.round(size * 0.45)
+  const iconColor = theme.textPrimary
   const icon =
     type === "reading" ? (
-      <BookIcon size={inner} />
+      <BookIcon size={inner} color={iconColor} />
     ) : type === "activity" ? (
-      <WrenchIcon size={inner} />
+      <WrenchIcon size={inner} color={iconColor} />
     ) : (
-      <PlayIcon size={inner} />
+      <PlayIcon size={inner} color={iconColor} />
     )
   return (
-    <IconBox size={size} radius={Math.round(size * 0.28)}>
+    <IconBox size={size} radius={Math.round(size * 0.28)} theme={theme}>
       {icon}
     </IconBox>
   )

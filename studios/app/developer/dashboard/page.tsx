@@ -17,6 +17,7 @@ import {
   Star,
 } from "lucide-react"
 import { fetchJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 interface User {
   email: string
@@ -93,7 +94,7 @@ export default function DeveloperDashboard() {
     const parsedUser = JSON.parse(userData)
 
     // Only allow developer users
-    if (parsedUser.type !== "developer") {
+    if (!canAccessService(parsedUser, "developer")) {
       router.push("/login")
       return
     }

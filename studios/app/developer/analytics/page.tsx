@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LogOut, TrendingUp, Download, Star, Users, Calendar, BarChart3, PieChart, Activity } from "lucide-react"
 import { fetchJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 interface GameStats {
   connected_users: number
@@ -92,7 +93,7 @@ export default function DeveloperAnalyticsPage() {
       const parsedUser = JSON.parse(userData)
 
       // Only allow developer users
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }

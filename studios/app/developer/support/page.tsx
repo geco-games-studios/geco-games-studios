@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LogOut, HelpCircle, MessageSquare, Mail, Phone, FileText, ChevronDown, ChevronUp, Send, CheckCircle } from "lucide-react"
 import { fetchJson, postJson } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 
 interface FAQ {
   question: string
@@ -54,7 +55,7 @@ export default function DeveloperSupportPage() {
       const parsedUser = JSON.parse(userData)
 
       // Only allow developer users
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }

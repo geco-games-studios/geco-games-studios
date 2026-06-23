@@ -7,6 +7,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, Gamepad2, Edit2, Trash2, TrendingUp, Download, Star, ShieldCheck, Eye, Plus } from "lucide-react"
 import { fetchJson, deleteJson, postJson, getMediaUrl } from "@/lib/api"
+import { canAccessService } from "@/lib/auth-session"
 import { SubmitGameDialog } from "@/components/developer/submit-game-dialog"
 import {
   Dialog,
@@ -90,7 +91,7 @@ export default function DeveloperGamesPage() {
       const parsedUser = JSON.parse(userData)
 
       // Only allow developer users
-      if (parsedUser.type !== "developer") {
+      if (!canAccessService(parsedUser, "developer")) {
         router.push("/login")
         return
       }

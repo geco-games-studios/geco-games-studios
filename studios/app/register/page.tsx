@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Check, Calendar, Code, GraduationCap, Lock, ShoppingCart, Ticket, User } from "lucide-react"
 import Image from "next/image"
 import { COUNTRIES, ACCOUNT_TYPES, JAMPASS_SUB_TYPES, ACADEMY_SUB_TYPES } from "@/lib/countries"
+import { persistAuthSession } from "@/lib/auth-session"
 
 const ACCOUNT_TYPE_ICONS: Record<string, React.ReactNode> = {
   cart: <ShoppingCart className="h-6 w-6" />,
@@ -214,6 +215,14 @@ export default function SignupPage() {
       if (!response.ok) {
         setError(getRegistrationError(data))
         setIsLoading(false)
+        return
+      }
+
+      if (data.access) {
+        persistAuthSession(data, formData.email)
+        localStorage.removeItem("pendingPhoneVerification")
+        setIsLoading(false)
+        router.push("/select-service")
         return
       }
 

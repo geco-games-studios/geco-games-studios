@@ -3,27 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Loader2, AlertCircle, Chrome, Github, Apple } from "lucide-react"
+import { Eye, EyeOff, Loader2, AlertCircle, Chrome, Apple } from "lucide-react"
 import Image from "next/image"
-
-function decodeJwt(token: string) {
-  try {
-    const [, payload] = token.split(".")
-    if (!payload) return null
-
-    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/")
-    const decoded = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((char) => `%${("00" + char.charCodeAt(0).toString(16)).slice(-2)}`)
-        .join("")
-    )
-
-    return JSON.parse(decoded)
-  } catch (error) {
-    return null
-  }
-}
+import { decodeJwt, persistAuthSession } from "@/lib/auth-session"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -31,6 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [socialProvider, setSocialProvider] = useState<string | null>(null)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -64,13 +47,6 @@ export default function LoginPage() {
         return
       }
 
-      if (data.access) {
-        localStorage.setItem("accessToken", data.access)
-      }
-      if (data.refresh) {
-        localStorage.setItem("refreshToken", data.refresh)
-      }
-
       const decodedToken = data.access ? decodeJwt(data.access) : null
       const isValidAccessToken = decodedToken && decodedToken.token_type === "access"
 
@@ -80,35 +56,19 @@ export default function LoginPage() {
         return
       }
 
-      const currentUser = {
-        email,
-        type: data.account_type || decodedToken?.user_type || decodedToken?.role || "academy",
-        account_type: data.account_type || decodedToken?.account_type || decodedToken?.user_type || decodedToken?.role || "academy",
-        name: email,
-        userId: decodedToken?.user_id || decodedToken?.sub || "",
-        academy_sub_type: data.academy_sub_type || decodedToken?.academy_sub_type || null,
-        sub_user_type: data.sub_user_type || data.jampass_sub_type || decodedToken?.sub_user_type || decodedToken?.jampass_sub_type || null,
-        is_staff: decodedToken?.is_staff || false,
-      }
-      localStorage.setItem("currentUser", JSON.stringify(currentUser))
-
-      const getRedirectPath = (user: any) => {
-        if (["market"].includes(user.type)) return "/marketplace"
-        if (user.type === "admin" || user.academy_sub_type === "admin" || user.is_staff === true) return "/academy/admin/dashboard"
-        if (user.type === "developer") return "/developer/dashboard"
-        if (["academy", "trainee", "student"].includes(user.type)) return "/academy/dashboard"
-        if (user.type === "jampass" && (user.sub_user_type === "player" || user.jampass_sub_type === "player")) return "/jampass/player/dashboard"
-        if (["player", "outlet"].includes(user.type)) return "/jampass"
-        return "/"
-      }
-
-      const redirectPath = getRedirectPath(currentUser)
+      persistAuthSession(data, email)
       setIsLoading(false)
-      router.push(redirectPath)
+      router.push("/select-service")
     } catch (err) {
       setError("Network error. Please check your connection and try again.")
       setIsLoading(false)
     }
+  }
+
+  const handleSocialLogin = (provider: "google" | "facebook" | "apple") => {
+    setError("")
+    setSocialProvider(provider)
+    window.location.href = `/api/auth/social/${provider}/start?next=/select-service`
   }
 
   return (
@@ -227,39 +187,34 @@ export default function LoginPage() {
           {/* Social Sign In Section */}
           <div className="my-8 space-y-4">
             <p className="text-center text-sm text-slate-400 font-medium">Or continue with</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               <button
                 type="button"
-                disabled={isLoading}
+                onClick={() => handleSocialLogin("google")}
+                disabled={isLoading || Boolean(socialProvider)}
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
               >
-                <Chrome className="h-5 w-5" />
+                {socialProvider === "google" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Chrome className="h-5 w-5" />}
                 <span>Google</span>
               </button>
               <button
                 type="button"
-                disabled={isLoading}
+                onClick={() => handleSocialLogin("facebook")}
+                disabled={isLoading || Boolean(socialProvider)}
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
               >
-                <Github className="h-5 w-5" />
-                <span>GitHub</span>
-              </button>
-              <button
-                type="button"
-                disabled={isLoading}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
-              >
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                {socialProvider === "facebook" ? <Loader2 className="h-5 w-5 animate-spin" /> : <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M23.998 12c0-6.628-5.372-12-12-12s-12 5.372-12 12c0 5.988 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.356c0-3.013 1.792-4.682 4.533-4.682 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 22.954 23.998 17.988 23.998 12z"/>
-                </svg>
+                </svg>}
                 <span>Facebook</span>
               </button>
               <button
                 type="button"
-                disabled={isLoading}
+                onClick={() => handleSocialLogin("apple")}
+                disabled={isLoading || Boolean(socialProvider)}
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
               >
-                <Apple className="h-5 w-5" />
+                {socialProvider === "apple" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Apple className="h-5 w-5" />}
                 <span>Apple</span>
               </button>
             </div>

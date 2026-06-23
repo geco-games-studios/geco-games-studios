@@ -3,13 +3,15 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { ArrowRight, Gamepad2, Users, User } from "lucide-react"
+import { ArrowRight, Gamepad2, Repeat2, User } from "lucide-react"
 import type { ReactNode } from "react"
+import { clearAuthSession } from "@/lib/auth-session"
 
 const navItems = [
   { href: "/developer/dashboard", label: "Dashboard" },
   { href: "/developer/profile", label: "Profile" },
   { href: "/developer/games", label: "My Games" },
+  { href: "/developer/webgl-deploy", label: "WebGL Deploy" },
   { href: "/developer/analytics", label: "Analytics" },
   { href: "/developer/leaderboards", label: "Leaderboards" },
   { href: "/developer/communities", label: "Communities" },
@@ -36,9 +38,7 @@ export default function DeveloperLayout({ children }: { children: ReactNode }) {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser")
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("refreshToken")
+    clearAuthSession()
     router.push("/login")
   }
 
@@ -65,14 +65,23 @@ export default function DeveloperLayout({ children }: { children: ReactNode }) {
                 Submit game
               </Link>
               {currentUser ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  <User className="h-4 w-4" />
-                  Logout
-                </button>
+                <>
+                  <Link
+                    href="/select-service"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  >
+                    <Repeat2 className="h-4 w-4" />
+                    Switch Service
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  >
+                    <User className="h-4 w-4" />
+                    Logout
+                  </button>
+                </>
               ) : (
                 <Link
                   href="/login?type=developer"

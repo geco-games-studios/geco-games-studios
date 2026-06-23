@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { LogOut } from "lucide-react"
+import { LogOut, Repeat2 } from "lucide-react"
+import { clearAuthSession } from "@/lib/auth-session"
 
 interface CurrentUser {
   email: string
@@ -45,9 +46,7 @@ export default function PlayerLayout({
   }, [router])
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser")
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("refreshToken")
+    clearAuthSession()
     router.push("/login")
   }
 
@@ -80,13 +79,22 @@ export default function PlayerLayout({
                 Welcome back, gamer!
               </p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href="/select-service"
+                className="flex items-center gap-2 rounded-full bg-cyan-100 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-200 dark:bg-cyan-900 dark:text-cyan-200 dark:hover:bg-cyan-800"
+              >
+                <Repeat2 className="h-4 w-4" />
+                Switch Service
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Navigation Tabs */}
