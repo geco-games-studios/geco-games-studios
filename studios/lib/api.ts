@@ -71,6 +71,20 @@ function createApiError(response: Response, data: unknown) {
   return error
 }
 
+async function readResponseBody(response: Response) {
+  const contentType = response.headers.get("content-type") || ""
+  const text = await response.text()
+
+  if (!text) return null
+  if (!contentType.includes("application/json")) return text
+
+  try {
+    return JSON.parse(text)
+  } catch {
+    return text
+  }
+}
+
 export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
   const response = await fetch(getRequestUrl(path), {
     method: "POST",
@@ -79,8 +93,7 @@ export async function postFormData<T = unknown>(path: string, formData: FormData
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -97,8 +110,7 @@ export async function putFormData<T = unknown>(path: string, formData: FormData,
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -114,8 +126,7 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     console.error(`API Error [${response.status}] at ${path}:`, data)
@@ -133,8 +144,7 @@ export async function postJson<T = unknown>(path: string, payload: unknown, init
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -151,8 +161,7 @@ export async function putJson<T = unknown>(path: string, payload: unknown, init?
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -169,8 +178,7 @@ export async function patchJson<T = unknown>(path: string, payload: unknown, ini
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -186,8 +194,7 @@ export async function deleteJson<T = unknown>(path: string, init?: Omit<RequestI
     ...init,
   })
 
-  const contentType = response.headers.get("content-type") || ""
-  const data = contentType.includes("application/json") ? await response.json() : null
+  const data = await readResponseBody(response)
 
   if (!response.ok) {
     throw createApiError(response, data)

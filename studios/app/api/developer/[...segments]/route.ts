@@ -16,7 +16,7 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
 
     console.debug(`Proxying ${request.method} ${backendUrl}`)
 
-    const requestBody = request.method !== "GET" ? await request.text() : undefined
+    const requestBody = request.method !== "GET" && request.method !== "HEAD" ? await request.text() : undefined
     // Log headers with Authorization redacted
     const headersObj: Record<string, string | null> = {}
     for (const [k, v] of request.headers.entries()) {
@@ -33,7 +33,7 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
         "Content-Type": "application/json",
         Authorization: authHeader,
       },
-      body: requestBody,
+      body: requestBody || undefined,
     })
 
     const respText = await backendResponse.text()
@@ -48,29 +48,29 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
     }
 
     // Forward success response body and content-type exactly as received
-    return new Response(respText, { status: backendResponse.status, headers: { "content-type": contentType } })
+    return new Response(respText || null, { status: backendResponse.status, headers: { "content-type": contentType } })
   } catch (error) {
     console.error("Error proxying developer request:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ segments: string[] }> }) {
   return proxyRequest(request, params)
 }
 
-export async function POST(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ segments: string[] }> }) {
   return proxyRequest(request, params)
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ segments: string[] }> }) {
   return proxyRequest(request, params)
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ segments: string[] }> }) {
   return proxyRequest(request, params)
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { segments: string[] } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ segments: string[] }> }) {
   return proxyRequest(request, params)
 }

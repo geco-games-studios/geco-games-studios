@@ -26,6 +26,61 @@
     <script>
       var canvas = document.querySelector("#unity-canvas");
 
+      function getStoredAccessToken() {
+        try {
+          return window.localStorage.getItem("accessToken");
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function shouldAttachAuth(url) {
+        if (!url) return false;
+
+        var value = String(url);
+        return value.indexOf("/api/") === 0 ||
+          value.indexOf(window.location.origin + "/api/") === 0 ||
+          value.indexOf("https://system.gecogames.com/api/v1/test/") === 0 ||
+          value.indexOf("api/v1/test/") === 0;
+      }
+
+      (function installJampassAuthBridge() {
+        var nativeFetch = window.fetch;
+        if (nativeFetch) {
+          window.fetch = function(input, init) {
+            var url = typeof input === "string" ? input : input && input.url;
+            var token = getStoredAccessToken();
+            var nextInit = init || {};
+
+            if (token && shouldAttachAuth(url)) {
+              var headers = new Headers(nextInit.headers || (input && input.headers) || {});
+              if (!headers.has("Authorization")) {
+                headers.set("Authorization", "Bearer " + token);
+              }
+              nextInit = Object.assign({}, nextInit, { headers: headers });
+            }
+
+            return nativeFetch.call(this, input, nextInit);
+          };
+        }
+
+        var nativeOpen = XMLHttpRequest.prototype.open;
+        var nativeSend = XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.open = function(method, url) {
+          this.__jampassRequestUrl = url;
+          return nativeOpen.apply(this, arguments);
+        };
+        XMLHttpRequest.prototype.send = function() {
+          var token = getStoredAccessToken();
+          if (token && shouldAttachAuth(this.__jampassRequestUrl)) {
+            try {
+              this.setRequestHeader("Authorization", "Bearer " + token);
+            } catch (error) {}
+          }
+          return nativeSend.apply(this, arguments);
+        };
+      })();
+
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
       // If type=='warning', a yellow highlight color is used.

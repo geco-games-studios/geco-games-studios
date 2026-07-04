@@ -19,6 +19,49 @@ interface ServiceCard {
   state: ServiceState
 }
 
+function readRemoteServices(data: any) {
+  const collections = [
+    data?.services,
+    data?.service_profiles,
+    data?.profiles,
+    data?.results,
+    data,
+  ]
+
+  for (const collection of collections) {
+    if (Array.isArray(collection)) return collection
+  }
+
+  for (const collection of collections) {
+    if (collection && typeof collection === "object") return Object.values(collection)
+  }
+
+  return []
+}
+
+function serviceMatchesProfile(profile: any, service: GecoService) {
+  const candidates = [
+    profile?.id,
+    profile?.service_id,
+    profile?.service,
+    profile?.service_slug,
+    profile?.slug,
+    profile?.type,
+    profile?.account_type,
+    profile?.name,
+  ]
+    .filter(Boolean)
+    .map((value) => String(value).toLowerCase().replace(/\s+/g, "-"))
+
+  const serviceIds = [service.id, service.id.replace("-", "_"), ...service.legacyTypes].map((value) => value.toLowerCase())
+  return candidates.some((candidate) => serviceIds.includes(candidate) || serviceIds.includes(candidate.replace("-", "_")))
+}
+
+function profileIsActive(profile: any) {
+  const status = String(profile?.status || profile?.state || profile?.approval_status || "").toLowerCase()
+  return ["active", "approved", "enabled", "enrolled", "joined"].includes(status) || profile?.active === true || profile?.is_active === true
+}
+
 export default function SelectServicePage() {
   const router = useRouter()
   const [cards, setCards] = useState<ServiceCard[]>([])
@@ -46,16 +89,13 @@ export default function SelectServicePage() {
       .then(async (response) => {
         if (!response.ok) throw new Error("Service registry unavailable")
         const data = await response.json()
-        const remoteServices = Array.isArray(data.services) ? data.services : Array.isArray(data) ? data : []
+        const remoteServices = readRemoteServices(data)
         if (!remoteServices.length) return fallbackCards
 
         return GECO_SERVICES.map((service) => {
-          const remote = remoteServices.find((item: any) => {
-            const id = String(item.id || item.service_id || item.slug || item.service || "").toLowerCase()
-            return id === service.id || id === service.id.replace("-", "_")
-          })
-          const status = String(remote?.status || remote?.state || "").toLowerCase()
-          const active = ["active", "approved", "enabled"].includes(status) || remote?.active === true
+          const fallback = fallbackCards.find((card) => card.service.id === service.id)
+          const remote = remoteServices.find((item: any) => serviceMatchesProfile(item, service))
+          const active = profileIsActive(remote) || fallback?.state === "active"
           return { service, state: active ? "active" as const : "not_joined" as const }
         })
       })

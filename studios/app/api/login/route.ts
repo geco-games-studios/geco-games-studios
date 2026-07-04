@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server"
 import { getApiUrl } from "@/lib/api"
 
+function getProxyErrorMessage(error: unknown) {
+  const detail = error instanceof Error ? error.message : String(error)
+
+  return {
+    message: "Could not reach the authentication service. Check the API base URL and backend server.",
+    detail,
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -13,7 +22,8 @@ export async function POST(request: Request) {
       )
     }
 
-    const apiResponse = await fetch(getApiUrl("login/"), {
+    const loginUrl = getApiUrl("login/")
+    const apiResponse = await fetch(loginUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,8 +51,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Login proxy error:", error)
     return NextResponse.json(
-      { message: "An error occurred during authentication." },
-      { status: 500 }
+      getProxyErrorMessage(error),
+      { status: 502 }
     )
   }
 }

@@ -24,7 +24,8 @@ interface PaymentTransaction {
 interface PaymentForm {
   amount: string
   currency: string
-  phone_number: string
+  phone: string
+  operator: string
   store_item: string
   quantity: string
   tournament: string
@@ -33,7 +34,8 @@ interface PaymentForm {
 const initialPaymentForm: PaymentForm = {
   amount: "",
   currency: "ZMW",
-  phone_number: "",
+  phone: "",
+  operator: "airtel",
   store_item: "",
   quantity: "1",
   tournament: "",
@@ -51,7 +53,8 @@ function readTransactionList(data: unknown) {
 }
 
 function getReference(transaction: PaymentTransaction) {
-  return transaction.payment_reference || transaction.reference || ""
+  const nestedPurchase = transaction.purchase as PaymentTransaction | undefined
+  return transaction.payment_reference || transaction.reference || nestedPurchase?.payment_reference || nestedPurchase?.reference || ""
 }
 
 function formatDate(value?: string) {
@@ -103,20 +106,22 @@ export default function PlayerFinancePage() {
   }
 
   const buildPayload = () => {
-    const payload: Record<string, unknown> = {
+    if (mode === "store") {
+      return {
+        store_item: Number(form.store_item),
+        quantity: Number(form.quantity),
+        phone: form.phone.trim(),
+        operator: form.operator.trim(),
+      }
+    }
+
+    return {
       amount: Number(form.amount),
       currency: form.currency.trim(),
-      phone_number: form.phone_number.trim(),
+      phone: form.phone.trim(),
+      operator: form.operator.trim(),
+      tournament: Number(form.tournament),
     }
-
-    if (mode === "store") {
-      payload.store_item = Number(form.store_item)
-      payload.quantity = Number(form.quantity)
-    } else {
-      payload.tournament = Number(form.tournament)
-    }
-
-    return payload
   }
 
   const handleCreatePayment = async (event: FormEvent<HTMLFormElement>) => {
@@ -225,35 +230,52 @@ export default function PlayerFinancePage() {
 
           <form onSubmit={handleCreatePayment} className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-sm font-medium">
-                Amount
-                <input
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  value={form.amount}
-                  onChange={(event) => updateForm("amount", event.target.value)}
-                  required
-                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
-                />
-              </label>
-              <label className="text-sm font-medium">
-                Currency
-                <input
-                  value={form.currency}
-                  onChange={(event) => updateForm("currency", event.target.value)}
-                  required
-                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
-                />
-              </label>
+              {mode === "tournament" && (
+                <>
+                  <label className="text-sm font-medium">
+                    Amount
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      value={form.amount}
+                      onChange={(event) => updateForm("amount", event.target.value)}
+                      required
+                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
+                    />
+                  </label>
+                  <label className="text-sm font-medium">
+                    Currency
+                    <input
+                      value={form.currency}
+                      onChange={(event) => updateForm("currency", event.target.value)}
+                      required
+                      className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
+                    />
+                  </label>
+                </>
+              )}
               <label className="text-sm font-medium">
                 Phone Number
                 <input
-                  value={form.phone_number}
-                  onChange={(event) => updateForm("phone_number", event.target.value)}
+                  value={form.phone}
+                  onChange={(event) => updateForm("phone", event.target.value)}
                   required
                   className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
                 />
+              </label>
+              <label className="text-sm font-medium">
+                Operator
+                <select
+                  value={form.operator}
+                  onChange={(event) => updateForm("operator", event.target.value)}
+                  required
+                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"
+                >
+                  <option value="airtel">Airtel</option>
+                  <option value="mtn">MTN</option>
+                  <option value="zamtel">Zamtel</option>
+                </select>
               </label>
               {mode === "store" ? (
                 <>

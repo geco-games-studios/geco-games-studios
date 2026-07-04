@@ -14,7 +14,7 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
     const resolvedParams = await params
     const endpoint = (resolvedParams?.segments || []).filter(Boolean).join("/")
     const backendUrl = `${API_BASE_URL}/jampass/${endpoint}/`
-    const requestBody = request.method !== "GET" ? await request.text() : undefined
+    const requestBody = request.method !== "GET" && request.method !== "HEAD" ? await request.text() : undefined
 
     const backendResponse = await fetch(backendUrl, {
       method: request.method,
@@ -22,13 +22,13 @@ async function proxyRequest(request: NextRequest, params: Promise<{ segments: st
         "Content-Type": "application/json",
         Authorization: authHeader,
       },
-      body: requestBody,
+      body: requestBody || undefined,
     })
 
     const responseText = await backendResponse.text()
     const contentType = backendResponse.headers.get("content-type") || "application/json"
 
-    return new Response(responseText, {
+    return new Response(responseText || null, {
       status: backendResponse.status,
       headers: { "content-type": contentType },
     })
