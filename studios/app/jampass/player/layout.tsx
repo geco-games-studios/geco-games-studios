@@ -149,6 +149,16 @@ export default function PlayerLayout({
             >
               Finance
             </Link>
+            <Link
+              href="/jampass/player/profile"
+              className={`px-4 py-3 border-b-2 font-semibold text-sm transition ${
+                isActive("/jampass/player/profile")
+                  ? "border-cyan-600 text-cyan-600 dark:border-cyan-400 dark:text-cyan-400"
+                  : "border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              Profile
+            </Link>
           </div>
         </div>
       </header>
