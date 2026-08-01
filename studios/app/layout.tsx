@@ -1,11 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import AppChrome from "@/components/app-chrome"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Geco Games Studios",
@@ -39,7 +36,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className={`${inter.className} bg-white text-slate-950 dark:bg-slate-950 dark:text-white transition-colors duration-300`}>
+      <body suppressHydrationWarning className="bg-white text-slate-950 dark:bg-slate-950 dark:text-white transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
           <AppChrome>{children}</AppChrome>
         </ThemeProvider>

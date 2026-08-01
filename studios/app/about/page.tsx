@@ -1,8 +1,30 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, ExternalLink, Play, Star, Users } from "lucide-react"
 
 export default function AboutPage() {
+  const milestones = [
+    {
+      year: "2015",
+      title: "Founded in Southern Province",
+      description: "Luyando Shilukukwa and Bulemu Narco Shilukukwa founded Geco Games Limited in the heart of Southern Province, Zambia.",
+    },
+    {
+      year: "Early days",
+      title: "Built to experiment",
+      description: "The studio began by developing, playing, and testing games internally. Super Hero Race Madness became one of its earliest original titles.",
+    },
+    {
+      year: "2016",
+      title: "Our first international project",
+      description: "Geco Games created Explore My Space Ride for Legends of Learning—an educational mathematics game designed for an international audience.",
+    },
+    {
+      year: "2026",
+      title: "The first Academy cohort",
+      description: "Geco Games Academy welcomed its first cohort, extending the studio’s mission from making games to developing the next generation of creators.",
+    },
+  ]
+
   const portfolio = [
     {
       title: "Arena Legends",
@@ -10,9 +32,6 @@ export default function AboutPage() {
       image: "/games/our-last-prayer-arena.png",
       details: "Premium battle arena title with a sustained eSports roadmap and community activation.",
       category: "Mobile Game",
-      platform: "iOS & Android",
-      downloads: "500K+",
-      rating: "4.8",
       features: [
         "Competitive PvP gameplay",
         "Esports tournament system",
@@ -27,9 +46,6 @@ export default function AboutPage() {
       image: "/games/become-a-chef.png",
       details: "A chef simulation title that blends casual gameplay with branded storytelling.",
       category: "Simulation Game",
-      platform: "iOS & Android",
-      downloads: "1.2M+",
-      rating: "4.6",
       features: [
         "Restaurant management",
         "Recipe creation system",
@@ -44,9 +60,6 @@ export default function AboutPage() {
       image: "/games/block-cat-fill.png",
       details: "Puzzle experiences designed for high retention and cross-platform discovery.",
       category: "Puzzle Game",
-      platform: "iOS & Android",
-      downloads: "800K+",
-      rating: "4.7",
       features: [
         "Brain-teasing puzzles",
         "Daily challenges",
@@ -61,9 +74,6 @@ export default function AboutPage() {
       image: "/games/fruit-valley.png",
       details: "A vibrant puzzle game with premium visuals and joyful player loops.",
       category: "Puzzle Game",
-      platform: "iOS & Android",
-      downloads: "2.1M+",
-      rating: "4.9",
       features: [
         "Colorful fruit themes",
         "Relaxing gameplay",
@@ -78,9 +88,6 @@ export default function AboutPage() {
       image: "/games/atomic-crush.png",
       details: "A fast-paced arcade experience with strong retention mechanics.",
       category: "Arcade Game",
-      platform: "iOS & Android",
-      downloads: "950K+",
-      rating: "4.5",
       features: [
         "Fast-paced action",
         "Power-up system",
@@ -95,9 +102,6 @@ export default function AboutPage() {
       image: "/games/clear-skies-3d.png",
       details: "A polished 3D flight simulation with cinematic world art.",
       category: "Simulation Game",
-      platform: "iOS & Android",
-      downloads: "650K+",
-      rating: "4.4",
       features: [
         "Realistic flight physics",
         "Beautiful 3D environments",
@@ -106,13 +110,6 @@ export default function AboutPage() {
         "Free flight mode"
       ]
     }
-  ]
-
-  const stats = [
-    { label: "Games Launched", value: "28", icon: Play },
-    { label: "Total Downloads", value: "10M+", icon: Users },
-    { label: "Average Rating", value: "4.7", icon: Star },
-    { label: "Platforms", value: "iOS & Android", icon: ExternalLink }
   ]
 
   return (
@@ -124,14 +121,14 @@ export default function AboutPage() {
               About Us
             </span>
             <h1 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl">
-              Games that speak for themselves.
+              Born in Zambia. Building worlds for everyone.
             </h1>
             <p className="mt-6 max-w-3xl mx-auto text-lg leading-8 text-white/80">
-              Every title in our portfolio represents our commitment to quality mobile game development, innovation, and player satisfaction. From concept to launch, we deliver exceptional mobile gaming experiences.
+              Geco Games Limited is an independent game company founded in 2015 by Luyando Shilukukwa and Bulemu Narco Shilukukwa in Southern Province, Zambia.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link href="#portfolio" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
-                View our work
+              <Link href="#our-story" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                Read our story
               </Link>
               <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                 Start a project
@@ -141,18 +138,31 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-20 px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {stats.map((item) => (
-              <div key={item.label} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <p className="mt-6 text-3xl font-semibold">{item.value}</p>
-                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{item.label}</p>
-              </div>
-            ))}
+      <section id="our-story" className="px-6 py-20 lg:px-12 lg:py-28">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+            <div className="lg:sticky lg:top-32">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">Our story</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Games can do more than entertain.</h2>
+              <p className="mt-6 text-lg leading-8">
+                What started as two innovators making games for internal play and testing grew into a studio with a broader purpose: using interactive entertainment to communicate ideas, make knowledge visual, and help people learn through play.
+              </p>
+              <p className="mt-5 text-lg leading-8">
+                Today, Geco Games continues to build original games and digital experiences while nurturing new creative talent through Geco Games Academy.
+              </p>
+            </div>
+
+            <div className="relative space-y-5 before:absolute before:bottom-10 before:left-[2.15rem] before:top-10 before:w-px before:bg-gradient-to-b before:from-violet-400 before:via-cyan-400 before:to-transparent">
+              {milestones.map((milestone) => (
+                <article key={milestone.year} className="relative rounded-3xl border border-white/10 bg-white/5 p-7 pl-24 shadow-xl backdrop-blur sm:p-9 sm:pl-28">
+                  <div className="absolute left-5 top-7 z-10 flex h-9 min-w-9 items-center justify-center rounded-full border border-cyan-300/30 bg-[#18144d] px-3 text-[10px] font-black uppercase tracking-wider text-cyan-200 sm:left-6 sm:top-9">
+                    {milestone.year}
+                  </div>
+                  <h3 className="text-2xl font-bold">{milestone.title}</h3>
+                  <p className="mt-3 leading-7">{milestone.description}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -179,22 +189,14 @@ export default function AboutPage() {
                         <p className="text-sm uppercase tracking-[0.2em] text-white/80">{project.subtitle}</p>
                         <h3 className="text-2xl font-semibold">{project.title}</h3>
                       </div>
-                      <div className="text-right">
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-semibold">{project.rating}</span>
-                        </div>
-                        <p className="text-sm text-white/80">{project.downloads} downloads</p>
-                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-8">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="mb-4">
                     <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                       {project.category}
                     </span>
-                    <span className="text-sm text-slate-500 dark:text-slate-400">{project.platform}</span>
                   </div>
                   <p className="text-slate-600 dark:text-slate-400 mb-6">{project.details}</p>
 
@@ -209,20 +211,6 @@ export default function AboutPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-3">
-                    <a
-                      href="https://play.google.com/store/apps/dev?id=5105347513801222490"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-                    >
-                      View on Play Store
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700">
-                      iOS Coming Soon
-                    </span>
-                  </div>
                 </div>
               </div>
             ))}

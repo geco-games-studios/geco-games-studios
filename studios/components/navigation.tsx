@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, Mail, ChevronDown, Repeat2 } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2 } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
 import { clearAuthSession, getDashboardPathForUser } from "@/lib/auth-session"
@@ -45,7 +45,7 @@ export default function Navigation() {
   }
 
   const navItems = [
-    { name: "Studio", href: "/" },
+    { name: "Home", href: "/" },
     {
       name: "Stories",
       href: "/stories",
@@ -58,10 +58,8 @@ export default function Navigation() {
     { name: "Services", href: "/services" },
     { name: "About", href: "/about" },
     { name: "Academy", href: "/academy" },
-    { name: "Developer", href: "/developer" },
+    { name: "Games", href: "/gaming" },
     { name: "Esports", href: "/esports" },
-    { name: "Jampass", href: "/jampass" },
-    { name: "Support", href: "/support" },
   ]
 
   return (
@@ -99,24 +97,16 @@ export default function Navigation() {
           animation: moveLightIcon 1.5s ease-in-out infinite;
         }
       `}</style>
-      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950/90">
+      <nav className="cosmic-nav sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950/90">
         <div className="container mx-auto flex items-center justify-between px-4 py-4 lg:px-6">
-          <Link href="/" className="flex flex-col items-center gap-1">
-            <div className="relative h-10 w-10 overflow-hidden rounded-2xl bg-white shadow-lg">
-              <video
-                src={encodeURI("/logoAnimation1 .mp4")}
-                aria-label="Geco Games Studios animated logo"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-contain"
-              />
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative h-11 w-11 overflow-hidden rounded-2xl bg-white shadow-lg">
+              <Image src="/logo-light.png" alt="Geco Games Studios" fill sizes="44px" className="object-contain p-1" priority />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Creative Game Studio</p>
+            <div className="leading-none"><p className="brand-title text-base font-black tracking-tight">GECO GAMES</p><p className="mt-1 text-[9px] font-bold uppercase tracking-[.28em] text-violet-300">Studios</p></div>
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
+          <div className="hidden items-center gap-5 lg:flex">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -171,30 +161,21 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center gap-4">
-            <ThemeToggle />
+            <div className="portal-only"><ThemeToggle /></div>
           
           {/* Icons Section */}
           <div className="flex items-center gap-2">
             {/* Marketplace Icon */}
             <Link
               href="/marketplace"
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
+              className={`cosmic-play flex h-10 items-center justify-center gap-2 rounded-full px-5 text-xs font-black uppercase tracking-wider transition ${
                 pathname === "/marketplace"
                   ? "bg-slate-950 text-white dark:bg-slate-100 dark:text-slate-900"
                   : "text-slate-700 dark:text-slate-300 icon-hover"
               }`}
-              title="Marketplace"
+              title="Browse games"
             >
-              <ShoppingBag className="h-5 w-5" />
-            </Link>
-
-            {/* Contact Icon */}
-            <Link
-              href="#contact"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 dark:text-slate-300 transition icon-hover"
-              title="Contact"
-            >
-              <Mail className="h-5 w-5" />
+              <Gamepad2 className="h-4 w-4" /> <span className="hidden sm:inline">Play now</span>
             </Link>
 
             {/* User Menu */}

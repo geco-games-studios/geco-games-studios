@@ -1,8 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Globe, Layers, Play, Shield, Sparkles, Star } from "lucide-react"
-import { Megaphone, Palette, Rocket } from "lucide-react"
-import { Code } from "lucide-react"
+import { ArrowRight, Globe, GraduationCap, Layers, Play, Shield, Sparkles, Star, Trophy, Users } from "lucide-react"
 import NewsletterSubscription from "../components/newsletter-subscription"
 
 const services = [
@@ -79,19 +77,19 @@ const featuredGames = [
 
 const characterGallery = [
   {
-    name: "Jeonz",
-    role: "Hero concept",
-    image: "/characters/jeonz.png",
+    name: "The Horned Warlord",
+    role: "Legends of Alkebulan · Character reveal",
+    image: "/alkebulan-horned-warlord.jpeg",
   },
   {
-    name: "Lotus",
-    role: "World champion",
-    image: "/characters/lotus.png",
+    name: "The Bone Shaman",
+    role: "Legends of Alkebulan · Character reveal",
+    image: "/alkebulan-bone-shaman.jpeg",
   },
   {
-    name: "Mis Fortune",
-    role: "Mystic rival",
-    image: "/characters/mis-fortune.png",
+    name: "The Forest Guardian",
+    role: "Legends of Alkebulan · Character reveal",
+    image: "/alkebulan-forest-guardian.jpeg",
   },
 ]
 
@@ -105,68 +103,38 @@ const processSteps = [
 export default function HomePage() {
   return (
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <section className="relative overflow-hidden h-screen flex items-center">
-        {/* Background Video - Desktop */}
-        <div className="absolute inset-0 z-0 overflow-hidden hidden lg:block">
-          <iframe 
-            src="https://www.youtube.com/embed/UXqq0ZvbOnk?autoplay=1&mute=1&loop=1&playlist=UXqq0ZvbOnk&controls=0&modestbranding=1&showinfo=0&rel=0&hd=1&vq=hd1080&fs=0" 
-            title="Geco Games Studios Introduction" 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowFullScreen
-            className="absolute top-1/2 left-1/2 w-[150vw] h-[150vh] max-w-none max-h-none -translate-x-1/2 -translate-y-1/2"
-            style={{ objectFit: "cover" }}
-          ></iframe>
-        </div>
-
-        {/* Background Image - Mobile */}
-        <div className="absolute inset-0 z-0 overflow-hidden lg:hidden">
-          <Image
-            src="/Mobile.jpeg"
-            alt="Geco Games Studios mobile background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-        
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40 z-10"></div>
+      <section className="cosmic-hero relative flex min-h-screen items-center overflow-hidden pt-20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(83,63,218,.38),transparent_25%),radial-gradient(circle_at_12%_18%,rgba(220,32,129,.2),transparent_18%),linear-gradient(180deg,#121044_0%,#17124e_70%,#24145a_100%)]" />
+        <div className="absolute left-[8%] top-[18%] h-20 w-20 rounded-full bg-gradient-to-br from-fuchsia-500 to-violet-900 opacity-70 shadow-[0_0_70px_rgba(225,47,151,.35)]" />
+        <div className="absolute right-[8%] top-[14%] h-28 w-28 rounded-full bg-gradient-to-br from-cyan-400 to-blue-900 opacity-50 shadow-[0_0_90px_rgba(39,216,232,.25)]" />
+        <div className="absolute bottom-[15%] left-[42%] h-2 w-40 rotate-[-38deg] rounded-full bg-gradient-to-r from-transparent via-cyan-300 to-violet-500 shadow-[0_0_18px_#27d8e8]" />
         
         {/* Content positioned directly over the image */}
         <div className="container mx-auto px-6 py-20 lg:py-28 relative z-10">
-          <div className="grid gap-16 lg:grid-cols-2 items-center">
+          <div className="grid items-center gap-14 lg:grid-cols-[.9fr_1.1fr]">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm">
-                Mobile-first game studio for modern brands
+              <span className="inline-flex items-center rounded-full border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-violet-200 shadow-sm">
+                Independent game studio · Zambia
               </span>
-              <h1 className="mt-8 text-5xl font-semibold tracking-tight sm:text-6xl text-white">
-                We build games, interactive experiences, and digital products that resonate.
+              <h1 className="mt-8 text-5xl font-black leading-[.98] tracking-[-.04em] text-white sm:text-7xl">
+                We create worlds worth playing.
               </h1>
               <p className="mt-6 text-lg leading-8 text-slate-100">
-                From concept and creative direction to launch support and esports production, Geco Games Studios helps teams deliver world-class interactive experiences with clarity and polish.
+                Original games, unforgettable characters, and digital experiences shaped by African imagination and built for players everywhere.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
-                <Link href="#contact" className="inline-flex items-center justify-center rounded-full bg-sky-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-400">
-                  Start a project
+                <Link href="/gaming" className="inline-flex items-center justify-center rounded-full bg-sky-500 px-7 py-3.5 text-sm font-black uppercase tracking-wider text-white transition hover:bg-sky-400">
+                  Explore our games
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-                <Link href="#portfolio" className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
-                  View portfolio
+                <Link href="/about" className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/10">
+                  Meet the studio
                 </Link>
               </div>
 
               <div className="mt-10 flex flex-wrap items-center gap-4 text-sm text-slate-200">
                 <div className="flex items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
-                  <video
-                    src={encodeURI("/logoAnimation1 .mp4")}
-                    aria-label="Geco Games Studios animated logo"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="h-8 w-8 object-contain"
-                  />
+                  <Image src="/logo-light.png" alt="Geco Games Studios" width={32} height={32} className="h-8 w-8 object-contain" />
                   <span>Studio brand identity</span>
                 </div>
                 <div className="rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
@@ -176,8 +144,101 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right side spacer for layout balance */}
-            <div className="hidden lg:block" />
+            <div className="relative mx-auto h-[470px] w-full max-w-[620px] sm:h-[590px]">
+              <div className="absolute inset-x-[8%] bottom-[6%] h-20 rounded-[50%] bg-black/50 blur-2xl" />
+              <div className="absolute left-0 top-[22%] h-[62%] w-[44%] rotate-[-7deg] overflow-hidden rounded-[2rem] border border-white/10 bg-cyan-400/10 shadow-2xl">
+                <Image src="/alkebulan-bone-shaman.jpeg" alt="The Bone Shaman from Legends of Alkebulan" fill className="object-cover object-top" priority />
+              </div>
+              <div className="absolute right-0 top-[15%] h-[70%] w-[48%] rotate-[6deg] overflow-hidden rounded-[2rem] border border-white/10 bg-violet-400/10 shadow-2xl">
+                <Image src="/alkebulan-horned-warlord.jpeg" alt="The Horned Warlord from Legends of Alkebulan" fill className="object-cover object-top" priority />
+              </div>
+              <div className="absolute bottom-0 left-[28%] h-[64%] w-[46%] overflow-hidden rounded-[2rem] border border-white/20 bg-fuchsia-400/10 shadow-[0_30px_80px_rgba(5,3,29,.65)]">
+                <Image src="/alkebulan-forest-guardian.jpeg" alt="The Forest Guardian from Legends of Alkebulan" fill className="object-cover object-top" priority />
+              </div>
+              <div className="absolute right-[3%] top-[6%] rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200 backdrop-blur">Original characters</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-24 lg:px-8 lg:py-32">
+        <div className="container mx-auto">
+          <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#17124e]/80 shadow-[0_30px_100px_rgba(4,3,24,.45)]">
+            <div className="grid lg:grid-cols-[1.08fr_.92fr] lg:items-stretch">
+              <div className="relative min-h-[440px] overflow-hidden sm:min-h-[600px]">
+                <Image
+                  src="/legends-of-alkebulan-map.jpeg"
+                  alt="The world map of Legends of Alkebulan"
+                  fill
+                  className="object-cover transition duration-700 hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#100d3d]/80 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#17124e]" />
+                <div className="absolute bottom-6 left-6 rounded-full border border-white/15 bg-[#100d3d]/70 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-200 backdrop-blur">
+                  Early world map
+                </div>
+              </div>
+              <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-16">
+                <p className="text-xs font-black uppercase tracking-[.3em] text-violet-300">A new legend is forming</p>
+                <h2 className="mt-5 text-4xl font-black tracking-[-.04em] sm:text-6xl">Legends of Alkebulan</h2>
+                <p className="mt-7 text-lg leading-8">
+                  Journey across a vast world of frozen peaks, ancient forests, winding rivers, and distant island realms. A new original game from Geco Games Studios is currently in development.
+                </p>
+                <div className="mt-8 grid grid-cols-3 gap-3 text-center">
+                  {[
+                    ["3", "Great realms"],
+                    ["New", "Original world"],
+                    ["WIP", "In development"],
+                  ].map(([value, label]) => (
+                    <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p className="text-xl font-black text-white">{value}</p>
+                      <p className="mt-1 text-[10px] uppercase tracking-wider">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link href="#characters" className="mt-9 inline-flex w-fit items-center rounded-full bg-violet-600 px-7 py-3.5 text-sm font-black uppercase tracking-wider text-white transition hover:bg-violet-500">
+                  Meet the first characters <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-20 lg:px-8 lg:py-28">
+        <div className="container mx-auto">
+          <div className="max-w-3xl">
+            <p className="text-sm font-black uppercase tracking-[.26em] text-violet-300">More than a game studio</p>
+            <h2 className="mt-4 text-4xl font-black tracking-[-.035em] sm:text-5xl">Play, compete, learn, and build with GECO.</h2>
+            <p className="mt-6 text-lg leading-8">Our ecosystem brings players, competitors, students, and creators together through three connected experiences.</p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            <article className="group relative overflow-hidden rounded-[2rem] border border-violet-300/15 bg-gradient-to-br from-violet-500/20 to-[#17132f] p-8 shadow-2xl sm:p-10">
+              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-violet-500/20 blur-2xl transition group-hover:scale-125" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500 text-white shadow-[0_0_30px_rgba(139,92,246,.35)]"><Users className="h-7 w-7" /></div>
+              <p className="relative mt-8 text-xs font-black uppercase tracking-[.24em] text-violet-300">Community platform</p>
+              <h3 className="relative mt-3 text-3xl font-black">JamPass</h3>
+              <p className="relative mt-4 leading-7">A home for players to join gaming communities, discover competitions, follow leaderboards, and participate in the wider GECO ecosystem.</p>
+              <Link href="/jampass" className="relative mt-8 inline-flex items-center text-sm font-black text-white">Discover JamPass <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" /></Link>
+            </article>
+
+            <article className="group relative overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-500/20 to-[#17132f] p-8 shadow-2xl sm:p-10">
+              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-cyan-500/20 blur-2xl transition group-hover:scale-125" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500 text-white shadow-[0_0_30px_rgba(6,182,212,.35)]"><Trophy className="h-7 w-7" /></div>
+              <p className="relative mt-8 text-xs font-black uppercase tracking-[.24em] text-cyan-300">Competitive gaming</p>
+              <h3 className="relative mt-3 text-3xl font-black">GECO Esports</h3>
+              <p className="relative mt-4 leading-7">Competitive experiences, tournament production, player engagement, and community events designed to help gaming talent take the stage.</p>
+              <Link href="/esports" className="relative mt-8 inline-flex items-center text-sm font-black text-white">Explore Esports <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" /></Link>
+            </article>
+
+            <article className="group relative overflow-hidden rounded-[2rem] border border-fuchsia-300/15 bg-gradient-to-br from-fuchsia-500/20 to-[#17132f] p-8 shadow-2xl sm:p-10">
+              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-fuchsia-500/20 blur-2xl transition group-hover:scale-125" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-500 text-white shadow-[0_0_30px_rgba(217,70,239,.35)]"><GraduationCap className="h-7 w-7" /></div>
+              <p className="relative mt-8 text-xs font-black uppercase tracking-[.24em] text-fuchsia-300">Creative education</p>
+              <h3 className="relative mt-3 text-3xl font-black">Geco Academy</h3>
+              <p className="relative mt-4 leading-7">Industry-led game development, programming, and digital creation training. Our first 2026 cohort is currently underway.</p>
+              <Link href="/academy" className="relative mt-8 inline-flex items-center text-sm font-black text-white">Visit the Academy <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" /></Link>
+            </article>
           </div>
         </div>
       </section>
@@ -202,102 +263,6 @@ export default function HomePage() {
                 <p className="mt-4 text-slate-600 dark:text-slate-400">{service.description}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800 dark:bg-green-900/20 dark:text-green-300 mb-6">
-              <Rocket className="h-4 w-4 mr-2" /> We’re Hiring!
-            </div>
-            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl mb-6">Join Our Creative Team</h2>
-            <p className="text-lg leading-8 text-slate-600 dark:text-slate-300 mb-8">
-              We're looking for talented individuals to help us create amazing games and stories. Newly accepted positions will be classified as Full-Time and Remote.
-            </p>
-
-            <div className="grid gap-6 md:grid-cols-3 mb-8">
-              <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="mb-4"><Megaphone className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
-                <h3 className="text-2xl font-semibold mb-3">Marketing Specialist</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  Drive campaigns, grow brand visibility, and support launch strategy. Create marketing content that connects with players.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Full-Time
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Remote
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="mb-4"><Palette className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
-                <h3 className="text-2xl font-semibold mb-3">Graphics Designer</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  Design visuals for campaigns, merchandise, and game marketing. Bring our studio’s creative identity to life across digital and print.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Full-Time
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Remote
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm dark:border-green-800 dark:bg-slate-900">
-                <div className="mb-4"><Code className="h-8 w-8 text-green-600 dark:text-green-400" /></div>
-                <h3 className="text-2xl font-semibold mb-3">Frontend Developer</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  Build polished web experiences for our studio and client projects. Work with Next.js, modern UI, and responsive design.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Full-Time
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 dark:bg-green-900/20">
-                    Remote
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-green-200 dark:border-green-800">
-              <h3 className="text-xl font-semibold mb-4">How to Apply</h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-6">
-                Send your CV and portfolio to <strong>hello@gecogames.com</strong> with the position title in the subject line.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                <Link
-                  href="mailto:hello@gecogames.com?subject=Application for Marketing Specialist Position"
-                  className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
-                >
-                  Apply for Marketing Specialist
-                </Link>
-                <Link
-                  href="mailto:hello@gecogames.com?subject=Application for Graphics Designer Position"
-                  className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
-                >
-                  Apply for Graphics Designer
-                </Link>
-                <Link
-                  href="mailto:hello@gecogames.com?subject=Application for Frontend Developer Position"
-                  className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
-                >
-                  Apply for Frontend Developer
-                </Link>
-              </div>
-              <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <strong>⏰ Application Deadline:</strong> 30th May 2026
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -352,21 +317,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 px-6 lg:px-8 bg-slate-100 dark:bg-slate-950">
+      <section id="characters" className="py-20 px-6 lg:px-8 bg-slate-100 dark:bg-slate-950">
         <div className="container mx-auto">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Character gallery</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Character designs that bring your worlds to life.</h2>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Meet the first legends of Alkebulan.</h2>
             <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-300">
-              Iconic characters, strong silhouettes, and expressive art direction are at the heart of our visual storytelling.
+              A first look at the warriors, guardians, and mystics taking shape inside our newest original world. Official names and stories will be revealed as development continues.
             </p>
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {characterGallery.map((character) => (
               <div key={character.name} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
-                <div className="relative h-72 w-full overflow-hidden rounded-3xl">
-                  <Image src={character.image} alt={character.name} fill className="object-cover" />
+                <div className="relative h-[28rem] w-full overflow-hidden rounded-3xl">
+                  <Image src={character.image} alt={character.name} fill className="object-cover object-top transition duration-500 hover:scale-105" />
                 </div>
                 <div className="mt-6">
                   <h3 className="text-2xl font-semibold">{character.name}</h3>
@@ -410,22 +375,22 @@ export default function HomePage() {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
                 Get exclusive insights, behind-the-scenes content, and early access to our latest projects. Join thousands of game developers, artists, and enthusiasts.
               </p>
-              <ul className="mt-8 space-y-3">
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/20">
-                    <Sparkles className="h-3 w-3 text-violet-600 dark:text-violet-400" />
+              <ul className="mt-10 grid gap-4">
+                <li className="flex items-center gap-4 rounded-2xl border border-violet-300/20 bg-violet-400/10 p-5 text-base font-bold text-white shadow-lg backdrop-blur">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-500 text-white shadow-[0_0_24px_rgba(139,92,246,.4)]">
+                    <Sparkles className="h-5 w-5" />
                   </div>
                   <span>Weekly industry insights and trends</span>
                 </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/20">
-                    <Layers className="h-3 w-3 text-violet-600 dark:text-violet-400" />
+                <li className="flex items-center gap-4 rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-5 text-base font-bold text-white shadow-lg backdrop-blur">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500 text-white shadow-[0_0_24px_rgba(6,182,212,.4)]">
+                    <Layers className="h-5 w-5" />
                   </div>
                   <span>Exclusive tutorials and production tips</span>
                 </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/20">
-                    <Star className="h-3 w-3 text-violet-600 dark:text-violet-400" />
+                <li className="flex items-center gap-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-400/10 p-5 text-base font-bold text-white shadow-lg backdrop-blur">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-fuchsia-500 text-white shadow-[0_0_24px_rgba(217,70,239,.4)]">
+                    <Star className="h-5 w-5" />
                   </div>
                   <span>Early access to new game releases</span>
                 </li>

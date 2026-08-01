@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Loader2, AlertCircle, Chrome, Apple } from "lucide-react"
-import Image from "next/image"
+import { AlertCircle, Apple, Chrome, Eye, EyeOff, Gamepad2, GraduationCap, Loader2, Trophy } from "lucide-react"
 import { decodeJwt, persistAuthSession } from "@/lib/auth-session"
 
 export default function LoginPage() {
@@ -16,30 +16,19 @@ export default function LoginPage() {
   const [socialProvider, setSocialProvider] = useState<string | null>(null)
   const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
     setError("")
     setIsLoading(true)
 
     try {
-      // Call backend API for authentication
       const response = await fetch("/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       })
-
       let data: any = { message: "Authentication failed. Please check your credentials and try again." }
-      try {
-        data = await response.json()
-      } catch {
-        data = { message: "Invalid response from authentication service." }
-      }
+      try { data = await response.json() } catch { data = { message: "Invalid response from authentication service." } }
 
       if (!response.ok) {
         setError(data.message || "Authentication failed. Please check your credentials and try again.")
@@ -48,9 +37,7 @@ export default function LoginPage() {
       }
 
       const decodedToken = data.access ? decodeJwt(data.access) : null
-      const isValidAccessToken = decodedToken && decodedToken.token_type === "access"
-
-      if (!isValidAccessToken) {
+      if (!decodedToken || decodedToken.token_type !== "access") {
         setError("Invalid access token returned from the server.")
         setIsLoading(false)
         return
@@ -59,7 +46,7 @@ export default function LoginPage() {
       persistAuthSession(data, email)
       setIsLoading(false)
       router.push("/select-service")
-    } catch (err) {
+    } catch {
       setError("Network error. Please check your connection and try again.")
       setIsLoading(false)
     }
@@ -72,227 +59,88 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-indigo-900 flex items-center justify-center px-4 py-12">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-        <div className="absolute -bottom-8 right-20 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse animation-delay-2000"></div>
-      </div>
+    <main className="relative min-h-screen overflow-hidden bg-[#2c196f] text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(43,221,225,.28),transparent_24%),radial-gradient(circle_at_88%_90%,rgba(136,73,232,.28),transparent_30%),linear-gradient(135deg,#311b79_0%,#3b237f_48%,#25145f_100%)]" />
+      <div className="absolute -left-28 -top-32 h-[430px] w-[430px] rounded-full border-[42px] border-cyan-300/30 shadow-[inset_0_0_60px_rgba(10,10,60,.45),0_0_70px_rgba(34,211,238,.18)]" />
+      <div className="absolute -left-16 -top-20 h-[300px] w-[430px] rotate-[20deg] rounded-[50%] border-[36px] border-violet-400/55 shadow-[0_20px_50px_rgba(6,4,40,.45)]" />
+      <div className="absolute left-5 top-20 h-[160px] w-[390px] -rotate-[12deg] rounded-[50%] border-[30px] border-cyan-200/45 blur-[1px]" />
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Login Card */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl dark:bg-slate-800/50 dark:border-slate-700/50 transition-all duration-300 hover:shadow-cyan-500/20">
-          {/* Logo Section */}
-          <div className="flex justify-center mb-8 animate-fade-in">
-            <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/50 hover:scale-110 transition-transform duration-300">
-              <video
-                src={encodeURI("/logoAnimation1 .mp4")}
-                aria-label="GECO animated logo"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-
-          {/* Heading */}
-          <div className="mb-8 text-center animate-fade-in animation-delay-100">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent mb-3">
-              Welcome Back
-            </h1>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Sign in to access your personal dashboard and manage your gaming journey with GECO Studios
-            </p>
-          </div>
-
-          {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-6 animate-fade-in animation-delay-200">
-            {/* Email Field */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-200 dark:text-slate-300">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-400/30 bg-white/10 backdrop-blur-sm px-4 py-3 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 dark:bg-slate-700/30 dark:border-slate-600/30 dark:focus:border-cyan-400"
-                placeholder="you@example.com"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-semibold text-slate-200 dark:text-slate-300">
-                  Password
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
-                >
-                  Forgot Password?
-                </Link>
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[1440px] lg:grid-cols-[.92fr_1.08fr]">
+        <section className="relative hidden min-h-screen flex-col justify-end px-12 py-16 lg:flex xl:px-20 xl:py-20">
+          <div className="max-w-lg">
+            <Link href="/" className="inline-flex items-center gap-4">
+              <div className="relative h-20 w-20 overflow-hidden rounded-2xl bg-white/5">
+                <Image src="/logo-light.png" alt="Geco Games Studios" fill sizes="80px" className="object-contain p-1" priority />
               </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-slate-400/30 bg-white/10 backdrop-blur-sm px-4 py-3 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 dark:bg-slate-700/30 dark:border-slate-600/30 dark:focus:border-cyan-400"
-                  placeholder="••••••••"
-                  required
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+              <div>
+                <p className="text-3xl font-black tracking-tight">GECO GAMES</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[.3em] text-cyan-200">Studios</p>
+              </div>
+            </Link>
+            <h1 className="mt-10 text-4xl font-black leading-tight tracking-[-.03em] xl:text-5xl">One account. Every GECO experience.</h1>
+            <p className="mt-5 max-w-md text-lg leading-8 text-violet-100/80">Enter the worlds you play, the communities you compete with, and the skills you’re building.</p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"><Gamepad2 className="h-4 w-4 text-cyan-300" /> Developer</span>
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"><Trophy className="h-4 w-4 text-amber-300" /> JamPass</span>
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold"><GraduationCap className="h-4 w-4 text-fuchsia-300" /> Academy</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex min-h-screen items-center justify-center px-4 py-10 sm:px-8 lg:px-14 xl:px-24">
+          <div className="w-full max-w-[540px] rounded-[2rem] border border-white/15 bg-white/[.09] p-6 shadow-[0_32px_100px_rgba(11,5,46,.45)] backdrop-blur-xl sm:p-10 xl:p-12">
+            <div className="mb-8 flex items-center gap-3 lg:hidden">
+              <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white/5"><Image src="/logo-light.png" alt="Geco Games Studios" fill sizes="48px" className="object-contain p-1" /></div>
+              <p className="text-lg font-black">GECO GAMES</p>
+            </div>
+            <p className="text-xs font-black uppercase tracking-[.28em] text-cyan-200">Welcome back</p>
+            <h2 className="mt-3 text-3xl font-black tracking-[-.025em] sm:text-4xl">Log in to your account</h2>
+            <p className="mt-3 text-sm leading-6 text-violet-100/70">Continue to your GECO dashboard and connected services.</p>
+
+            <form onSubmit={handleLogin} className="mt-8 space-y-5">
+              <div>
+                <label htmlFor="email" className="mb-2 block text-xs font-bold text-violet-100">Your email</label>
+                <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required disabled={isLoading} autoComplete="email" className="w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3.5 text-white outline-none transition placeholder:text-violet-200/35 focus:border-cyan-300/70 focus:ring-4 focus:ring-cyan-300/10" />
+              </div>
+              <div>
+                <label htmlFor="password" className="mb-2 block text-xs font-bold text-violet-100">Your password</label>
+                <div className="relative">
+                  <input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" required disabled={isLoading} autoComplete="current-password" className="w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3.5 pr-12 text-white outline-none transition placeholder:text-violet-200/35 focus:border-cyan-300/70 focus:ring-4 focus:ring-cyan-300/10" />
+                  <button type="button" onClick={() => setShowPassword((value) => !value)} className="absolute right-4 top-1/2 -translate-y-1/2 text-violet-200/60 hover:text-white" aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}</button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <label className="flex items-center gap-2 text-violet-100/70"><input type="checkbox" className="h-4 w-4 rounded border-white/20 bg-white/5 accent-cyan-300" /> Remember me</label>
+                <Link href="/forgot-password" className="font-bold text-cyan-200 hover:text-white">Forgot password?</Link>
+              </div>
+
+              {error && <div className="flex gap-3 rounded-xl border border-red-300/20 bg-red-500/10 p-4"><AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-300" /><p className="text-sm text-red-100">{error}</p></div>}
+
+              <button type="submit" disabled={isLoading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-200 px-6 py-3.5 text-sm font-black text-[#24125e] shadow-[0_12px_30px_rgba(103,232,249,.22)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50">
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}{isLoading ? "Signing in..." : "Log in"}
+              </button>
+            </form>
+
+            <div className="my-7 flex items-center gap-4"><span className="h-px flex-1 bg-white/10" /><span className="text-[11px] font-bold uppercase tracking-wider text-violet-100/50">or continue with</span><span className="h-px flex-1 bg-white/10" /></div>
+            <div className="grid grid-cols-3 gap-3">
+              {([
+                ["google", Chrome, "Google"],
+                ["facebook", Gamepad2, "Facebook"],
+                ["apple", Apple, "Apple"],
+              ] as const).map(([provider, Icon, label]) => (
+                <button key={provider} type="button" onClick={() => handleSocialLogin(provider)} disabled={isLoading || Boolean(socialProvider)} className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-3 text-xs font-bold transition hover:bg-white/10 disabled:opacity-50">
+                  {socialProvider === provider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}<span className="hidden sm:inline">{label}</span>
                 </button>
-              </div>
+              ))}
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-4 flex items-start gap-3 animate-shake">
-                <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-200">
-                  {error}
-                </p>
-              </div>
-            )}
-
-            {/* Sign In Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-cyan-500/50 active:scale-95 flex items-center justify-center gap-2"
-            >
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* Social Sign In Section */}
-          <div className="my-8 space-y-4">
-            <p className="text-center text-sm text-slate-400 font-medium">Or continue with</p>
-            <div className="grid gap-3 sm:grid-cols-3">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("google")}
-                disabled={isLoading || Boolean(socialProvider)}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
-              >
-                {socialProvider === "google" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Chrome className="h-5 w-5" />}
-                <span>Google</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("facebook")}
-                disabled={isLoading || Boolean(socialProvider)}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
-              >
-                {socialProvider === "facebook" ? <Loader2 className="h-5 w-5 animate-spin" /> : <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M23.998 12c0-6.628-5.372-12-12-12s-12 5.372-12 12c0 5.988 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.356c0-3.013 1.792-4.682 4.533-4.682 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 22.954 23.998 17.988 23.998 12z"/>
-                </svg>}
-                <span>Facebook</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("apple")}
-                disabled={isLoading || Boolean(socialProvider)}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-400/30 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-400/50"
-              >
-                {socialProvider === "apple" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Apple className="h-5 w-5" />}
-                <span>Apple</span>
-              </button>
-            </div>
+            <p className="mt-8 text-center text-sm text-violet-100/65">Don’t have an account?</p>
+            <Link href="/register" className="mt-3 flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-black text-white transition hover:bg-white/10">Create an account</Link>
+            <p className="mt-7 text-center text-[11px] leading-5 text-violet-100/45">By continuing, you agree to our <Link href="/support/terms" className="text-violet-100/75 hover:text-white">Terms</Link> and <Link href="/support/privacy" className="text-violet-100/75 hover:text-white">Privacy Policy</Link>.</p>
           </div>
-
-          {/* Divider */}
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-400/20"></div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="space-y-4">
-            <div className="rounded-lg border border-slate-400/20 bg-white/5 p-4 text-center">
-              <p className="text-sm text-slate-300 mb-3">
-                New to GECO Studios?
-              </p>
-              <Link
-                href="/register"
-                className="inline-block w-full rounded-lg border border-cyan-400/50 bg-cyan-400/10 hover:bg-cyan-400/20 px-4 py-2.5 text-sm font-semibold text-cyan-300 transition-all duration-300 hover:border-cyan-400"
-              >
-                Create an Account
-              </Link>
-            </div>
-          </div>
-
-          {/* Footer Text */}
-          <p className="mt-6 text-center text-xs text-slate-400">
-            By signing in, you agree to our{" "}
-            <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">Terms of Service</a>
-            {" "}and{" "}
-            <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">Privacy Policy</a>
-          </p>
-        </div>
-
-        {/* Footer Info */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-slate-400">
-            Need help?{" "}
-            <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">Contact Support</a>
-          </p>
-        </div>
+        </section>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.6s ease-out forwards;
-          opacity: 0;
-        }
-        .animation-delay-100 {
-          animation-delay: 0.1s;
-        }
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animate-shake {
-          animation: shake 0.4s ease-in-out;
-        }
-      `}</style>
-    </div>
+    </main>
   )
 }

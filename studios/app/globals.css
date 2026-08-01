@@ -31,14 +31,311 @@
     scroll-behavior: smooth;
   }
 
-  body {
+body {
     @apply min-h-screen bg-[color:var(--background)] text-[color:var(--foreground)] antialiased;
+    font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
   }
 
   ::selection {
     background-color: rgba(14, 165, 233, 0.2);
     color: inherit;
   }
+}
+
+/* Public website — deep-space visual system. Portal routes are deliberately
+   excluded by AppChrome so product dashboards keep their existing UI. */
+.cosmic-site {
+  --space: #100d3d;
+  --space-soft: #191451;
+  --space-card: rgba(35, 27, 91, .82);
+  --purple: #7c4dff;
+  --cyan: #27d8e8;
+  min-height: 100vh;
+  color: #fff;
+  background:
+    radial-gradient(circle at 8% 7%, rgba(233, 38, 130, .32) 0 9px, transparent 11px),
+    radial-gradient(circle at 91% 12%, rgba(39, 216, 232, .22), transparent 18%),
+    radial-gradient(circle at 70% 35%, rgba(111, 61, 214, .24), transparent 24%),
+    var(--space);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Ambient stars and asteroids shared by every public page. */
+.cosmic-site::before,
+.cosmic-site::after {
+  content: "";
+  position: fixed;
+  inset: -20vh -15vw;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.cosmic-site::before {
+  opacity: .34;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.9) 0 1px, transparent 1.7px),
+    radial-gradient(circle, rgba(117,214,255,.7) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(190,164,255,.65) 0 1.2px, transparent 1.9px);
+  background-position: 8px 12px, 43px 71px, 92px 35px;
+  background-size: 113px 127px, 167px 181px, 229px 211px;
+  animation: cosmic-star-drift 55s linear infinite;
+}
+
+.cosmic-site::after {
+  width: 120px;
+  height: 4px;
+  inset: 18vh auto auto -160px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(93,225,238,.14) 48%, rgba(184,238,255,.9));
+  filter: drop-shadow(0 0 7px rgba(71,218,238,.6));
+  transform: rotate(-28deg);
+  box-shadow:
+    -38vw 42vh 0 -1px rgba(151,108,255,.48),
+    -75vw 78vh 0 -1px rgba(255,107,184,.35);
+  animation: cosmic-asteroid-flight 15s linear infinite 2s;
+}
+
+@keyframes cosmic-star-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-90px, 120px, 0); }
+}
+
+@keyframes cosmic-asteroid-flight {
+  0%, 8% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-28deg) scale(.75); }
+  12% { opacity: .75; }
+  35% { opacity: .55; }
+  42%, 100% { opacity: 0; transform: translate3d(135vw, 72vh, 0) rotate(-28deg) scale(1); }
+}
+
+.cosmic-site h1, .cosmic-site h2, .cosmic-site h3, .cosmic-site h4,
+  .cosmic-site .brand-title { font-family: "Arial Rounded MT Bold", "Avenir Next", system-ui, sans-serif; }
+.cosmic-site > main { overflow: hidden; background: transparent; }
+.cosmic-site .cosmic-nav {
+  position: fixed;
+  width: 100%;
+  border-color: rgba(255,255,255,.08) !important;
+  background: rgba(16,13,61,.72) !important;
+  color: white;
+}
+.cosmic-site .cosmic-nav a { color: #d8d5f2; }
+.cosmic-site .cosmic-nav a:hover { color: white; }
+.cosmic-site .cosmic-nav .cosmic-play {
+  color: white !important;
+  background: linear-gradient(100deg, #7554ec, #9a5cff) !important;
+  box-shadow: 0 10px 30px rgba(116, 77, 255, .35);
+}
+.cosmic-site .portal-only { display: none; }
+.cosmic-site .cosmic-nav [class*="bg-white"],
+.cosmic-site .cosmic-nav [class*="dark:bg-slate-950"] { background-color: rgba(20,16,65,.97) !important; }
+
+.cosmic-site main > div,
+.cosmic-site main > main { background-color: transparent !important; color: white !important; }
+.cosmic-site main section:not(:first-child) {
+  position: relative;
+  background: transparent !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+.cosmic-site main section:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(59,220,230,.2), rgba(104,63,215,.12) 46%, transparent 70%);
+  right: -140px;
+  top: 12%;
+  pointer-events: none;
+}
+.cosmic-site main section:nth-child(odd)::before { left: -160px; right: auto; }
+.cosmic-site main p { color: #b8b4d3 !important; }
+.cosmic-site main h1, .cosmic-site main h2, .cosmic-site main h3,
+.cosmic-site main h4, .cosmic-site main strong { color: white; }
+.cosmic-site main [class*="bg-white"],
+.cosmic-site main [class*="bg-slate-50"],
+.cosmic-site main [class*="bg-slate-100"],
+.cosmic-site main [class*="bg-slate-900"] {
+  background-color: var(--space-card) !important;
+}
+.cosmic-site main [class*="border-slate"],
+.cosmic-site main [class*="border-green"],
+.cosmic-site main [class*="border-blue"] { border-color: rgba(255,255,255,.1) !important; }
+.cosmic-site main a[class*="bg-sky"], .cosmic-site main a[class*="bg-green"],
+.cosmic-site main button[class*="bg-sky"], .cosmic-site main button[class*="bg-violet"] {
+  background: linear-gradient(100deg, #714cff, #9b5cff) !important;
+  box-shadow: 0 12px 32px rgba(113,76,255,.28);
+}
+.cosmic-site main input, .cosmic-site main textarea, .cosmic-site main select {
+  color: white !important;
+  background: rgba(12,9,52,.72) !important;
+  border-color: rgba(255,255,255,.14) !important;
+}
+.cosmic-site .cosmic-footer {
+  position: relative;
+  overflow: hidden;
+  color: white;
+  border-color: rgba(255,255,255,.08) !important;
+  background: #0b0932 !important;
+}
+.cosmic-site .cosmic-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .35;
+  background: radial-gradient(circle at 12% 76%, #714cff 0 2px, transparent 3px), radial-gradient(circle at 86% 20%, #27d8e8 0 2px, transparent 3px);
+  background-size: 110px 90px, 160px 140px;
+}
+.cosmic-site .cosmic-footer > div { position: relative; }
+.cosmic-site .cosmic-footer p, .cosmic-site .cosmic-footer li, .cosmic-site .cosmic-footer a { color: #aaa6c8 !important; }
+.cosmic-site .cosmic-footer .text-lg { color: white !important; }
+
+@media (max-width: 1023px) {
+  .cosmic-site .cosmic-nav > div + div > div { background: rgba(16,13,61,.98) !important; border-color: rgba(255,255,255,.1) !important; }
+  .cosmic-site .cosmic-nav button { color: white; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-site::before,
+  .cosmic-site::after { animation: none; }
+  .cosmic-site::after { display: none; }
+}
+
+/* Authenticated dashboards — compact analytics UI using the gaming palette. */
+.portal-site {
+  --portal-bg: #0d0a24;
+  --portal-panel: #17132f;
+  --portal-panel-high: #201a40;
+  --portal-border: rgba(255, 255, 255, .085);
+  --portal-text: #f7f5ff;
+  --portal-muted: #9b96b7;
+  min-height: 100vh;
+  color: var(--portal-text);
+  background:
+    radial-gradient(circle at 85% 0%, rgba(77, 216, 232, .08), transparent 28%),
+    radial-gradient(circle at 8% 30%, rgba(124, 77, 255, .12), transparent 28%),
+    var(--portal-bg);
+}
+
+.portal-site > main { min-height: 100vh; }
+.portal-site h1, .portal-site h2, .portal-site h3, .portal-site h4 { color: var(--portal-text) !important; }
+.portal-site p, .portal-site label { color: var(--portal-muted); }
+.portal-site [class*="min-h-screen"] { background-color: transparent !important; color: var(--portal-text) !important; }
+.portal-site header {
+  border-color: var(--portal-border) !important;
+  background: rgba(13, 10, 36, .88) !important;
+  box-shadow: 0 18px 50px rgba(3, 2, 16, .18);
+}
+.portal-site header nav,
+.portal-site header [class*="border-t"] { border-color: var(--portal-border) !important; }
+.portal-site header nav a {
+  border: 0 !important;
+  border-radius: 12px 12px 0 0;
+  color: var(--portal-muted) !important;
+}
+.portal-site header nav a:hover { color: white !important; background: rgba(255,255,255,.04); }
+.portal-site header nav a[class*="text-cyan"] {
+  color: white !important;
+  background: linear-gradient(100deg, #7048e8, #8b5cf6);
+}
+.portal-site [class*="bg-white"],
+.portal-site [class*="dark:bg-slate-800"],
+.portal-site [class*="dark:bg-slate-900"],
+.portal-site [class*="bg-slate-50"],
+.portal-site [class*="bg-slate-100"] {
+  background-color: var(--portal-panel) !important;
+}
+.portal-site [class*="border-slate"] { border-color: var(--portal-border) !important; }
+.portal-site [class*="rounded-2xl"],
+.portal-site [class*="rounded-3xl"] {
+  border: 1px solid var(--portal-border);
+  box-shadow: 0 18px 55px rgba(3, 2, 18, .2);
+}
+.portal-site [class*="text-slate-9"],
+.portal-site [class*="dark:text-white"] { color: var(--portal-text) !important; }
+.portal-site [class*="text-slate-6"],
+.portal-site [class*="text-slate-5"],
+.portal-site [class*="text-slate-4"] { color: var(--portal-muted) !important; }
+.portal-site [class*="bg-cyan-6"],
+.portal-site [class*="bg-blue-6"],
+.portal-site button[class*="bg-slate-9"],
+.portal-site a[class*="bg-slate-9"] {
+  color: white !important;
+  background: linear-gradient(100deg, #6544db, #8b5cf6) !important;
+  box-shadow: 0 10px 26px rgba(112,72,232,.25);
+}
+.portal-site input, .portal-site textarea, .portal-site select {
+  color: white !important;
+  border-color: var(--portal-border) !important;
+  background: var(--portal-panel-high) !important;
+}
+.portal-site table { overflow: hidden; border-radius: 14px; }
+.portal-site thead { background: rgba(139,92,246,.1) !important; }
+.portal-site th { color: #cfc9e9 !important; border-color: var(--portal-border) !important; }
+.portal-site td { color: #eeeafd !important; border-color: var(--portal-border) !important; }
+.portal-site tbody tr:hover { background: rgba(255,255,255,.025); }
+.portal-site .recharts-cartesian-grid line { stroke: rgba(255,255,255,.07); }
+.portal-site .recharts-text { fill: #8f89aa; }
+.portal-account { bottom: 18px; left: 18px; width: 214px; }
+
+@media (min-width: 1024px) {
+  .portal-site header > .container { max-width: 1480px; }
+  .portal-site main .container { max-width: 1480px; }
+  .portal-site .dashboard-app-shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+  .portal-site .dashboard-app-shell > header {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid var(--portal-border) !important;
+    border-bottom: 0 !important;
+    background: rgba(18,14,45,.96) !important;
+  }
+  .portal-site .dashboard-app-shell > header > .container { padding: 28px 18px; }
+  .portal-site .dashboard-app-shell > header > .container > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .portal-site .dashboard-app-shell > header > .container > div:first-child > div:last-child {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+  .portal-site .dashboard-app-shell > header > .container > div:first-child > div:last-child a,
+  .portal-site .dashboard-app-shell > header > .container > div:first-child > div:last-child button {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .portal-site .dashboard-app-shell > header nav { margin-top: 24px; overflow: visible; }
+  .portal-site .dashboard-app-shell > header nav > div,
+  .portal-site .dashboard-app-shell > header .container > div:last-child:not(:first-child) {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 16px;
+  }
+  .portal-site .dashboard-app-shell > header nav a,
+  .portal-site .dashboard-app-shell > header .container > div:last-child:not(:first-child) > a {
+    width: 100%;
+    border-radius: 11px !important;
+    padding: 11px 14px;
+  }
+  .portal-site .dashboard-app-shell > main,
+  .portal-site .dashboard-app-shell > header + div { min-width: 0; }
+}
+
+@media (max-width: 1023px) {
+  .portal-account { bottom: auto; left: auto; right: 14px; top: 14px; width: 190px; }
+  .portal-account-panel { bottom: auto; left: auto; right: 0; top: calc(100% + 10px); }
+  .portal-site header > .container { padding-right: 215px; }
+}
+
+@media (max-width: 639px) {
+  .portal-account { width: 52px; }
+  .portal-account > button { padding: 6px; }
+  .portal-account > button > span:nth-child(2),
+  .portal-account > button > svg { display: none; }
+  .portal-site header > .container { padding-right: 74px; }
 }
 
 @layer components {
