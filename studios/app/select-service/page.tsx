@@ -116,6 +116,11 @@ export default function SelectServicePage() {
       return
     }
 
+    if (card.service.id === "survey") {
+      router.push("/survey/admin")
+      return
+    }
+
     setBusyService(card.service.id)
     setNotice("")
 

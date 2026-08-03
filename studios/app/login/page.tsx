@@ -15,6 +15,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [socialProvider, setSocialProvider] = useState<string | null>(null)
   const router = useRouter()
+  const nextPath = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("next")
+  const destination = nextPath?.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/select-service"
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -45,7 +47,7 @@ export default function LoginPage() {
 
       persistAuthSession(data, email)
       setIsLoading(false)
-      router.push("/select-service")
+      router.push(destination)
     } catch {
       setError("Network error. Please check your connection and try again.")
       setIsLoading(false)
@@ -55,7 +57,7 @@ export default function LoginPage() {
   const handleSocialLogin = (provider: "google" | "facebook" | "apple") => {
     setError("")
     setSocialProvider(provider)
-    window.location.href = `/api/auth/social/${provider}/start?next=/select-service`
+    window.location.href = `/api/auth/social/${provider}/start?next=${encodeURIComponent(destination)}`
   }
 
   return (

@@ -1,6 +1,6 @@
 "use client"
 
-export type GecoServiceId = "academy" | "developer" | "jampass-player" | "marketplace" | "esports"
+export type GecoServiceId = "academy" | "developer" | "jampass-player" | "marketplace" | "esports" | "survey"
 
 export interface GecoService {
   id: GecoServiceId
@@ -90,6 +90,14 @@ export const GECO_SERVICES: GecoService[] = [
     dashboardPath: "/esports",
     onboardingPath: "/select-service/esports/onboarding",
     legacyTypes: ["esports", "gamer"],
+  },
+  {
+    id: "survey",
+    name: "Survey Dashboard",
+    description: "View combined anonymous survey results. Available to Django superusers only.",
+    dashboardPath: "/survey/admin",
+    onboardingPath: "/survey/admin",
+    legacyTypes: [],
   },
 ]
 

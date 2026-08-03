@@ -26,6 +26,11 @@ export default function ServiceOnboardingPage() {
         return
       }
 
+      if (service.id === "survey") {
+        router.replace("/survey/admin")
+        return
+      }
+
       setError("")
 
       try {
