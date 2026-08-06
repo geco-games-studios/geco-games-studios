@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2, ClipboardList } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2, ClipboardList, ShoppingBag } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
 import { clearAuthSession, getDashboardPathForUser } from "@/lib/auth-session"
@@ -172,11 +172,22 @@ export default function Navigation() {
             >
               <ClipboardList className="h-4 w-4" /> Bunc
             </Link>
-            {/* Marketplace Icon */}
             <Link
               href="/marketplace"
-              className={`cosmic-play flex h-10 items-center justify-center gap-2 rounded-full px-5 text-xs font-black uppercase tracking-wider transition ${
+              className={`flex h-10 items-center justify-center gap-2 rounded-full border border-cyan-200/30 px-5 text-xs font-black uppercase tracking-wider transition ${
                 pathname === "/marketplace"
+                  ? "border-cyan-300 bg-cyan-300 text-[#17124e]"
+                  : "text-slate-700 dark:text-slate-300 hover:border-cyan-200 hover:bg-cyan-300/10 icon-hover"
+              }`}
+              title="Shop merchandise"
+            >
+              <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">Shop now</span>
+            </Link>
+            {/* Games */}
+            <Link
+              href="/gaming"
+              className={`cosmic-play flex h-10 items-center justify-center gap-2 rounded-full px-5 text-xs font-black uppercase tracking-wider transition ${
+                pathname === "/gaming"
                   ? "bg-slate-950 text-white dark:bg-slate-100 dark:text-slate-900"
                   : "text-slate-700 dark:text-slate-300 icon-hover"
               }`}

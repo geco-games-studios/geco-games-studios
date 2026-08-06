@@ -18,6 +18,11 @@ const categoryLabels: Record<string, string> = Object.fromEntries(defaultCategor
 const keyFor = (question: Question) => question.id || question.key || question.name || ""
 const labelFor = (question: Question) => question.label || question.question || question.text || keyFor(question)
 const choiceLabel = (choice: Choice) => typeof choice === "string" ? choice : choice.label || choice.name || choice.value || ""
+const ratingScaleFor = (choices: string[]) => {
+  const values = choices.map(Number)
+  const isWholeNumberScale = values.length >= 2 && values.every((value, index) => Number.isInteger(value) && value === index + 1)
+  return isWholeNumberScale && (values.length === 5 || values.length === 10) ? values.length : null
+}
 
 export default function SurveyForm() {
   const [categories, setCategories] = useState(defaultCategories)
@@ -86,6 +91,7 @@ function QuestionControl({ question, value, setAnswer, toggleAnswer }: { questio
   const multiple = type.includes("check") || type.includes("multi")
   const freeResponse = type.includes("text") || type.includes("open") || type.includes("comment") || type.includes("textarea")
   const choices = rating && !options.length ? ["1", "2", "3", "4", "5"] : options
+  const ratingScale = rating ? ratingScaleFor(choices) : null
 
   const rankedChoices = Array.isArray(value) && value.length ? value : choices
   const reorder = (from: string, to: string) => {
@@ -100,7 +106,7 @@ function QuestionControl({ question, value, setAnswer, toggleAnswer }: { questio
 
   return <fieldset><legend className="text-lg font-bold text-white">{labelFor(question)} {question.required ? <span className="text-cyan-200">*</span> : null}</legend>
     {freeResponse ? <textarea value={typeof value === "string" ? value : ""} onChange={(event) => setAnswer(key, event.target.value)} rows={4} className="mt-4 w-full resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-violet-200/60 focus:border-cyan-200" placeholder="Share your thoughts (optional)" /> : null}
-    {rating ? <div className="mt-4 flex gap-3">{choices.map((choice) => <button type="button" key={choice} onClick={() => setAnswer(key, Number(choice))} className={`flex h-12 w-12 items-center justify-center rounded-2xl border font-black ${Number(value) === Number(choice) ? "border-cyan-200 bg-cyan-300 text-[#17124e]" : "border-white/15 bg-white/5 text-white"}`}>{choice}</button>)}</div> : null}
+    {rating ? <div className="mt-4"><div className="flex flex-wrap gap-3">{choices.map((choice) => <button type="button" key={choice} onClick={() => setAnswer(key, Number(choice))} aria-label={`Select ${choice}${ratingScale ? ` out of ${ratingScale}` : ""}`} aria-pressed={Number(value) === Number(choice)} className={`flex h-12 w-12 items-center justify-center rounded-2xl border font-black ${Number(value) === Number(choice) ? "border-cyan-200 bg-cyan-300 text-[#17124e]" : "border-white/15 bg-white/5 text-white"}`}>{choice}</button>)}</div>{ratingScale ? <div className="mt-3 flex max-w-[36rem] justify-between gap-4 text-xs font-semibold text-violet-100" aria-label={`${ratingScale}-point scale: 1 is the lowest and ${ratingScale} is the highest`}><span>1 = Lowest</span><span>{ratingScale} = Highest</span></div> : null}</div> : null}
     {ranking ? <div className="mt-4 space-y-2"><p className="text-sm text-violet-100">Drag platforms into your preferred order.</p>{rankedChoices.map((choice, index) => <div key={choice} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", choice)} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); reorder(event.dataTransfer.getData("text/plain"), choice) }} className="flex cursor-grab items-center gap-4 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-white active:cursor-grabbing"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-cyan-300/15 text-xs font-black text-cyan-200">{index + 1}</span><span className="text-violet-200">⠿</span>{choice}</div>)}</div> : null}
     {!freeResponse && !rating && !ranking ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{choices.map((choice) => { const selected = multiple ? Array.isArray(value) && value.includes(choice) : value === choice; return <button type="button" key={choice} onClick={() => multiple ? toggleAnswer(key, choice) : setAnswer(key, choice)} className={`flex min-h-14 items-center gap-3 rounded-2xl border px-4 text-left text-sm font-semibold ${selected ? "border-cyan-200 bg-cyan-300/15 text-white" : "border-white/15 bg-white/5 text-violet-50"}`}><span className={`flex h-5 w-5 items-center justify-center border ${multiple ? "rounded-md" : "rounded-full"} ${selected ? "border-cyan-200 bg-cyan-300 text-[#17124e]" : "border-white/30"}`}>{selected ? <Check className="h-3.5 w-3.5" /> : null}</span>{choice}</button> })}</div> : null}
   </fieldset>

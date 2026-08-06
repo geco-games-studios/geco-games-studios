@@ -155,7 +155,7 @@ export default function HomePage() {
               <div className="absolute bottom-0 left-[28%] h-[64%] w-[46%] overflow-hidden rounded-[2rem] border border-white/20 bg-fuchsia-400/10 shadow-[0_30px_80px_rgba(5,3,29,.65)]">
                 <Image src="/alkebulan-forest-guardian.jpeg" alt="The Forest Guardian from Legends of Alkebulan" fill className="object-cover object-top" priority />
               </div>
-              <div className="absolute right-[3%] top-[6%] rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200 backdrop-blur">Original characters</div>
+              <div className="absolute right-[3%] top-[6%] rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200 backdrop-blur">Legends of Alkebulan</div>
             </div>
           </div>
         </div>
