@@ -44,7 +44,12 @@ export default function ServiceOnboardingPage() {
         })
 
         const data = await response.json().catch(() => ({}))
-        if (response.ok && (data.access || data.user || data.current_user || data.profile)) {
+        if (!response.ok) {
+          setError(data.message || data.detail || "Could not create this service profile. Please try again.")
+          return
+        }
+
+        if (data.access || data.user || data.current_user || data.profile) {
           persistAuthSession(data)
         }
 
@@ -82,8 +87,13 @@ export default function ServiceOnboardingPage() {
         </p>
 
         {error ? (
-          <div className="mt-6 rounded-lg border border-red-300/25 bg-red-400/10 p-4 text-sm text-red-100">
-            {error}
+          <div className="mt-6">
+            <div className="rounded-lg border border-red-300/25 bg-red-400/10 p-4 text-sm text-red-100">
+              {error}
+            </div>
+            <Link href="/select-service" className="mt-5 inline-flex text-sm font-semibold text-cyan-300 hover:text-cyan-200">
+              Back to services
+            </Link>
           </div>
         ) : (
           <div className="mt-8 flex items-center gap-3 text-sm font-semibold text-cyan-100">

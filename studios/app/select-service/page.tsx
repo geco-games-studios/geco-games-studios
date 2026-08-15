@@ -136,19 +136,21 @@ export default function SelectServicePage() {
       })
 
       const data = await response.json().catch(() => ({}))
-      if (response.ok) {
-        if (data.access || data.user || data.current_user || data.profile) {
-          persistAuthSession(data)
-        }
-      } else {
-        setNotice(data.message || "Service permissions could not be refreshed from the server. Opening with your saved GECO session.")
+      if (!response.ok) {
+        setNotice(data.message || data.detail || "Could not open this service. Please try again.")
+        return
       }
-    } catch {
-      setNotice("Service permissions could not be refreshed from the server. Opening with your saved GECO session.")
-    } finally {
+
+      if (data.access || data.user || data.current_user || data.profile) {
+        persistAuthSession(data)
+      }
+
       setActiveService(card.service.id)
-      setBusyService(null)
       router.push(card.service.dashboardPath)
+    } catch {
+      setNotice("Could not reach the service. Check your connection and try again.")
+    } finally {
+      setBusyService(null)
     }
   }
 
