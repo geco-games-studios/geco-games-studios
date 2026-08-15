@@ -46,6 +46,16 @@ interface Game {
   updated_at: string
   developer: number
   api_key?: string
+  telemetry?: GameTelemetryStats | null
+}
+
+interface GameTelemetryStats {
+  total_downloads: number
+  downloads_by_platform: Record<string, number>
+  completed_play_sessions: number
+  total_seconds_played: number
+  average_playtime_seconds: number
+  average_playtime_minutes: number
 }
 
 export default function DeveloperGamesPage() {
@@ -101,7 +111,20 @@ export default function DeveloperGamesPage() {
 
       // Fetch games from API
       const gamesData = await fetchJson<Game[]>("developer/games/")
-      setGames(gamesData)
+      const gamesWithTelemetry = await Promise.all(
+        gamesData.map(async (game) => {
+          try {
+            const telemetry = await fetchJson<GameTelemetryStats>(
+              `developer/games/${game.id}/telemetry/stats/`
+            )
+            return { ...game, telemetry }
+          } catch (telemetryError) {
+            console.warn(`Failed to load downloads for game ${game.id}:`, telemetryError)
+            return { ...game, telemetry: null }
+          }
+        })
+      )
+      setGames(gamesWithTelemetry)
       setIsLoading(false)
     } catch (err) {
       console.error("Error fetching games:", err)
@@ -416,7 +439,7 @@ export default function DeveloperGamesPage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-2 gap-3 mb-4 pb-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                  <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-t border-slate-200 dark:border-slate-700 pt-4">
                     <div className="flex items-center gap-2">
                       <Star className="h-4 w-4 text-yellow-500" />
                       <div>
@@ -435,6 +458,17 @@ export default function DeveloperGamesPage() {
                       <p className="text-sm font-bold text-slate-900 dark:text-white">
                         {game.version}
                       </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Download className="h-4 w-4 text-cyan-600" />
+                      <div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                          Downloads
+                        </p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">
+                          {game.telemetry ? game.telemetry.total_downloads.toLocaleString() : "—"}
+                        </p>
+                      </div>
                     </div>
                   </div>
 

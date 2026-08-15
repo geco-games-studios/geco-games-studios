@@ -24,6 +24,16 @@ interface Game {
 interface GameWithStats extends Game {
   connected_users: number
   average_rating: number
+  telemetry: GameTelemetryStats | null
+}
+
+interface GameTelemetryStats {
+  total_downloads: number
+  downloads_by_platform: Record<string, number>
+  completed_play_sessions: number
+  total_seconds_played: number
+  average_playtime_seconds: number
+  average_playtime_minutes: number
 }
 
 interface ConnectedTrendResponse {
@@ -109,19 +119,27 @@ export default function DeveloperAnalyticsPage() {
       // Fetch stats for each game
       const topGames: GameWithStats[] = []
       for (const game of gamesData) {
-        try {
-          const stats = await fetchJson<GameStats>(`developer/games/${game.id}/stats/`)
+        const [stats, telemetry] = await Promise.all([
+          fetchJson<GameStats>(`developer/games/${game.id}/stats/`).catch((statsError) => {
+            console.warn(`Failed to fetch stats for game ${game.id}:`, statsError)
+            return null
+          }),
+          fetchJson<GameTelemetryStats>(`developer/games/${game.id}/telemetry/stats/`).catch((telemetryError) => {
+            console.warn(`Failed to load downloads for game ${game.id}:`, telemetryError)
+            return null
+          }),
+        ])
+        if (stats) {
           totalConnectedUsers += stats.connected_users
           totalRating += stats.average_rating
           ratingCount++
-          topGames.push({
-            ...game,
-            connected_users: stats.connected_users,
-            average_rating: stats.average_rating,
-          })
-        } catch (err) {
-          console.warn(`Failed to fetch stats for game ${game.id}:`, err)
         }
+        topGames.push({
+          ...game,
+          connected_users: stats?.connected_users ?? 0,
+          average_rating: stats?.average_rating ?? game.average_rating,
+          telemetry,
+        })
       }
 
       const aggregatedTrend = WEEKDAY_ORDER.reduce<Record<string, number>>((acc, day) => {
@@ -179,7 +197,7 @@ export default function DeveloperAnalyticsPage() {
         playTimePerUser,
         connectedUsersTrend,
         connectedUsersTrendLabels,
-        topGames: topGames.slice(0, 4)
+        topGames
       }
 
       setAnalytics(analyticsData)
@@ -365,7 +383,7 @@ export default function DeveloperAnalyticsPage() {
           </div>
           <div className="space-y-4">
             {analytics.topGames.map((game, index) => (
-              <div key={game.id} className="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-slate-700">
+              <div key={game.id} className="flex flex-col gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-700 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-bold">
                     {index + 1}
@@ -380,13 +398,32 @@ export default function DeveloperAnalyticsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-green-600 dark:text-green-400">{formatNumber(game.connected_users)}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Connected Users</p>
+                <div className="grid grid-cols-2 gap-4 text-right sm:grid-cols-5">
+                  <div>
+                    <p className="font-semibold text-green-600 dark:text-green-400">{formatNumber(game.connected_users)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Connected Users</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-cyan-600 dark:text-cyan-400">{formatNumber(game.telemetry?.total_downloads)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Total installs</p>
+                  </div>
+                  {(["android", "ios", "itch_io"] as const).map((platform) => (
+                    <div key={platform}>
+                      <p className="font-semibold text-slate-900 dark:text-white">
+                        {formatNumber(game.telemetry?.downloads_by_platform?.[platform] ?? (game.telemetry ? 0 : null))}
+                      </p>
+                      <p className="text-sm capitalize text-slate-500 dark:text-slate-400">
+                        {platform === "itch_io" ? "itch.io" : platform}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
+          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+            Download totals include every installation reported by each game and are not limited to JamPass installs.
+          </p>
         </div>
 
         <div className="rounded-xl bg-white shadow-lg dark:bg-slate-800 p-6">
