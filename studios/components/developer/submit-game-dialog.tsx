@@ -48,6 +48,14 @@ interface Game {
   api_key: string
 }
 
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024
+const MAX_VIDEO_BYTES = 5 * 1024 * 1024
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024
+
+function formatFileSize(bytes: number) {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 export function SubmitGameDialog({
   open,
   onOpenChange,
@@ -175,9 +183,22 @@ export function SubmitGameDialog({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = event.target
+    const file = files?.[0] ?? null
+    const isVideo = name === "gameplay_video_file"
+    const fileLimit = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES
+
+    if (file && file.size > fileLimit) {
+      setSubmitError(
+        `${file.name} is ${formatFileSize(file.size)}. ${isVideo ? "Videos" : "Images"} must be ${formatFileSize(fileLimit)} or smaller.`
+      )
+      event.target.value = ""
+      return
+    }
+
+    setSubmitError("")
     setFileInputs((prev) => ({
       ...prev,
-      [name]: files?.[0] ?? null,
+      [name]: file,
     }))
   }
 
@@ -193,6 +214,17 @@ export function SubmitGameDialog({
     }
     if (!formData.studio_name || formData.studio_name.trim() === "") {
       setSubmitError("Studio name is required.")
+      return
+    }
+
+    const uploadSize = Object.values(fileInputs).reduce(
+      (total, file) => total + (file?.size || 0),
+      0
+    )
+    if (uploadSize > MAX_UPLOAD_BYTES) {
+      setSubmitError(
+        `The selected files total ${formatFileSize(uploadSize)}. Keep the complete upload at ${formatFileSize(MAX_UPLOAD_BYTES)} or less.`
+      )
       return
     }
 
@@ -214,7 +246,7 @@ export function SubmitGameDialog({
       }
 
       const useFormData = Boolean(
-        fileInputs.game_image_file || fileInputs.gameplay_video_file
+        Object.values(fileInputs).some(Boolean)
       )
 
       let updatedGame: any
@@ -272,8 +304,14 @@ export function SubmitGameDialog({
       setCreatedGame(updatedGame)
     } catch (error) {
       console.error("Submit game error:", error)
+      const status =
+        typeof error === "object" && error !== null && "status" in error
+          ? Number((error as { status?: unknown }).status)
+          : undefined
       setSubmitError(
-        error instanceof Error ? error.message : "Failed to submit game."
+        status === 413 || (error instanceof TypeError && error.message === "Failed to fetch")
+          ? "The game files are too large for the upload server. Compress or remove the gameplay video and try again."
+          : error instanceof Error ? error.message : "Failed to submit game."
       )
     } finally {
       setIsSubmitting(false)
@@ -287,6 +325,7 @@ export function SubmitGameDialog({
           <DialogTitle>{editGame ? "Edit Game" : "Submit a New Game"}</DialogTitle>
           <DialogDescription>
             {editGame ? "Update your game details below." : "Fill in the game details below to create a new developer game record."}
+            <span className="mt-1 block">Images: 2 MB each. Video: 5 MB. Complete upload: 8 MB maximum.</span>
           </DialogDescription>
         </DialogHeader>
 
