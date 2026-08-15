@@ -4,33 +4,37 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ChevronDown, LogOut, User } from "lucide-react"
-import { clearAuthSession, getDashboardPathForUser } from "@/lib/auth-session"
-
-type PortalUser = {
-  name?: string
-  email?: string
-  type?: string
-  sub_user_type?: string
-  jampass_sub_type?: string
-}
+import { AUTH_SESSION_CHANGED_EVENT, clearAuthSession, getDashboardPathForUser, getStoredUser, hasValidAuthSession } from "@/lib/auth-session"
+import type { CurrentUser } from "@/lib/auth-session"
 
 export default function PortalAccountMenu() {
-  const [user, setUser] = useState<PortalUser | null>(null)
+  const [user, setUser] = useState<CurrentUser | null>(null)
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   useEffect(() => {
-    const stored = localStorage.getItem("currentUser")
-    if (stored) {
-      try { setUser(JSON.parse(stored)) } catch { setUser(null) }
+    const syncSession = () => {
+      if (!hasValidAuthSession()) {
+        if (getStoredUser() || localStorage.getItem("accessToken")) clearAuthSession()
+        setUser(null)
+      } else {
+        setUser(getStoredUser())
+      }
     }
+    syncSession()
 
     const close = (event: MouseEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) setOpen(false)
     }
     document.addEventListener("mousedown", close)
-    return () => document.removeEventListener("mousedown", close)
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, syncSession)
+    window.addEventListener("storage", syncSession)
+    return () => {
+      document.removeEventListener("mousedown", close)
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, syncSession)
+      window.removeEventListener("storage", syncSession)
+    }
   }, [])
 
   if (!user) return null

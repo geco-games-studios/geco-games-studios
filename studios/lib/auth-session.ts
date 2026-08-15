@@ -48,6 +48,8 @@ export interface AuthPayload {
   [key: string]: unknown
 }
 
+export const AUTH_SESSION_CHANGED_EVENT = "geco-auth-session-changed"
+
 export const GECO_SERVICES: GecoService[] = [
   {
     id: "academy",
@@ -137,6 +139,19 @@ export function clearAuthSession() {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("refreshToken")
   localStorage.removeItem("activeGecoService")
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT))
+}
+
+export function isAccessTokenExpired(token: string | null) {
+  if (!token) return true
+  const payload = decodeJwt(token)
+  if (!payload || typeof payload.exp !== "number") return false
+  return payload.exp * 1000 <= Date.now()
+}
+
+export function hasValidAuthSession() {
+  if (typeof window === "undefined") return false
+  return Boolean(getStoredUser()) && !isAccessTokenExpired(localStorage.getItem("accessToken"))
 }
 
 export function normalizeAuthUser(payload: AuthPayload, emailFallback = ""): CurrentUser {
@@ -197,6 +212,7 @@ export function persistAuthSession(payload: AuthPayload, emailFallback = "") {
   const user = normalizeAuthUser(payload, emailFallback)
   localStorage.setItem("currentUser", JSON.stringify(user))
   if (user.active_service) localStorage.setItem("activeGecoService", user.active_service)
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT))
   return user
 }
 

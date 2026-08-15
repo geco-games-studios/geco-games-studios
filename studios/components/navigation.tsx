@@ -6,7 +6,7 @@ import Image from "next/image"
 import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2, ClipboardList, ShoppingBag } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
-import { clearAuthSession, getDashboardPathForUser } from "@/lib/auth-session"
+import { AUTH_SESSION_CHANGED_EVENT, clearAuthSession, getDashboardPathForUser, getStoredUser, hasValidAuthSession } from "@/lib/auth-session"
 
 interface CurrentUser {
   email: string
@@ -26,11 +26,23 @@ export default function Navigation() {
   const pathname = usePathname()
 
   useEffect(() => {
-    const userData = localStorage.getItem("currentUser")
-    if (userData) {
-      setUser(JSON.parse(userData))
+    const syncSession = () => {
+      if (!hasValidAuthSession()) {
+        if (getStoredUser() || localStorage.getItem("accessToken")) clearAuthSession()
+        setUser(null)
+      } else {
+        setUser(getStoredUser() as CurrentUser)
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
+
+    syncSession()
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, syncSession)
+    window.addEventListener("storage", syncSession)
+    return () => {
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, syncSession)
+      window.removeEventListener("storage", syncSession)
+    }
   }, [])
 
   const handleLogout = () => {

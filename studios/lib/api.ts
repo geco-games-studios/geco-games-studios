@@ -85,6 +85,16 @@ async function readResponseBody(response: Response) {
   }
 }
 
+function clearExpiredSession(response: Response) {
+  if (response.status !== 401 || typeof window === "undefined") return
+
+  localStorage.removeItem("currentUser")
+  localStorage.removeItem("accessToken")
+  localStorage.removeItem("refreshToken")
+  localStorage.removeItem("activeGecoService")
+  window.dispatchEvent(new Event("geco-auth-session-changed"))
+}
+
 export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
   const response = await fetch(getRequestUrl(path), {
     method: "POST",
@@ -94,6 +104,7 @@ export async function postFormData<T = unknown>(path: string, formData: FormData
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -111,6 +122,7 @@ export async function putFormData<T = unknown>(path: string, formData: FormData,
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -127,6 +139,7 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     console.error(`API Error [${response.status}] at ${path}:`, data)
@@ -145,6 +158,7 @@ export async function postJson<T = unknown>(path: string, payload: unknown, init
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -162,6 +176,7 @@ export async function putJson<T = unknown>(path: string, payload: unknown, init?
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -179,6 +194,7 @@ export async function patchJson<T = unknown>(path: string, payload: unknown, ini
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
@@ -195,6 +211,7 @@ export async function deleteJson<T = unknown>(path: string, init?: Omit<RequestI
   })
 
   const data = await readResponseBody(response)
+  clearExpiredSession(response)
 
   if (!response.ok) {
     throw createApiError(response, data)
