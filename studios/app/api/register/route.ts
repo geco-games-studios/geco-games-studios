@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getApiUrl } from "@/lib/api"
+import { normalizeCountryCode } from "@/lib/countries"
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
 
     const isAcademyAdmin =
       account_type === "academy" && academy_sub_type === "admin"
+    const countryCode = normalizeCountryCode(country)
 
     if (!first_name || !last_name || !email || !password || !account_type) {
       return NextResponse.json(
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
           { status: 400 }
         )
       }
-    } else if (!country || !phone_number || !nrc_number || !date_of_birth) {
+    } else if (!countryCode || !phone_number || !nrc_number || !date_of_birth) {
       return NextResponse.json(
         { message: "All fields are required." },
         { status: 400 }
@@ -61,7 +63,9 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(
+        isAcademyAdmin ? body : { ...body, country: countryCode }
+      ),
     })
 
     const contentType = apiResponse.headers.get("content-type") || ""

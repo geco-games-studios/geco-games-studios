@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { getApiUrl } from "@/lib/api"
+import { COUNTRIES as COUNTRY_OPTIONS, normalizeCountryCode } from "@/lib/countries"
 import { LogOut, Mail, User, Calendar, MapPin, Phone, CreditCard, Award, CheckCircle, XCircle, Clock } from "lucide-react"
 
 // Countries list
@@ -174,7 +175,7 @@ export default function ProfilePage() {
         last_name: profileData.last_name || "",
         phone_number: profileData.phone_number || "",
         date_of_birth: profileData.date_of_birth || "",
-        country: profileData.country || "",
+        country: normalizeCountryCode(profileData.country),
         academy_sub_type: profileData.academy_sub_type || profileData.jampass_sub_type || "",
       })
       setIsLoading(false)
@@ -200,7 +201,7 @@ export default function ProfilePage() {
         last_name: user.last_name || "",
         phone_number: user.phone_number || "",
         date_of_birth: user.date_of_birth || "",
-        country: user.country || "",
+        country: normalizeCountryCode(user.country),
         academy_sub_type: user.academy_sub_type || user.jampass_sub_type || "",
       })
       setEditError("")
@@ -248,7 +249,7 @@ export default function ProfilePage() {
         last_name: formData.last_name,
         phone_number: formData.phone_number,
         date_of_birth: formData.date_of_birth,
-        country: formData.country,
+        country: normalizeCountryCode(formData.country),
       }
 
       const response = await fetch(getApiUrl(`users/${userId}/`), {
@@ -649,9 +650,9 @@ export default function ProfilePage() {
                           required
                         >
                           <option value="">Select a country...</option>
-                          {COUNTRIES.map((country) => (
-                            <option key={country} value={country}>
-                              {country}
+                          {COUNTRY_OPTIONS.map((country) => (
+                            <option key={country.code} value={country.code}>
+                              {country.name}
                             </option>
                           ))}
                         </select>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { LogOut, Mail, User, Phone, Globe, CheckCircle, XCircle, Clock, Award } from "lucide-react"
 import { fetchJson, putJson } from "@/lib/api"
 import { canAccessService } from "@/lib/auth-session"
+import { COUNTRIES as COUNTRY_OPTIONS, normalizeCountryCode } from "@/lib/countries"
 
 const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
@@ -99,7 +100,7 @@ export default function DeveloperProfilePage() {
         name: profileData?.name || parsedUser.name || "",
         studio_name: profileData?.studio_name || parsedUser.studio_name || "",
         phone: profileData?.phone || "",
-        country: profileData?.country || "",
+        country: normalizeCountryCode(profileData?.country),
         website: profileData?.website || "",
         bio: profileData?.bio || "",
       })
@@ -114,7 +115,7 @@ export default function DeveloperProfilePage() {
         setFormData({
           name: parsedUser.name || "",
           phone: parsedUser.phone || "",
-          country: parsedUser.country || "",
+          country: normalizeCountryCode(parsedUser.country),
           website: parsedUser.website || "",
           bio: parsedUser.bio || "",
         })
@@ -122,7 +123,7 @@ export default function DeveloperProfilePage() {
           name: parsedUser.name || "",
           studio_name: parsedUser.studio_name || "",
           phone: parsedUser.phone || "",
-          country: parsedUser.country || "",
+          country: normalizeCountryCode(parsedUser.country),
           website: parsedUser.website || "",
           bio: parsedUser.bio || "",
         })
@@ -146,7 +147,7 @@ export default function DeveloperProfilePage() {
         name: user.name || "",
         studio_name: user.studio_name || "",
         phone: user.phone || "",
-        country: user.country || "",
+        country: normalizeCountryCode(user.country),
         website: user.website || "",
         bio: user.bio || "",
       })
@@ -190,7 +191,7 @@ export default function DeveloperProfilePage() {
         name: formData.name,
         studio_name: formData.studio_name,
         phone: formData.phone,
-        country: formData.country,
+        country: normalizeCountryCode(formData.country),
         website: formData.website,
         bio: formData.bio,
       }
@@ -204,7 +205,7 @@ export default function DeveloperProfilePage() {
         name: formData.name,
         studio_name: formData.studio_name,
         phone: formData.phone,
-        country: formData.country,
+        country: normalizeCountryCode(formData.country),
         website: formData.website,
         bio: formData.bio,
       }
@@ -462,9 +463,9 @@ export default function DeveloperProfilePage() {
                         className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       >
                         <option value="">Select a country</option>
-                        {COUNTRIES.map((country) => (
-                          <option key={country} value={country}>
-                            {country}
+                        {COUNTRY_OPTIONS.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.name}
                           </option>
                         ))}
                       </select>

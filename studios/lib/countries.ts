@@ -55,6 +55,18 @@ export const COUNTRIES = [
   { code: 'ZW', name: 'Zimbabwe', prefix: '+263' },
 ]
 
+export function normalizeCountryCode(value: unknown) {
+  if (typeof value !== "string") return ""
+
+  const country = value.trim().replace(/^(["'])(.*)\1$/, "$2").trim()
+  if (/^[a-z]{2}$/i.test(country)) return country.toUpperCase()
+
+  return (
+    COUNTRIES.find(({ name }) => name.toLowerCase() === country.toLowerCase())
+      ?.code || ""
+  )
+}
+
 export const ACCOUNT_TYPES = [
   {
     value: "market",

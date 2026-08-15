@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Award, CheckCircle, Globe, Mail, Phone, Save, User } from "lucide-react"
-import { COUNTRIES } from "@/lib/countries"
+import { COUNTRIES, normalizeCountryCode } from "@/lib/countries"
 import { getApiUrl } from "@/lib/api"
 
 interface PlayerProfile {
@@ -87,7 +87,7 @@ export default function JamPassPlayerProfilePage() {
       middle_name: nextProfile.middle_name || "",
       last_name: nextProfile.last_name || "",
       phone_number: getPhone(nextProfile),
-      country: nextProfile.country || "",
+      country: normalizeCountryCode(nextProfile.country),
     })
   }
 
@@ -186,7 +186,7 @@ export default function JamPassPlayerProfilePage() {
         middle_name: form.middle_name.trim() || null,
         last_name: form.last_name.trim(),
         phone_number: form.phone_number.trim(),
-        country: form.country,
+        country: normalizeCountryCode(form.country),
       }
 
       const response = await fetch(getApiUrl(`users/${userId}/`), {
