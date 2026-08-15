@@ -151,7 +151,9 @@ export function isAccessTokenExpired(token: string | null) {
 
 export function hasValidAuthSession() {
   if (typeof window === "undefined") return false
-  return Boolean(getStoredUser()) && !isAccessTokenExpired(localStorage.getItem("accessToken"))
+  if (!getStoredUser()) return false
+  if (!isAccessTokenExpired(localStorage.getItem("accessToken"))) return true
+  return Boolean(localStorage.getItem("refreshToken"))
 }
 
 export function normalizeAuthUser(payload: AuthPayload, emailFallback = ""): CurrentUser {

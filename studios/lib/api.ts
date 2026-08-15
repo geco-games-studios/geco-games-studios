@@ -57,6 +57,56 @@ export function getAuthHeaders(contentType: string | null = "application/json") 
   return headers
 }
 
+let refreshRequest: Promise<boolean> | null = null
+
+export async function refreshAccessToken() {
+  if (typeof window === "undefined") return false
+  if (refreshRequest) return refreshRequest
+
+  refreshRequest = (async () => {
+    const refresh = localStorage.getItem("refreshToken")
+    if (!refresh) return false
+
+    try {
+      const response = await fetch(getApiUrl("token/refresh/"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh }),
+      })
+      if (!response.ok) return false
+
+      const tokens = await response.json() as { access?: string; refresh?: string }
+      if (!tokens.access) return false
+
+      localStorage.setItem("accessToken", tokens.access)
+      if (tokens.refresh) localStorage.setItem("refreshToken", tokens.refresh)
+      window.dispatchEvent(new Event("geco-auth-session-changed"))
+      return true
+    } catch {
+      return false
+    }
+  })()
+
+  try {
+    return await refreshRequest
+  } finally {
+    refreshRequest = null
+  }
+}
+
+async function fetchWithAuthRetry(input: RequestInfo | URL, init: RequestInit) {
+  let response = await fetch(input, init)
+  if (response.status !== 401 || typeof window === "undefined") return response
+
+  if (!(await refreshAccessToken())) return response
+
+  const headers = new Headers(init.headers)
+  const accessToken = localStorage.getItem("accessToken")
+  if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`)
+  response = await fetch(input, { ...init, headers })
+  return response
+}
+
 function createApiError(response: Response, data: unknown) {
   const message =
     typeof data === "object" && data !== null && "message" in data
@@ -96,7 +146,7 @@ function clearExpiredSession(response: Response) {
 }
 
 export async function postFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "POST",
     headers: getAuthHeaders(null),
     body: formData,
@@ -114,7 +164,7 @@ export async function postFormData<T = unknown>(path: string, formData: FormData
 }
 
 export async function putFormData<T = unknown>(path: string, formData: FormData, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(null),
     body: formData,
@@ -132,7 +182,7 @@ export async function putFormData<T = unknown>(path: string, formData: FormData,
 }
 
 export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "GET",
     headers: getAuthHeaders(),
     ...init,
@@ -150,7 +200,7 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
 }
 
 export async function postJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -168,7 +218,7 @@ export async function postJson<T = unknown>(path: string, payload: unknown, init
 }
 
 export async function putJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -186,7 +236,7 @@ export async function putJson<T = unknown>(path: string, payload: unknown, init?
 }
 
 export async function patchJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "PATCH",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -204,7 +254,7 @@ export async function patchJson<T = unknown>(path: string, payload: unknown, ini
 }
 
 export async function deleteJson<T = unknown>(path: string, init?: Omit<RequestInit, "method">) {
-  const response = await fetch(getRequestUrl(path), {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "DELETE",
     headers: getAuthHeaders(),
     ...init,

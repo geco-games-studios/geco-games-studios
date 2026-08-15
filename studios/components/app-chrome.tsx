@@ -8,6 +8,7 @@ import Navigation from "@/components/navigation"
 import Footer from "@/components/footer"
 import PortalAccountMenu from "@/components/portal-account-menu"
 import { AUTH_SESSION_CHANGED_EVENT, clearAuthSession, getStoredUser, isAccessTokenExpired } from "@/lib/auth-session"
+import { refreshAccessToken } from "@/lib/api"
 
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -25,7 +26,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/play/")
 
   useEffect(() => {
-    const validateSession = () => {
+    const validateSession = async () => {
       const user = getStoredUser()
       if (!user) {
         if (hadAuthSession.current && isPortal) router.replace("/login")
@@ -36,8 +37,10 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem("accessToken")
       if (!isAccessTokenExpired(token)) return
 
-      clearAuthSession()
-      if (isPortal) router.replace("/login")
+      if (!(await refreshAccessToken())) {
+        clearAuthSession()
+        if (isPortal) router.replace("/login")
+      }
     }
 
     validateSession()
