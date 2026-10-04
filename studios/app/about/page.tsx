@@ -1,7 +1,17 @@
 import Image from "next/image"
 import Link from "next/link"
 
+type TeamMember = { name: string; role: string; initials: string; image?: string }
+
 export default function AboutPage() {
+  const team: TeamMember[] = [
+    { name: "Luyando Shilukukwa", role: "CEO, Founder, Senior Developer", initials: "LS" },
+    { name: "Bulemu Narco Shilukukwa", role: "CTO, Co-Founder", initials: "BS" },
+    { name: "Joseph Mwaba", role: "Lead Senior Developer", initials: "JM" },
+    { name: "Maxson Shilukukwa", role: "Business Strategist", initials: "MS" },
+    { name: "Mapalo Kayange", role: "Quality Assurance", initials: "MK" },
+  ]
+
   const milestones = [
     {
       year: "2015",
@@ -114,8 +124,10 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <section className="bg-gradient-to-r from-emerald-900 via-teal-900 to-cyan-900 py-20 px-6 lg:px-12 text-white">
-        <div className="container mx-auto max-w-6xl">
+      <section className="relative isolate overflow-hidden bg-emerald-950 pb-20 pt-32 px-6 lg:px-12 text-white">
+        <Image src="/legends-of-alkebulan-map.jpeg" alt="" fill priority sizes="100vw" className="-z-20 object-cover" />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/95 via-emerald-950/85 to-slate-950/75" />
+        <div className="container relative mx-auto max-w-6xl">
           <div className="text-center">
             <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white">
               About Us
@@ -163,6 +175,29 @@ export default function AboutPage() {
                 </article>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="our-team" aria-labelledby="team-heading" className="bg-slate-100 px-6 py-20 dark:bg-slate-900 lg:px-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">Our team</p>
+            <h2 id="team-heading" className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Meet the people behind the games.</h2>
+            <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">The team building Geco Games Studios, from development and technology to business strategy and quality assurance.</p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {team.map((member) => (
+              <article key={member.name} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
+                <div className="relative flex aspect-[4/3] items-center justify-center bg-gradient-to-br from-emerald-900 via-teal-950 to-slate-950">
+                  {member.image ? <Image src={member.image} alt={member.name} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover object-top" /> : <span aria-hidden="true" className="flex h-24 w-24 items-center justify-center rounded-full border border-white/20 bg-white/10 text-3xl font-bold text-white">{member.initials}</span>}
+                </div>
+                <div className="p-8">
+                <h3 className="text-xl font-semibold">{member.name}</h3>
+                <p className="mt-3 leading-7 text-slate-600 dark:text-slate-400">{member.role}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>

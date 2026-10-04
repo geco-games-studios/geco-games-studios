@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, Globe, GraduationCap, Layers, Play, Shield, Sparkles, Star, Trophy, Users } from "lucide-react"
+import HomeSlider from "../components/home-slider"
 import NewsletterSubscription from "../components/newsletter-subscription"
 
 const services = [
@@ -101,67 +102,44 @@ const processSteps = [
 ]
 
 export default function HomePage() {
+  const inshimuTestUrl = process.env.NEXT_PUBLIC_INSHIMU_WEBGL_URL || "https://play.unity.com/en/games/2f23ea58-737e-44ed-92eb-d069243fa586/inshimu-guns-and-puzzles"
+  const inshimuDiscordUrl = process.env.NEXT_PUBLIC_INSHIMU_DISCORD_URL || "https://discord.com/invite/gecogamesstudios"
+
   return (
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <section className="cosmic-hero relative flex min-h-screen items-center overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(83,63,218,.38),transparent_25%),radial-gradient(circle_at_12%_18%,rgba(220,32,129,.2),transparent_18%),linear-gradient(180deg,#121044_0%,#17124e_70%,#24145a_100%)]" />
-        <div className="absolute left-[8%] top-[18%] h-20 w-20 rounded-full bg-gradient-to-br from-fuchsia-500 to-violet-900 opacity-70 shadow-[0_0_70px_rgba(225,47,151,.35)]" />
-        <div className="absolute right-[8%] top-[14%] h-28 w-28 rounded-full bg-gradient-to-br from-cyan-400 to-blue-900 opacity-50 shadow-[0_0_90px_rgba(39,216,232,.25)]" />
-        <div className="absolute bottom-[15%] left-[42%] h-2 w-40 rotate-[-38deg] rounded-full bg-gradient-to-r from-transparent via-cyan-300 to-violet-500 shadow-[0_0_18px_#27d8e8]" />
-        
-        {/* Content positioned directly over the image */}
-        <div className="container mx-auto px-6 py-20 lg:py-28 relative z-10">
-          <div className="grid items-center gap-14 lg:grid-cols-[.9fr_1.1fr]">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center rounded-full border border-violet-300/20 bg-violet-400/10 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-violet-200 shadow-sm">
-                Independent game studio · Zambia
-              </span>
-              <h1 className="mt-8 text-5xl font-black leading-[.98] tracking-[-.04em] text-white sm:text-7xl">
-                We create worlds worth playing.
-              </h1>
-              <p className="mt-6 text-lg leading-8 text-slate-100">
-                Original games, unforgettable characters, and digital experiences shaped by African imagination and built for players everywhere.
-              </p>
-              <div className="mt-10 flex flex-wrap gap-4">
-                <Link href="/gaming" className="inline-flex items-center justify-center rounded-full bg-sky-500 px-7 py-3.5 text-sm font-black uppercase tracking-wider text-white transition hover:bg-sky-400">
-                  Explore our games
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-                <Link href="/about" className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/10">
-                  Meet the studio
-                </Link>
-              </div>
+      <HomeSlider testUrl={inshimuTestUrl} discordUrl={inshimuDiscordUrl} />
 
-              <div className="mt-10 flex flex-wrap items-center gap-4 text-sm text-slate-200">
-                <div className="flex items-center gap-3 rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
-                  <Image src="/logo-light.png" alt="Geco Games Studios" width={32} height={32} className="h-8 w-8 object-contain" />
-                  <span>Studio brand identity</span>
-                </div>
-                <div className="rounded-3xl border border-white/20 bg-white/10 px-4 py-3 shadow-sm backdrop-blur-sm">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Featured in</p>
-                  <p className="mt-1 text-sm text-slate-100">Games, live events, and education.</p>
-                </div>
-              </div>
+      <section id="inshimu" aria-labelledby="inshimu-heading" className="bg-emerald-50 px-6 py-20 dark:bg-slate-900 lg:px-8">
+        <div className="container mx-auto">
+          <div className="grid overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-2">
+            <div className="relative min-h-72 sm:min-h-96">
+              <Image src="/games/inshimu-one.png" alt="Inshimu 1: Guns and Puzzles cover artwork" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-contain p-6" />
             </div>
-
-            <div className="relative mx-auto h-[470px] w-full max-w-[620px] sm:h-[590px]">
-              <div className="absolute inset-x-[8%] bottom-[6%] h-20 rounded-[50%] bg-black/50 blur-2xl" />
-              <div className="absolute left-0 top-[22%] h-[62%] w-[44%] rotate-[-7deg] overflow-hidden rounded-[2rem] border border-white/10 bg-cyan-400/10 shadow-2xl">
-                <Image src="/alkebulan-bone-shaman.jpeg" alt="The Bone Shaman from Legends of Alkebulan" fill className="object-cover object-top" priority />
+            <div className="p-8 sm:p-12">
+              <span className="inline-flex rounded-full bg-emerald-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">Open test · Unity WebGL</span>
+              <h2 id="inshimu-heading" className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">Inshimu</h2>
+              <p className="mt-2 text-xl font-medium text-emerald-700 dark:text-emerald-300">The tales of all seasons</p>
+              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">Discover our casual game with multiple gameplay types and stories. Join our open test in your browser with Unity WebGL and help us shape the experience.</p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                {inshimuTestUrl ? (
+                  <a href={inshimuTestUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800">
+                    <Play aria-hidden="true" className="mr-2 h-4 w-4" /> Play the WebGL test
+                  </a>
+                ) : (
+                  <p className="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">The WebGL test link will be shared here.</p>
+                )}
+                <a href={inshimuDiscordUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold transition hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Share feedback on Discord <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" /></a>
               </div>
-              <div className="absolute right-0 top-[15%] h-[70%] w-[48%] rotate-[6deg] overflow-hidden rounded-[2rem] border border-white/10 bg-violet-400/10 shadow-2xl">
-                <Image src="/alkebulan-horned-warlord.jpeg" alt="The Horned Warlord from Legends of Alkebulan" fill className="object-cover object-top" priority />
+              <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
+                <h3 className="font-semibold">Spotted an issue or gameplay bug?</h3>
+                <p className="mt-2 leading-7 text-slate-600 dark:text-slate-400">Tell us on Discord what happened, which gameplay type or story you were playing, and how to reproduce it. Include your device, browser, and a screenshot or video if possible. We also welcome your thoughts on the gameplay.</p>
               </div>
-              <div className="absolute bottom-0 left-[28%] h-[64%] w-[46%] overflow-hidden rounded-[2rem] border border-white/20 bg-fuchsia-400/10 shadow-[0_30px_80px_rgba(5,3,29,.65)]">
-                <Image src="/alkebulan-forest-guardian.jpeg" alt="The Forest Guardian from Legends of Alkebulan" fill className="object-cover object-top" priority />
-              </div>
-              <div className="absolute right-[3%] top-[6%] rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200 backdrop-blur">Legends of Alkebulan</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-24 lg:px-8 lg:py-32">
+      <section id="legends-of-alkebulan" className="px-6 py-24 lg:px-8 lg:py-32">
         <div className="container mx-auto">
           <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#17124e]/80 shadow-[0_30px_100px_rgba(4,3,24,.45)]">
             <div className="grid lg:grid-cols-[1.08fr_.92fr] lg:items-stretch">
