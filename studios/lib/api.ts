@@ -199,6 +199,15 @@ export async function fetchJson<T = unknown>(path: string, init?: RequestInit) {
   return data as T
 }
 
+export async function fetchBlob(path: string) {
+  const response = await fetchWithAuthRetry(getRequestUrl(path), {
+    headers: getAuthHeaders(null),
+  })
+  clearExpiredSession(response)
+  if (!response.ok) throw createApiError(response, await readResponseBody(response))
+  return response.blob()
+}
+
 export async function postJson<T = unknown>(path: string, payload: unknown, init?: Omit<RequestInit, "method" | "body" | "headers">) {
   const response = await fetchWithAuthRetry(getRequestUrl(path), {
     method: "POST",

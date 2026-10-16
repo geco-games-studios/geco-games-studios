@@ -18,6 +18,7 @@ const navItems = [
   { href: "/developer/stores", label: "Stores" },
   { href: "/developer/support", label: "Support" },
   { href: "/developer/finance", label: "Finance" },
+  { href: "/developer/invoices", label: "Invoices" },
 ]
 
 export default function DeveloperLayout({ children }: { children: ReactNode }) {
