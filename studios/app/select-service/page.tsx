@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react"
+import Link from "next/link"
+import { ArrowRight, CheckCircle2, FileText, Loader2, ShieldCheck } from "lucide-react"
 import {
   GECO_SERVICES,
   type GecoService,
@@ -189,6 +190,25 @@ export default function SelectServicePage() {
         )}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <Link
+            href="/developer/invoices"
+            className="flex min-h-56 flex-col justify-between rounded-lg border border-white/15 bg-white/10 p-6 text-left transition hover:border-cyan-300/60 hover:bg-white/15"
+          >
+            <div>
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-cyan-400/15 text-cyan-200">
+                  <FileText className="h-5 w-5" />
+                </div>
+                <span className="rounded-full bg-slate-700 px-3 py-1 text-xs font-bold text-slate-200">Available</span>
+              </div>
+              <h2 className="text-xl font-bold">Invoices</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-300">Generate client invoices, download PDFs, and send them by email.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-sm font-semibold text-cyan-200">
+              <span>Open invoices</span>
+              <ArrowRight className="h-4 w-4" />
+            </div>
+          </Link>
           {cards.map((card) => {
             const content = (
               <>
