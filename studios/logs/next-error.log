@@ -52580,3 +52580,11 @@
 2026-10-16T16:11:59: Missing SMTP environment variables for academy application route.
 2026-10-16T16:11:59: Missing SMTP environment variables for developer submission route.
 2026-10-16T16:11:59: Missing SMTP environment variables for newsletter subscription route.
+2026-10-16T16:25:19: Missing SMTP environment variables for academy application route.
+2026-10-16T16:25:19: Missing SMTP environment variables for developer submission route.
+2026-10-16T16:25:19: Missing SMTP environment variables for newsletter subscription route.
+2026-10-16T16:28:36: Error: Failed to find Server Action "y". This request might be from an older or newer deployment.
+2026-10-16T16:28:36: Read more: https://nextjs.org/docs/messages/failed-to-find-server-action
+2026-10-16T16:28:36:     at async m (.next/server/app/page.js:1:9712)
+2026-10-16T16:28:36:     at async p (.next/server/app/page.js:2:1860)
+2026-10-16T16:28:36:     at async L (.next/server/app/page.js:2:6944)
