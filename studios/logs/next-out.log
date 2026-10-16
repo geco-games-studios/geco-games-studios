@@ -10833,3 +10833,10 @@
 2026-10-11T12:32:04: Users list API route called
 2026-10-11T12:32:04: Auth header present: false
 2026-10-11T12:32:04: No auth header found
+2026-10-16T16:11:58:    ▲ Next.js 15.5.7
+2026-10-16T16:11:58:    - Local:        http://localhost:3000
+2026-10-16T16:11:58:    - Network:      http://46.4.218.149:3000
+2026-10-16T16:11:58: 
+2026-10-16T16:11:58:  ✓ Starting...
+2026-10-16T16:11:59:  ✓ Ready in 260ms
+2026-10-16T16:11:59: API_BASE_URL: https://system.gecogames.com/api/v1/test
