@@ -269,6 +269,17 @@ body {
   border-color: var(--portal-border) !important;
   background: var(--portal-panel-high) !important;
 }
+.portal-site .invoice-page .bg-background {
+  background-color: var(--portal-panel);
+  color: var(--portal-text);
+}
+.portal-site .invoice-page .border {
+  border-color: var(--portal-border);
+}
+.portal-site .invoice-page button.bg-background:hover {
+  background-color: var(--portal-panel-high);
+  color: var(--portal-text);
+}
 .portal-site table { overflow: hidden; border-radius: 14px; }
 .portal-site thead { background: rgba(139,92,246,.1) !important; }
 .portal-site th { color: #cfc9e9 !important; border-color: var(--portal-border) !important; }

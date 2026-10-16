@@ -98,7 +98,7 @@ export default function InvoicesPage() {
     </label>
   }
 
-  return <div className="container mx-auto max-w-5xl space-y-6 p-4 md:p-8">
+  return <div className="invoice-page container mx-auto max-w-5xl space-y-6 p-4 md:p-8">
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div><h1 className="text-3xl font-bold">Invoices</h1><p className="mt-2 text-sm text-slate-500">Create invoices for your clients, download PDFs, and send them by email.</p></div>
       <Button disabled={!signedIn || Boolean(busy)} onClick={() => setShowForm(true)}>Generate invoice</Button>
