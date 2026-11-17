@@ -62,6 +62,7 @@ export default function PlayerDashboardPage() {
   const [selectedCommunity, setSelectedCommunity] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [isPlayerProfileMissing, setIsPlayerProfileMissing] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
   const router = useRouter()
 
@@ -72,6 +73,8 @@ export default function PlayerDashboardPage() {
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true)
+      setError("")
+      setIsPlayerProfileMissing(false)
 
       const userData = localStorage.getItem("currentUser")
       const accessToken = localStorage.getItem("accessToken")
@@ -136,7 +139,12 @@ export default function PlayerDashboardPage() {
       setIsLoading(false)
     } catch (err) {
       console.error("Error fetching dashboard data:", err)
-      setError(`Failed to load dashboard: ${err instanceof Error ? err.message : "Unknown error"}`)
+      const message = err instanceof Error ? err.message : "Unknown error"
+      const status = typeof err === "object" && err !== null && "status" in err ? Number((err as any).status) : null
+      const missingPlayer = status === 404 || /player\s+not\s+found/i.test(message)
+
+      setIsPlayerProfileMissing(missingPlayer)
+      setError(missingPlayer ? "" : `Failed to load dashboard: ${message}`)
       setIsLoading(false)
     }
   }
@@ -223,11 +231,42 @@ export default function PlayerDashboardPage() {
           <div className="h-12 w-12 rounded-full border-4 border-red-200 border-t-red-600 animate-spin mx-auto mb-4"></div>
           <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={fetchDashboardData}
             className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700"
           >
             Retry
           </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (isPlayerProfileMissing) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 dark:bg-slate-950">
+        <div className="w-full max-w-lg rounded-2xl border border-amber-200 bg-white p-8 text-center shadow-lg dark:border-amber-800/60 dark:bg-slate-900">
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+            <Users className="h-6 w-6" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Player profile not found</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Your GECO account is signed in, but its JamPass Player profile is missing. Please contact support so an administrator can repair your profile.
+          </p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href="/support/contact"
+              className="inline-flex items-center justify-center rounded-lg bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700"
+            >
+              Contact Support
+            </Link>
+            <button
+              type="button"
+              onClick={fetchDashboardData}
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     )

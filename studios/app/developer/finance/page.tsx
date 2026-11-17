@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { fetchJson, postJson } from "@/lib/api"
 
 interface Account {
@@ -52,13 +53,12 @@ export default function DeveloperFinancePage() {
       setIsDepositing((s) => ({ ...s, [accountId]: false }))
     }
   }
-
-  if (isLoading) return <div className="p-8">Loading accounts…</div>
-  if (error) return <div className="p-8 text-red-600">{error}</div>
-
   return (
     <main className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">Developer Finance</h2>
+      <Link href="/developer/invoices" className="inline-flex mb-4 rounded-md bg-cyan-600 px-4 py-2 font-semibold text-white">Generate invoice</Link>
+      {isLoading && <p role="status">Loading accounts…</p>}
+      {error && <p role="alert" className="text-red-600">{error}</p>}
       <p className="text-sm text-slate-600 mb-6">Developer accounts and balances. Ensure you're authenticated as a developer.</p>
 
       <div className="space-y-4">

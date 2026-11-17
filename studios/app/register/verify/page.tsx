@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Loader2, AlertCircle, CheckCircle, RefreshCcw } from "lucide-react"
+import { CheckCircle, Loader2, RefreshCcw, Smartphone } from "lucide-react"
 
 export default function VerifyPhonePage() {
   const [otp, setOtp] = useState("")
@@ -109,83 +110,58 @@ export default function VerifyPhonePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-indigo-900 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg">
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl dark:bg-slate-800/60 dark:border-slate-700/50">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-cyan-500/10 text-cyan-300 shadow-lg shadow-cyan-500/10">
-              <CheckCircle className="h-8 w-8" />
+    <main className="relative min-h-screen overflow-hidden bg-[#2c196f] text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(43,221,225,.28),transparent_24%),radial-gradient(circle_at_88%_90%,rgba(136,73,232,.28),transparent_30%),linear-gradient(135deg,#311b79_0%,#3b237f_48%,#25145f_100%)]" />
+      <div className="absolute -left-28 -top-32 h-[430px] w-[430px] rounded-full border-[42px] border-cyan-300/30 shadow-[inset_0_0_60px_rgba(10,10,60,.45),0_0_70px_rgba(34,211,238,.18)]" />
+      <div className="absolute -left-16 -top-20 h-[300px] w-[430px] rotate-[20deg] rounded-[50%] border-[36px] border-violet-400/55 shadow-[0_20px_50px_rgba(6,4,40,.45)]" />
+
+      <section className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10 sm:px-8">
+        <div className="w-full max-w-[540px] rounded-[2rem] border border-white/15 bg-white/[.09] p-6 shadow-[0_32px_100px_rgba(11,5,46,.45)] backdrop-blur-xl sm:p-10">
+          <Link href="/" className="mb-8 flex items-center gap-3">
+            <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white/5">
+              <Image src="/logo-light.png" alt="Geco Games Studios" fill sizes="48px" className="object-contain p-1" priority />
             </div>
-            <h1 className="text-3xl font-bold text-white">Verify Your Phone</h1>
-            <p className="mt-3 text-sm text-slate-300">
-              Enter the OTP sent to your phone number to complete registration.
-            </p>
+            <p className="text-lg font-black">GECO GAMES</p>
+          </Link>
+
+          <div className="mb-8">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-300/10 text-cyan-200">
+              <Smartphone className="h-7 w-7" />
+            </div>
+            <p className="text-xs font-black uppercase tracking-[.28em] text-cyan-200">Secure verification</p>
+            <h1 className="mt-3 text-3xl font-black tracking-[-.025em] sm:text-4xl">Verify your phone</h1>
+            <p className="mt-3 text-sm leading-6 text-violet-100/70">Enter the one-time passcode we sent to complete your registration.</p>
           </div>
 
-          <div className="rounded-2xl bg-white/5 p-5 border border-slate-400/10 mb-6 text-slate-200">
-            <p className="text-sm">
-              Verification code sent to:
-            </p>
-            <p className="mt-2 font-semibold text-white break-words">{phone || "No phone number available"}</p>
+          <div className="mb-6 rounded-xl border border-white/15 bg-white/[.06] p-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-violet-100/55">Code sent to</p>
+            <p className="mt-2 break-words text-sm font-bold text-white">{phone || "No phone number available"}</p>
           </div>
 
           <form onSubmit={handleVerify} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-200 mb-2">
-                One-time Passcode
-              </label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter 6-digit code"
-                className="w-full rounded-2xl border border-slate-400/30 bg-slate-950/80 px-4 py-3 text-white placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
-                maxLength={6}
-                required
-              />
+              <label htmlFor="otp" className="mb-2 block text-xs font-bold text-violet-100">One-time passcode</label>
+              <input id="otp" type="text" inputMode="numeric" autoComplete="one-time-code" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter 6-digit code" className="w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3.5 text-center text-lg font-bold tracking-[.35em] text-white outline-none transition placeholder:text-left placeholder:text-sm placeholder:font-normal placeholder:tracking-normal placeholder:text-violet-200/35 focus:border-cyan-300/70 focus:ring-4 focus:ring-cyan-300/10" maxLength={6} required />
             </div>
 
-            {error && (
-              <div className="rounded-2xl bg-red-500/10 border border-red-500/30 p-4 text-sm text-red-200">
-                {error}
-              </div>
-            )}
+            {error && <div className="rounded-xl border border-red-300/20 bg-red-500/10 p-4 text-sm text-red-100">{error}</div>}
+            {success && <div className="flex gap-3 rounded-xl border border-emerald-300/20 bg-emerald-500/10 p-4 text-sm text-emerald-100"><CheckCircle className="h-5 w-5 shrink-0" />{success}</div>}
 
-            {success && (
-              <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-4 text-sm text-emerald-100">
-                {success}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-cyan-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
+            <button type="submit" disabled={isLoading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-200 px-6 py-3.5 text-sm font-black text-[#24125e] shadow-[0_12px_30px_rgba(103,232,249,.22)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50">
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Verify Phone
+              {isLoading ? "Verifying..." : "Verify phone"}
             </button>
           </form>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={isResending}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-500/30 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-cyan-400 hover:text-cyan-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <RefreshCcw className="h-4 w-4" />
-              {isResending ? "Resending..." : "Resend Code"}
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <button type="button" onClick={handleResend} disabled={isResending} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm font-black text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50">
+              <RefreshCcw className={`h-4 w-4 ${isResending ? "animate-spin" : ""}`} />
+              {isResending ? "Resending..." : "Resend code"}
             </button>
-            <Link
-              href="/register"
-              className="text-sm font-medium text-cyan-300 hover:text-cyan-100"
-            >
-              Back to registration
-            </Link>
+            <Link href="/register" className="inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-bold text-cyan-200 transition hover:bg-white/5 hover:text-white">Back to registration</Link>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }

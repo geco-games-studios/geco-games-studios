@@ -66,7 +66,7 @@ export default function PlayerLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+    <div className="dashboard-app-shell min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
         <div className="container mx-auto px-4 lg:px-6">
@@ -148,6 +148,16 @@ export default function PlayerLayout({
               }`}
             >
               Finance
+            </Link>
+            <Link
+              href="/jampass/player/profile"
+              className={`px-4 py-3 border-b-2 font-semibold text-sm transition ${
+                isActive("/jampass/player/profile")
+                  ? "border-cyan-600 text-cyan-600 dark:border-cyan-400 dark:text-cyan-400"
+                  : "border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              Profile
             </Link>
           </div>
         </div>

@@ -30,20 +30,20 @@ export type AcademyTheme = {
 
 export const academyDarkTheme: AcademyTheme = {
   // Backgrounds
-  bg: "#0b0b14",
-  surface: "#141420",
-  surfaceHigh: "#1c1c2e",
-  surfaceHover: "#1e1e30",
+  bg: "#0d0a24",
+  surface: "#17132f",
+  surfaceHigh: "#201a40",
+  surfaceHover: "#29204f",
 
   // Borders
   border: "rgba(255,255,255,0.08)",
   borderStrong: "rgba(255,255,255,0.15)",
 
   // Brand / accent — cyan, matches gecogames.com buttons
-  primary: "#06b6d4",
-  primaryDark: "#0891b2",
-  primaryGlow: "rgba(6,182,212,0.18)",
-  primaryBg: "rgba(6,182,212,0.12)",
+  primary: "#8b5cf6",
+  primaryDark: "#7045db",
+  primaryGlow: "rgba(139,92,246,0.22)",
+  primaryBg: "rgba(139,92,246,0.13)",
 
   // Text
   textPrimary: "#ffffff",
@@ -69,7 +69,7 @@ export const academyDarkTheme: AcademyTheme = {
 
 export const academyLightTheme: AcademyTheme = {
   // Backgrounds
-  bg: "linear-gradient(135deg, #0f95a9 0%, #2175dd 62%, #315ce3 100%)",
+  bg: "linear-gradient(135deg, #171047 0%, #30206f 58%, #173f6c 100%)",
   surface: "#ffffff",
   surfaceHigh: "#f5f9ff",
   surfaceHover: "#eef6ff",
@@ -79,10 +79,10 @@ export const academyLightTheme: AcademyTheme = {
   borderStrong: "rgba(15,23,42,0.22)",
 
   // Brand / accent - cyan, matches the active account card in the reference.
-  primary: "#0397bf",
-  primaryDark: "#087d9f",
-  primaryGlow: "rgba(3,151,191,0.18)",
-  primaryBg: "rgba(3,151,191,0.1)",
+  primary: "#714cff",
+  primaryDark: "#5b35dc",
+  primaryGlow: "rgba(113,76,255,0.2)",
+  primaryBg: "rgba(113,76,255,0.1)",
 
   // Text
   textPrimary: "#071633",

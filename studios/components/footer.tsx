@@ -53,21 +53,13 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="border-t border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+    <footer className="cosmic-footer border-t border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
       <div className="container mx-auto px-6 py-16 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-3xl bg-white shadow-sm">
-                <video
-                  src={encodeURI("/logoAnimation1 .mp4")}
-                  aria-label="Geco Games Studios animated logo"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="h-full w-full object-contain"
-                />
+                <Image src="/logo-light.png" alt="Geco Games Studios" width={48} height={48} className="h-full w-full object-contain p-1" />
               </div>
               <div>
                 <p className="text-lg font-semibold">Geco Games Studios</p>

@@ -1,0 +1,64 @@
+.hero { padding: 112px 4.5% 48px; background: var(--space, #100d3d); color: white; }
+.frame { position: relative; min-height: 570px; height: min(72vh, 800px); overflow: hidden; isolation: isolate; background: var(--space-soft, #191451); border: 1px solid rgba(255,255,255,.1); border-radius: 32px; box-shadow: 0 30px 80px rgba(4,3,24,.4); }
+.visual { position: absolute; inset: 0; z-index: -1; animation: reveal .65s ease both; }
+.artwork { object-fit: cover; }
+.inshimu { background: var(--space-soft, #191451); }
+.inshimu .artwork { width: 56% !important; left: auto !important; right: 0; object-fit: contain; object-position: center; padding: 24px; }
+.inshimu .visual { background: radial-gradient(ellipse at 70% 45%, rgba(39,216,232,.22), #191451 75%); }
+.shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(16,13,61,.94), rgba(16,13,61,.2) 72%), linear-gradient(0deg, rgba(16,13,61,.85), transparent 65%); }
+.legends .artwork { object-position: center; }
+.topline { position: absolute; inset: 32px 40px auto; display: flex; justify-content: space-between; gap: 20px; font-size: 11px; font-weight: 800; letter-spacing: .22em; color: rgba(255,255,255,.75); }
+.content { position: absolute; left: 4.5%; right: 20%; bottom: 94px; display: flex; gap: 26px; align-items: flex-end; }
+.counter { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 13px; font-weight: 700; color: var(--cyan, #27d8e8); white-space: nowrap; margin-bottom: 4px; }
+.copy { max-width: 850px; animation: rise .5s ease both; }
+.hero .frame .eyebrow { color: var(--cyan, #27d8e8) !important; font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 14px; }
+.hero .frame h1 { font-family: "Arial Rounded MT Bold", "Avenir Next", system-ui, sans-serif; font-weight: 800; font-size: clamp(38px, 5.5vw, 82px); letter-spacing: -.04em; line-height: 1.06; margin: 0; text-wrap: balance; }
+.hero .frame .description { color: #b8b4d3 !important; max-width: 570px; margin: 20px 0 24px; font-size: 17px; line-height: 1.75; }
+.cta { display: inline-flex; justify-content: space-between; align-items: center; gap: 24px; padding: 15px 28px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: linear-gradient(100deg, #714cff, #9b5cff); box-shadow: 0 12px 32px rgba(113,76,255,.28); color: white; font-size: 14px; font-weight: 700; transition: filter .2s, transform .2s; }
+.cta:hover { filter: brightness(1.15); transform: translateY(-2px); }
+.controls { position: absolute; right: 4.5%; bottom: 92px; display: flex; gap: 8px; align-items: center; }
+.controls button { color: white; display: grid; place-items: center; background: rgba(124,77,255,.16); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; cursor: pointer; }
+.arrow { width: 48px; height: 48px; transition: transform .2s; }
+.arrow:hover { transform: scale(1.1); }
+.arrow svg { width: 20px; height: 24px; stroke: currentColor; fill: none; stroke-width: 3; }
+.pause { width: 40px; height: 40px; margin-right: 8px; }
+.dots { position: absolute; bottom: 32px; left: calc(4.5% + 40px); display: flex; gap: 8px; }
+.dots button { padding: 12px 0; width: 48px; border: 0; background: transparent; cursor: pointer; }
+.dots span { height: 3px; display: block; background: rgba(255,255,255,.35); }
+.dots button[aria-current] span { background: var(--cyan, #27d8e8); }
+.hero a:focus-visible, .hero button:focus-visible { outline: 3px solid var(--cyan, #27d8e8); outline-offset: 5px; }
+.communityArt { position: absolute; inset: 0; background: radial-gradient(ellipse at 75% 30%, rgba(39,216,232,.15), transparent 60%), var(--space-soft, #191451); overflow: hidden; }
+.communityArt::before, .communityArt::after { content: ''; position: absolute; width: 110px; height: 410px; border-radius: 80px; background: var(--purple, #7c4dff); transform: rotate(35deg); }
+.communityArt::before { right: 5%; top: -140px; box-shadow: -135px -55px 0 rgba(39,216,232,.5); }
+.communityArt::after { left: 4%; bottom: -280px; box-shadow: 140px 25px 0 rgba(124,77,255,.5); }
+.outlineWord { position: absolute; right: -3%; top: 4%; font: 800 clamp(100px, 16vw, 240px)/.9 "Arial Rounded MT Bold", "Avenir Next", system-ui, sans-serif; -webkit-text-stroke: 2px rgba(184,180,211,.14); color: transparent; }
+.communityMark { position: absolute; right: 8%; top: 24%; width: 50%; display: flex; gap: 28px; align-items: center; color: #fff; }
+.communityMark svg { width: 130px; flex-shrink: 0; }
+.communityMark > div { border-left: 2px solid white; padding-left: 28px; }
+.communityMark span { font-size: clamp(26px, 3.8vw, 58px); color: var(--cyan, #27d8e8); font-weight: 800; line-height: 1.1; }
+.communityMark strong { display: block; margin-top: 8px; font-size: clamp(15px, 1.7vw, 25px); }
+.discord .shade { background: linear-gradient(0deg, rgba(16,13,61,.9), transparent 80%); }
+@keyframes reveal { from { opacity: .4; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 767px) {
+  .hero { padding: 90px 16px 24px; }
+  .frame { height: 660px; min-height: 580px; max-height: 85svh; }
+  .topline { inset: 24px 22px auto; font-size: 9px; }
+  .topline span:last-child { display: none; }
+  .content { left: 24px; right: 24px; bottom: 134px; gap: 12px; }
+  .counter { font-size: 10px; }
+  .hero .frame h1 { font-size: clamp(32px, 8.5vw, 56px); }
+  .hero .frame .description { font-size: 13px; line-height: 1.6; }
+  .hero .frame .eyebrow { font-size: 11px; }
+  .cta { min-width: 0; max-width: 100%; padding: 14px 16px; font-size: 11px; gap: 16px; }
+  .inshimu .artwork { width: 100% !important; opacity: .75; }
+  .shade { background: linear-gradient(0deg, rgba(16,13,61,.96), rgba(16,13,61,.1) 95%); }
+  .controls { bottom: 40px; right: 20px; gap: 6px; }
+  .dots { bottom: 52px; left: 24px; gap: 5px; }
+  .dots button { width: 25px; }
+  .communityMark { width: 82%; right: 9%; top: 20%; gap: 16px; }
+  .communityMark svg { width: 70px; }
+  .communityMark > div { padding-left: 16px; }
+  .communityMark span { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) { .visual, .copy { animation: none; } .cta, .arrow { transition: none; } }

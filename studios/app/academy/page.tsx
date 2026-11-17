@@ -27,15 +27,15 @@ export default function AcademyPage() {
                   Explore courses
                 </Link>
                 <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
-                  Apply now
+                  Register interest
                 </Link>
               </div>
             </div>
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-10 shadow-2xl backdrop-blur-xl">
               <div className="space-y-6">
                 <div className="rounded-3xl bg-slate-900 p-8">
-                  <p className="text-sm uppercase tracking-[0.24em] text-sky-300">Next cohort</p>
-                  <p className="mt-3 text-3xl font-semibold">1st Cohort to 4th May</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-sky-300">Current cohort</p>
+                  <p className="mt-3 text-3xl font-semibold">Now in progress</p>
                 </div>
                 <div className="grid gap-4">
                   <div className="rounded-3xl bg-slate-900 p-6">

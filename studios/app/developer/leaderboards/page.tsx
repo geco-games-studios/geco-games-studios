@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { LogOut, Plus, Trash2, Edit2, CheckCircle, Loader2 } from "lucide-react"
+import { Plus, Trash2, Edit2, Loader2, RefreshCcw, AlertTriangle } from "lucide-react"
 import { fetchJson, postJson, putJson, deleteJson } from "@/lib/api"
 import { canAccessService } from "@/lib/auth-session"
 
@@ -23,9 +23,26 @@ interface LeaderboardConfig {
   metric_type: string
 }
 
+interface LeaderboardEntry {
+  user_id: number
+  user_name: string
+  metric_value: number | string
+}
+
+interface LeaderboardResponse {
+  game: string
+  metric: string
+  display_name: string
+  leaderboard: LeaderboardEntry[]
+}
+
 export default function DeveloperLeaderboardsPage() {
   const [games, setGames] = useState<Game[]>([])
   const [configs, setConfigs] = useState<LeaderboardConfig[]>([])
+  const [selectedPerformanceGameId, setSelectedPerformanceGameId] = useState(0)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardResponse | null>(null)
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false)
+  const [leaderboardError, setLeaderboardError] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
@@ -81,11 +98,35 @@ export default function DeveloperLeaderboardsPage() {
       if ((gamesData || []).length > 0 && form.gameId === 0) {
         setForm((prev) => ({ ...prev, gameId: gamesData[0].id }))
       }
+      if ((gamesData || []).length > 0) {
+        setSelectedPerformanceGameId((current) => current || gamesData[0].id)
+      }
     } catch (err) {
       console.error("Error loading leaderboard configs:", err)
       setError("Failed to load leaderboard data. Please try again.")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (selectedPerformanceGameId) {
+      loadLeaderboard(selectedPerformanceGameId)
+    }
+  }, [selectedPerformanceGameId])
+
+  const loadLeaderboard = async (gameId: number) => {
+    try {
+      setIsLoadingLeaderboard(true)
+      setLeaderboardError("")
+      const data = await fetchJson<LeaderboardResponse>(`leaderboard/game/${gameId}/`)
+      setLeaderboard(data)
+    } catch (err) {
+      console.error("Error loading developer leaderboard:", err)
+      setLeaderboard(null)
+      setLeaderboardError(`Failed to load leaderboard performance: ${err instanceof Error ? err.message : "Unknown error"}`)
+    } finally {
+      setIsLoadingLeaderboard(false)
     }
   }
 
@@ -266,6 +307,70 @@ export default function DeveloperLeaderboardsPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
 
       <main className="container mx-auto px-4 py-12 lg:px-6">
+        <section className="mb-8 rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Leaderboard Performance</h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400">View the live player rankings for games you created.</p>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <label htmlFor="performance-game" className="sr-only">Select game</label>
+              <select
+                id="performance-game"
+                value={selectedPerformanceGameId || ""}
+                onChange={(event) => setSelectedPerformanceGameId(Number(event.target.value))}
+                disabled={!games.length}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+              >
+                <option value="" disabled>{games.length ? "Select a game" : "No games available"}</option>
+                {games.map((game) => <option key={game.id} value={game.id}>{game.title}</option>)}
+              </select>
+              <button
+                type="button"
+                onClick={() => loadLeaderboard(selectedPerformanceGameId)}
+                disabled={!selectedPerformanceGameId || isLoadingLeaderboard}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-950"
+              >
+                <RefreshCcw className={`h-4 w-4 ${isLoadingLeaderboard ? "animate-spin" : ""}`} />
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          {leaderboardError ? (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-700/30 dark:bg-red-900/30 dark:text-red-200">
+              <AlertTriangle className="mr-2 inline-block h-4 w-4" />{leaderboardError}
+            </div>
+          ) : isLoadingLeaderboard ? (
+            <div className="rounded-xl bg-slate-50 p-6 text-slate-600 dark:bg-slate-900 dark:text-slate-300">Loading leaderboard performance...</div>
+          ) : !leaderboard?.leaderboard?.length ? (
+            <div className="rounded-xl bg-slate-50 p-6 text-slate-600 dark:bg-slate-900 dark:text-slate-300">
+              {games.length ? "No leaderboard entries are available for this game yet." : "Add a game to view its leaderboard performance."}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                <thead className="bg-slate-100 dark:bg-slate-900">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Rank</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Player</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">{leaderboard.display_name || "Metric"}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-700 dark:bg-slate-950/60">
+                  {leaderboard.leaderboard.map((entry, index) => (
+                    <tr key={`${entry.user_id}-${index}`}>
+                      <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 dark:text-white">#{index + 1}</td>
+                      <td className="px-4 py-4 text-sm text-slate-700 dark:text-slate-300">{entry.user_name}</td>
+                      <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-semibold text-slate-900 dark:text-white">{entry.metric_value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 rounded-xl bg-white shadow-lg dark:bg-slate-800 p-6">
             <div className="flex items-center justify-between gap-4 mb-6">

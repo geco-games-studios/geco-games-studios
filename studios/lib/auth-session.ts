@@ -1,6 +1,6 @@
 "use client"
 
-export type GecoServiceId = "academy" | "developer" | "jampass-player" | "marketplace" | "esports"
+export type GecoServiceId = "academy" | "developer" | "jampass-player" | "marketplace" | "esports" | "survey"
 
 export interface GecoService {
   id: GecoServiceId
@@ -48,6 +48,8 @@ export interface AuthPayload {
   [key: string]: unknown
 }
 
+export const AUTH_SESSION_CHANGED_EVENT = "geco-auth-session-changed"
+
 export const GECO_SERVICES: GecoService[] = [
   {
     id: "academy",
@@ -91,6 +93,14 @@ export const GECO_SERVICES: GecoService[] = [
     onboardingPath: "/select-service/esports/onboarding",
     legacyTypes: ["esports", "gamer"],
   },
+  {
+    id: "survey",
+    name: "Survey Dashboard",
+    description: "View combined anonymous survey results. Available to Django superusers only.",
+    dashboardPath: "/survey/admin",
+    onboardingPath: "/survey/admin",
+    legacyTypes: [],
+  },
 ]
 
 export function decodeJwt(token: string) {
@@ -129,6 +139,21 @@ export function clearAuthSession() {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("refreshToken")
   localStorage.removeItem("activeGecoService")
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT))
+}
+
+export function isAccessTokenExpired(token: string | null) {
+  if (!token) return true
+  const payload = decodeJwt(token)
+  if (!payload || typeof payload.exp !== "number") return false
+  return payload.exp * 1000 <= Date.now()
+}
+
+export function hasValidAuthSession() {
+  if (typeof window === "undefined") return false
+  if (!getStoredUser()) return false
+  if (!isAccessTokenExpired(localStorage.getItem("accessToken"))) return true
+  return Boolean(localStorage.getItem("refreshToken"))
 }
 
 export function normalizeAuthUser(payload: AuthPayload, emailFallback = ""): CurrentUser {
@@ -189,6 +214,7 @@ export function persistAuthSession(payload: AuthPayload, emailFallback = "") {
   const user = normalizeAuthUser(payload, emailFallback)
   localStorage.setItem("currentUser", JSON.stringify(user))
   if (user.active_service) localStorage.setItem("activeGecoService", user.active_service)
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT))
   return user
 }
 
