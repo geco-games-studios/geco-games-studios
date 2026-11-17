@@ -10847,3 +10847,206 @@
 2026-10-16T16:25:19:  ✓ Starting...
 2026-10-16T16:25:19:  ✓ Ready in 201ms
 2026-10-16T16:25:19: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-10-16T16:54:53:    ▲ Next.js 15.5.7
+2026-10-16T16:54:53:    - Local:        http://localhost:3000
+2026-10-16T16:54:53:    - Network:      http://46.4.218.149:3000
+2026-10-16T16:54:53: 
+2026-10-16T16:54:53:  ✓ Starting...
+2026-10-16T16:54:53:  ✓ Ready in 201ms
+2026-10-16T16:54:53: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-10-18T02:16:49: User API route called with params: Promise {
+2026-10-18T02:16:49:   { id: '*' },
+2026-10-18T02:16:49:   id: '*',
+2026-10-18T02:16:49:   [Symbol(async_id_symbol)]: 4509352,
+2026-10-18T02:16:49:   [Symbol(trigger_async_id_symbol)]: 4509344,
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: { isAppRoute: true, isAction: false },
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: {
+2026-10-18T02:16:49:     isStaticGeneration: false,
+2026-10-18T02:16:49:     page: '/api/users/[id]/route',
+2026-10-18T02:16:49:     route: '/api/users/[id]',
+2026-10-18T02:16:49:     incrementalCache: IncrementalCache {
+2026-10-18T02:16:49:       locks: Map(0) {},
+2026-10-18T02:16:49:       hasCustomCacheHandler: false,
+2026-10-18T02:16:49:       dev: false,
+2026-10-18T02:16:49:       disableForTestmode: false,
+2026-10-18T02:16:49:       minimalMode: false,
+2026-10-18T02:16:49:       requestHeaders: [Object],
+2026-10-18T02:16:49:       allowedRevalidateHeaderKeys: undefined,
+2026-10-18T02:16:49:       prerenderManifest: [Object],
+2026-10-18T02:16:49:       cacheControls: [SharedCacheControls],
+2026-10-18T02:16:49:       fetchCacheKeyPrefix: '',
+2026-10-18T02:16:49:       cacheHandler: [FileSystemCache]
+2026-10-18T02:16:49:     },
+2026-10-18T02:16:49:     cacheLifeProfiles: {
+2026-10-18T02:16:49:       default: [Object],
+2026-10-18T02:16:49:       seconds: [Object],
+2026-10-18T02:16:49:       minutes: [Object],
+2026-10-18T02:16:49:       hours: [Object],
+2026-10-18T02:16:49:       days: [Object],
+2026-10-18T02:16:49:       weeks: [Object],
+2026-10-18T02:16:49:       max: [Object]
+2026-10-18T02:16:49:     },
+2026-10-18T02:16:49:     isRevalidate: false,
+2026-10-18T02:16:49:     isBuildTimePrerendering: undefined,
+2026-10-18T02:16:49:     hasReadableErrorStacks: undefined,
+2026-10-18T02:16:49:     fetchCache: undefined,
+2026-10-18T02:16:49:     isOnDemandRevalidate: undefined,
+2026-10-18T02:16:49:     isDraftMode: undefined,
+2026-10-18T02:16:49:     isPrefetchRequest: undefined,
+2026-10-18T02:16:49:     buildId: 'q6EzvftMsRhTa4Ncn7Lk3',
+2026-10-18T02:16:49:     reactLoadableManifest: {},
+2026-10-18T02:16:49:     assetPrefix: '',
+2026-10-18T02:16:49:     afterContext: tO {
+2026-10-18T02:16:49:       workUnitStores: Set(0) {},
+2026-10-18T02:16:49:       waitUntil: [Function (anonymous)],
+2026-10-18T02:16:49:       onClose: [Function: onClose],
+2026-10-18T02:16:49:       onTaskError: undefined,
+2026-10-18T02:16:49:       callbackQueue: [o]
+2026-10-18T02:16:49:     },
+2026-10-18T02:16:49:     cacheComponentsEnabled: false,
+2026-10-18T02:16:49:     dev: false,
+2026-10-18T02:16:49:     previouslyRevalidatedTags: [],
+2026-10-18T02:16:49:     refreshTagsByCacheKind: Map(2) { 'default' => [Object], 'remote' => [Object] },
+2026-10-18T02:16:49:     runInCleanSnapshot: [Function: bound] { asyncResource: [Getter/Setter] },
+2026-10-18T02:16:49:     shouldTrackFetchMetrics: false
+2026-10-18T02:16:49:   },
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: undefined,
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: undefined,
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: undefined,
+2026-10-18T02:16:49:   [Symbol(kResourceStore)]: {
+2026-10-18T02:16:49:     type: 'request',
+2026-10-18T02:16:49:     phase: 'action',
+2026-10-18T02:16:49:     implicitTags: { tags: [Array], expirationsByCacheKind: [Map] },
+2026-10-18T02:16:49:     url: { pathname: '/api/users/*', search: '' },
+2026-10-18T02:16:49:     rootParams: {},
+2026-10-18T02:16:49:     headers: [Getter],
+2026-10-18T02:16:49:     cookies: [Getter/Setter],
+2026-10-18T02:16:49:     mutableCookies: [Getter],
+2026-10-18T02:16:49:     userspaceMutableCookies: [Getter],
+2026-10-18T02:16:49:     draftMode: [Getter],
+2026-10-18T02:16:49:     renderResumeDataCache: null,
+2026-10-18T02:16:49:     isHmrRefresh: false,
+2026-10-18T02:16:49:     serverComponentsHmrCache: undefined,
+2026-10-18T02:16:49:     devFallbackParams: null
+2026-10-18T02:16:49:   }
+2026-10-18T02:16:49: }
+2026-10-18T02:16:49: Auth header present: false
+2026-10-18T02:16:49: No auth header found
+2026-10-26T08:29:38:    ▲ Next.js 15.5.7
+2026-10-26T08:29:38:    - Local:        http://localhost:3000
+2026-10-26T08:29:38:    - Network:      http://46.4.218.149:3000
+2026-10-26T08:29:38: 
+2026-10-26T08:29:38:  ✓ Starting...
+2026-10-26T08:29:38:  ✓ Ready in 362ms
+2026-10-26T08:29:38: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-10-28T01:41:38: User API route called with params: Promise {
+2026-10-28T01:41:38:   { id: '1.js' },
+2026-10-28T01:41:38:   id: '1.js',
+2026-10-28T01:41:38:   [Symbol(async_id_symbol)]: 2761960,
+2026-10-28T01:41:38:   [Symbol(trigger_async_id_symbol)]: 2761952,
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: {
+2026-10-28T01:41:38:     isStaticGeneration: false,
+2026-10-28T01:41:38:     page: '/api/users/[id]/route',
+2026-10-28T01:41:38:     route: '/api/users/[id]',
+2026-10-28T01:41:38:     incrementalCache: IncrementalCache {
+2026-10-28T01:41:38:       locks: Map(0) {},
+2026-10-28T01:41:38:       hasCustomCacheHandler: false,
+2026-10-28T01:41:38:       dev: false,
+2026-10-28T01:41:38:       disableForTestmode: false,
+2026-10-28T01:41:38:       minimalMode: false,
+2026-10-28T01:41:38:       requestHeaders: [Object],
+2026-10-28T01:41:38:       allowedRevalidateHeaderKeys: undefined,
+2026-10-28T01:41:38:       prerenderManifest: [Object],
+2026-10-28T01:41:38:       cacheControls: [SharedCacheControls],
+2026-10-28T01:41:38:       fetchCacheKeyPrefix: '',
+2026-10-28T01:41:38:       cacheHandler: [FileSystemCache]
+2026-10-28T01:41:38:     },
+2026-10-28T01:41:38:     cacheLifeProfiles: {
+2026-10-28T01:41:38:       default: [Object],
+2026-10-28T01:41:38:       seconds: [Object],
+2026-10-28T01:41:38:       minutes: [Object],
+2026-10-28T01:41:38:       hours: [Object],
+2026-10-28T01:41:38:       days: [Object],
+2026-10-28T01:41:38:       weeks: [Object],
+2026-10-28T01:41:38:       max: [Object]
+2026-10-28T01:41:38:     },
+2026-10-28T01:41:38:     isRevalidate: false,
+2026-10-28T01:41:38:     isBuildTimePrerendering: undefined,
+2026-10-28T01:41:38:     hasReadableErrorStacks: undefined,
+2026-10-28T01:41:38:     fetchCache: undefined,
+2026-10-28T01:41:38:     isOnDemandRevalidate: undefined,
+2026-10-28T01:41:38:     isDraftMode: undefined,
+2026-10-28T01:41:38:     isPrefetchRequest: undefined,
+2026-10-28T01:41:38:     buildId: 'q6EzvftMsRhTa4Ncn7Lk3',
+2026-10-28T01:41:38:     reactLoadableManifest: {},
+2026-10-28T01:41:38:     assetPrefix: '',
+2026-10-28T01:41:38:     afterContext: tO {
+2026-10-28T01:41:38:       workUnitStores: Set(0) {},
+2026-10-28T01:41:38:       waitUntil: [Function (anonymous)],
+2026-10-28T01:41:38:       onClose: [Function: onClose],
+2026-10-28T01:41:38:       onTaskError: undefined,
+2026-10-28T01:41:38:       callbackQueue: [o]
+2026-10-28T01:41:38:     },
+2026-10-28T01:41:38:     cacheComponentsEnabled: false,
+2026-10-28T01:41:38:     dev: false,
+2026-10-28T01:41:38:     previouslyRevalidatedTags: [],
+2026-10-28T01:41:38:     refreshTagsByCacheKind: Map(2) { 'default' => [Object], 'remote' => [Object] },
+2026-10-28T01:41:38:     runInCleanSnapshot: [Function: bound] { asyncResource: [Getter/Setter] },
+2026-10-28T01:41:38:     shouldTrackFetchMetrics: false
+2026-10-28T01:41:38:   },
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: { isAppRoute: true, isAction: false },
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: undefined,
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: undefined,
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: undefined,
+2026-10-28T01:41:38:   [Symbol(kResourceStore)]: {
+2026-10-28T01:41:38:     type: 'request',
+2026-10-28T01:41:38:     phase: 'action',
+2026-10-28T01:41:38:     implicitTags: { tags: [Array], expirationsByCacheKind: [Map] },
+2026-10-28T01:41:38:     url: { pathname: '/api/users/1.js', search: '' },
+2026-10-28T01:41:38:     rootParams: {},
+2026-10-28T01:41:38:     headers: [Getter],
+2026-10-28T01:41:38:     cookies: [Getter/Setter],
+2026-10-28T01:41:38:     mutableCookies: [Getter],
+2026-10-28T01:41:38:     userspaceMutableCookies: [Getter],
+2026-10-28T01:41:38:     draftMode: [Getter],
+2026-10-28T01:41:38:     renderResumeDataCache: null,
+2026-10-28T01:41:38:     isHmrRefresh: false,
+2026-10-28T01:41:38:     serverComponentsHmrCache: undefined,
+2026-10-28T01:41:38:     devFallbackParams: null
+2026-10-28T01:41:38:   }
+2026-10-28T01:41:38: }
+2026-10-28T01:41:38: Auth header present: false
+2026-10-28T01:41:38: No auth header found
+2026-11-02T09:52:13:    ▲ Next.js 15.5.7
+2026-11-02T09:52:13:    - Local:        http://localhost:3000
+2026-11-02T09:52:13:    - Network:      http://46.4.218.149:3000
+2026-11-02T09:52:13: 
+2026-11-02T09:52:13:  ✓ Starting...
+2026-11-02T09:52:13:  ✓ Ready in 336ms
+2026-11-02T09:52:13: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-11-04T10:34:08:    ▲ Next.js 15.5.7
+2026-11-04T10:34:08:    - Local:        http://localhost:3000
+2026-11-04T10:34:08:    - Network:      http://46.4.218.149:3000
+2026-11-04T10:34:08: 
+2026-11-04T10:34:08:  ✓ Starting...
+2026-11-04T10:34:09:  ✓ Ready in 346ms
+2026-11-04T10:34:09: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-11-04T11:10:06: Users list API route called
+2026-11-04T11:10:06: Auth header present: false
+2026-11-04T11:10:06: No auth header found
+2026-11-05T15:56:34: Users list API route called
+2026-11-05T15:56:34: Auth header present: false
+2026-11-05T15:56:34: No auth header found
+2026-11-13T21:37:16: Users list API route called
+2026-11-13T21:37:16: Auth header present: false
+2026-11-13T21:37:16: No auth header found
+2026-11-14T02:52:20: Users list API route called
+2026-11-14T02:52:20: Auth header present: false
+2026-11-14T02:52:20: No auth header found
+2026-11-14T19:52:39:    ▲ Next.js 15.5.7
+2026-11-14T19:52:39:    - Local:        http://localhost:3000
+2026-11-14T19:52:39:    - Network:      http://46.4.218.149:3000
+2026-11-14T19:52:39: 
+2026-11-14T19:52:39:  ✓ Starting...
+2026-11-14T19:52:39:  ✓ Ready in 327ms
+2026-11-14T19:52:39: API_BASE_URL: https://system.gecogames.com/api/v1/test
