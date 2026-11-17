@@ -78234,3 +78234,10 @@
 2026-11-17T16:13:40: Missing SMTP environment variables for academy application route.
 2026-11-17T16:13:40: Missing SMTP environment variables for developer submission route.
 2026-11-17T16:13:40: Missing SMTP environment variables for newsletter subscription route.
+2026-11-17T16:36:28: Missing SMTP environment variables for academy application route.
+2026-11-17T16:36:28: Missing SMTP environment variables for developer submission route.
+2026-11-17T16:36:28: Missing SMTP environment variables for newsletter subscription route.
+2026-11-17T16:44:36:  ⨯ TypeError: Failed to parse body as FormData.
+2026-11-17T16:44:36:     at async m (.next/server/app/page.js:1:9712)
+2026-11-17T16:44:36:  ⨯ TypeError: Failed to parse body as FormData.
+2026-11-17T16:44:36:     at async m (.next/server/app/page.js:1:9712)
