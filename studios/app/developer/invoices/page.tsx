@@ -1,9 +1,10 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useCallback, useEffect, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FilePlus2, Search, Trash2 } from "lucide-react"
-import { postJson } from "@/lib/api"
+import { FilePlus2, RefreshCw, Search, Trash2 } from "lucide-react"
+import { fetchJson, postJson } from "@/lib/api"
 import type { Invoice, InvoiceItem } from "@/lib/invoice-types"
 
 interface InvoiceForm {
@@ -51,6 +52,14 @@ function inputClassName() {
   return "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
 }
 
+function readInvoiceList(data: unknown): Invoice[] {
+  if (Array.isArray(data)) return data as Invoice[]
+  if (data && typeof data === "object" && "results" in data && Array.isArray(data.results)) {
+    return data.results as Invoice[]
+  }
+  throw new Error("The invoice list response was not in the expected format.")
+}
+
 export default function DeveloperInvoicesPage() {
   const router = useRouter()
   const [form, setForm] = useState<InvoiceForm>(createInitialForm)
@@ -60,6 +69,27 @@ export default function DeveloperInvoicesPage() {
   const [invoiceId, setInvoiceId] = useState("")
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [isLoadingInvoices, setIsLoadingInvoices] = useState(true)
+  const [invoiceListError, setInvoiceListError] = useState("")
+
+  const loadInvoices = useCallback(async () => {
+    setIsLoadingInvoices(true)
+    setInvoiceListError("")
+    try {
+      const data = await fetchJson<unknown>("invoices/")
+      setInvoices(readInvoiceList(data))
+    } catch (requestError) {
+      console.error("Failed to load invoices:", requestError)
+      setInvoiceListError(requestError instanceof Error ? requestError.message : "Unable to load invoices.")
+    } finally {
+      setIsLoadingInvoices(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadInvoices()
+  }, [loadInvoices])
 
   const updateForm = (field: keyof InvoiceForm, value: string) => {
     setForm((current) => ({ ...current, [field]: value }))
@@ -106,22 +136,60 @@ export default function DeveloperInvoicesPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Invoices</h1>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Create an invoice, or open an existing invoice using its ID.
+          View your invoices, record payments, and download payment receipts.
         </p>
       </header>
 
       {error && <div role="alert" className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
 
+      <section className="mb-6 rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
+          <h2 className="font-semibold">Your invoices</h2>
+          <button type="button" onClick={() => void loadInvoices()} disabled={isLoadingInvoices} className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
+        {isLoadingInvoices ? (
+          <p role="status" className="p-4 text-sm text-slate-500">Loading invoices...</p>
+        ) : invoiceListError ? (
+          <div className="p-4">
+            <p role="alert" className="text-sm text-red-700">{invoiceListError}</p>
+            <button type="button" onClick={() => void loadInvoices()} className="mt-2 text-sm font-semibold text-cyan-700 hover:underline dark:text-cyan-400">Try again</button>
+          </div>
+        ) : invoices.length === 0 ? (
+          <p className="p-4 text-sm text-slate-500">No invoices yet. Create one below and it will appear here.</p>
+        ) : (
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
+            {invoices.map((invoice) => (
+              <Link
+                key={invoice.id}
+                href={`/developer/invoices/${encodeURIComponent(String(invoice.id))}`}
+                className="flex flex-col gap-3 p-4 transition hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between dark:hover:bg-slate-800"
+              >
+                <div>
+                  <div className="font-semibold">{invoice.invoice_number}</div>
+                  <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">{invoice.client_name} · Due {invoice.due_date}</div>
+                </div>
+                <div className="flex items-center justify-between gap-4 sm:justify-end">
+                  <div className="text-right">
+                    <div className="font-semibold">{invoice.currency} {invoice.totals.total}</div>
+                    <div className="text-xs text-slate-500">{invoice.currency} {invoice.balance_due} due</div>
+                  </div>
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold capitalize text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+                    {invoice.payment_status.replace("_", " ")}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
       <form onSubmit={handleOpenInvoice} className="mb-6 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-end dark:border-slate-800 dark:bg-slate-900">
         <label className="flex-1 text-sm font-medium">
-          Existing invoice ID
-          <input
-            value={invoiceId}
-            onChange={(event) => setInvoiceId(event.target.value)}
-            required
-            inputMode="numeric"
-            className={inputClassName()}
-          />
+          Open invoice by ID
+          <input value={invoiceId} onChange={(event) => setInvoiceId(event.target.value)} required inputMode="numeric" className={inputClassName()} />
         </label>
         <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">
           <Search className="h-4 w-4" />
