@@ -18,6 +18,8 @@ const navItems = [
   { href: "/developer/stores", label: "Stores" },
   { href: "/developer/support", label: "Support" },
   { href: "/developer/finance", label: "Finance" },
+  { href: "/developer/invoices", label: "Invoices" },
+  { href: "/developer/receipts", label: "Receipts" },
 ]
 
 export default function DeveloperLayout({ children }: { children: ReactNode }) {
@@ -97,7 +99,7 @@ export default function DeveloperLayout({ children }: { children: ReactNode }) {
           <nav className="mt-4 overflow-x-auto">
             <div className="flex gap-1 border-t border-slate-200 pt-3 dark:border-slate-800">
               {navItems.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
                 return (
                   <Link
                     key={item.href}
