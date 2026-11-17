@@ -4,7 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { ArrowLeft, Download, Mail, RefreshCw } from "lucide-react"
-import { fetchJson, postJson } from "@/lib/api"
+import { fetchBlob, fetchJson, postJson } from "@/lib/api"
 import { formatInvoiceAmount } from "@/lib/invoice-types"
 import type { Invoice, InvoicePayment } from "@/lib/invoice-types"
 
@@ -32,6 +32,7 @@ export default function InvoiceDetailPage() {
   const [reference, setReference] = useState("")
   const [latestPayment, setLatestPayment] = useState<InvoicePayment | null>(null)
   const [emailingPaymentId, setEmailingPaymentId] = useState<number | null>(null)
+  const [invoiceAction, setInvoiceAction] = useState<"download" | "email" | null>(null)
 
   const loadInvoice = useCallback(async (): Promise<boolean> => {
     if (!invoiceId) {
@@ -121,6 +122,60 @@ export default function InvoiceDetailPage() {
     }
   }
 
+  const handleDownloadInvoice = async () => {
+    if (!invoice) return
+
+    setInvoiceAction("download")
+    setError("")
+    setNotice("")
+    try {
+      const blob = await fetchBlob(`/api/invoices/${encodeURIComponent(invoiceId)}/pdf/`)
+      const objectUrl = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      const filename = String(invoice.invoice_number || invoice.id).replace(/[^a-zA-Z0-9_-]/g, "_")
+      link.href = objectUrl
+      link.download = `invoice-${filename}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000)
+      setNotice("Invoice PDF downloaded.")
+    } catch (requestError) {
+      console.error("Failed to download invoice PDF:", requestError)
+      setError(requestError instanceof Error ? requestError.message : "Unable to download the invoice PDF.")
+    } finally {
+      setInvoiceAction(null)
+    }
+  }
+
+  const handleEmailInvoice = async () => {
+    const clientEmail = invoice?.client_email?.trim()
+    if (!clientEmail) {
+      setError("Add a client email to this invoice before emailing it.")
+      setNotice("")
+      return
+    }
+
+    const confirmed = window.confirm(`Email invoice ${invoice?.invoice_number} to ${clientEmail}?`)
+    if (!confirmed) return
+
+    setInvoiceAction("email")
+    setError("")
+    setNotice("")
+    try {
+      const response = await postJson<{ detail?: string }>(
+        `/api/invoices/${encodeURIComponent(invoiceId)}/email/`,
+        {}
+      )
+      setNotice(response.detail || `Invoice emailed to ${clientEmail}.`)
+    } catch (requestError) {
+      console.error("Failed to email invoice:", requestError)
+      setError(requestError instanceof Error ? requestError.message : "Unable to email this invoice.")
+    } finally {
+      setInvoiceAction(null)
+    }
+  }
+
   if (isLoading) return <div className="container mx-auto p-6 text-sm text-slate-500">Loading invoice...</div>
   if (error && !invoice) return <div role="alert" className="container mx-auto p-6 text-sm text-red-700">{error}</div>
   if (!invoice) return <div className="container mx-auto p-6 text-sm text-slate-600">Invoice not found.</div>
@@ -136,10 +191,20 @@ export default function InvoiceDetailPage() {
           <h1 className="text-2xl font-semibold">{invoice.invoice_number}</h1>
           <p className="mt-1 text-sm text-slate-500">Invoice ID: {invoice.id}</p>
         </div>
-        <button type="button" onClick={() => void loadInvoice()} disabled={isLoading} className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => void handleDownloadInvoice()} disabled={invoiceAction !== null} className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
+            <Download className="h-4 w-4" />
+            {invoiceAction === "download" ? "Downloading..." : "Download invoice"}
+          </button>
+          <button type="button" onClick={() => void handleEmailInvoice()} disabled={invoiceAction !== null} className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
+            <Mail className="h-4 w-4" />
+            {invoiceAction === "email" ? "Sending..." : "Email invoice"}
+          </button>
+          <button type="button" onClick={() => void loadInvoice()} disabled={isLoading} className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </header>
 
       {error && <div role="alert" className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
