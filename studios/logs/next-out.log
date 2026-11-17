@@ -11050,3 +11050,10 @@
 2026-11-14T19:52:39:  ✓ Starting...
 2026-11-14T19:52:39:  ✓ Ready in 327ms
 2026-11-14T19:52:39: API_BASE_URL: https://system.gecogames.com/api/v1/test
+2026-11-17T15:30:01:    ▲ Next.js 15.5.7
+2026-11-17T15:30:01:    - Local:        http://localhost:3000
+2026-11-17T15:30:01:    - Network:      http://46.4.218.149:3000
+2026-11-17T15:30:01: 
+2026-11-17T15:30:01:  ✓ Starting...
+2026-11-17T15:30:02:  ✓ Ready in 268ms
+2026-11-17T15:30:02: API_BASE_URL: https://system.gecogames.com/api/v1/test

@@ -78225,3 +78225,6 @@
 2026-11-17T14:43:44:     at async m (.next/server/app/_not-found/page.js:1:6871)
 2026-11-17T14:43:44:     at async p (.next/server/app/_not-found/page.js:2:1860)
 2026-11-17T14:43:44:     at async L (.next/server/app/_not-found/page.js:2:6944)
+2026-11-17T15:30:02: Missing SMTP environment variables for academy application route.
+2026-11-17T15:30:02: Missing SMTP environment variables for developer submission route.
+2026-11-17T15:30:02: Missing SMTP environment variables for newsletter subscription route.
