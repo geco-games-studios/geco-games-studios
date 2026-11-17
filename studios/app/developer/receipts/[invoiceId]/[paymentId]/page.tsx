@@ -33,7 +33,7 @@ export default function PaymentReceiptPage() {
     setError("")
 
     try {
-      const endpoint = `invoices/${encodeURIComponent(invoiceId)}/payments/${encodeURIComponent(paymentId)}/receipt/`
+      const endpoint = `/api/invoices/${encodeURIComponent(invoiceId)}/payments/${encodeURIComponent(paymentId)}/receipt/`
       const response = await fetch(getRequestUrl(endpoint), {
         method: "GET",
         headers: getAuthHeaders(),

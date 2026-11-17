@@ -4,7 +4,17 @@ async function proxy(request: NextRequest, context: { params: Promise<{ segments
   const authorization = request.headers.get("authorization")
   if (!authorization) return NextResponse.json({ detail: "Please sign in to manage invoices." }, { status: 401 })
   const { segments = [] } = await context.params
-  if (segments.length > 2 || (segments[0] && !/^\d+$/.test(segments[0])) || (segments[1] && !["pdf", "email"].includes(segments[1]))) {
+  const isInvoiceId = (value?: string) => Boolean(value && /^\d+$/.test(value))
+  const isValidEndpoint =
+    segments.length === 0 ||
+    (segments.length === 1 && isInvoiceId(segments[0])) ||
+    (segments.length === 2 && isInvoiceId(segments[0]) && ["payments", "pdf", "email"].includes(segments[1])) ||
+    (segments.length === 4 &&
+      isInvoiceId(segments[0]) &&
+      segments[1] === "payments" &&
+      isInvoiceId(segments[2]) &&
+      segments[3] === "receipt")
+  if (!isValidEndpoint) {
     return NextResponse.json({ detail: "Invalid invoice endpoint." }, { status: 404 })
   }
   try {

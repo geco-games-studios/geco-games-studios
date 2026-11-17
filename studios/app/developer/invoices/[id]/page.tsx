@@ -41,7 +41,7 @@ export default function InvoiceDetailPage() {
     try {
       setIsLoading(true)
       setError("")
-      const data = await fetchJson<Invoice>(`invoices/${encodeURIComponent(invoiceId)}/`)
+      const data = await fetchJson<Invoice>(`/api/invoices/${encodeURIComponent(invoiceId)}/`)
       setInvoice(data)
       return true
     } catch (requestError) {
@@ -71,7 +71,7 @@ export default function InvoiceDetailPage() {
       if (paidAt) payload.paid_at = paidAt
       if (paymentMethod.trim()) payload.payment_method = paymentMethod.trim()
       if (reference.trim()) payload.reference = reference.trim()
-      const payment = await postJson<InvoicePayment>(`invoices/${encodeURIComponent(invoiceId)}/payments/`, {
+      const payment = await postJson<InvoicePayment>(`/api/invoices/${encodeURIComponent(invoiceId)}/payments/`, {
         ...payload,
       })
       setLatestPayment(payment)

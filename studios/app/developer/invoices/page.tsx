@@ -77,7 +77,7 @@ export default function DeveloperInvoicesPage() {
     setIsLoadingInvoices(true)
     setInvoiceListError("")
     try {
-      const data = await fetchJson<unknown>("invoices/")
+      const data = await fetchJson<unknown>("/api/invoices/")
       setInvoices(readInvoiceList(data))
     } catch (requestError) {
       console.error("Failed to load invoices:", requestError)
@@ -107,7 +107,7 @@ export default function DeveloperInvoicesPage() {
     setError("")
 
     try {
-      const invoice = await postJson<Invoice>("invoices/", {
+      const invoice = await postJson<Invoice>("/api/invoices/", {
         ...form,
         items: items.map(({ name, description, quantity, unit_price }) => ({
           name,
