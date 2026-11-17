@@ -158,6 +158,8 @@ export default function InvoiceDetailPage() {
                 <div className="text-xs uppercase tracking-wide text-slate-500">Bill to</div>
                 <div className="mt-1 font-semibold">{invoice.client_name}</div>
                 {invoice.client_email && <div className="text-sm text-slate-500">{invoice.client_email}</div>}
+                {invoice.client_phone && <div className="text-sm text-slate-500">{invoice.client_phone}</div>}
+                {invoice.client_address && <div className="whitespace-pre-wrap text-sm text-slate-500">{invoice.client_address}</div>}
               </div>
               <div className="text-sm">
                 <span className="text-slate-500">Issued: </span>{formatDate(invoice.issue_date)}

@@ -25,6 +25,8 @@ export interface Invoice {
   business_email?: string
   client_name: string
   client_email?: string
+  client_phone?: string
+  client_address?: string
   issue_date: string
   due_date: string
   currency: string

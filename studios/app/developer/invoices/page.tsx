@@ -12,6 +12,8 @@ interface InvoiceForm {
   business_email: string
   client_name: string
   client_email: string
+  client_phone: string
+  client_address: string
   issue_date: string
   due_date: string
   currency: string
@@ -37,6 +39,8 @@ function createInitialForm(): InvoiceForm {
     business_email: "",
     client_name: "",
     client_email: "",
+    client_phone: "",
+    client_address: "",
     issue_date: today,
     due_date: today,
     currency: "ZMW",
@@ -221,6 +225,14 @@ export default function DeveloperInvoicesPage() {
             <label className="text-sm font-medium">
               Client email
               <input type="email" value={form.client_email} onChange={(event) => updateForm("client_email", event.target.value)} className={inputClassName()} />
+            </label>
+            <label className="text-sm font-medium">
+              Client phone
+              <input type="tel" value={form.client_phone} onChange={(event) => updateForm("client_phone", event.target.value)} className={inputClassName()} />
+            </label>
+            <label className="text-sm font-medium sm:col-span-2">
+              Client address
+              <textarea rows={2} value={form.client_address} onChange={(event) => updateForm("client_address", event.target.value)} className={inputClassName()} />
             </label>
           </div>
         </section>
