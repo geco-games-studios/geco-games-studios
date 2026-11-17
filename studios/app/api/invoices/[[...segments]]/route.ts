@@ -13,7 +13,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ segments
       isInvoiceId(segments[0]) &&
       segments[1] === "payments" &&
       isInvoiceId(segments[2]) &&
-      segments[3] === "receipt")
+      ["receipt", "email"].includes(segments[3]))
   if (!isValidEndpoint) {
     return NextResponse.json({ detail: "Invalid invoice endpoint." }, { status: 404 })
   }
