@@ -102,37 +102,29 @@ const processSteps = [
 ]
 
 export default function HomePage() {
-  const inshimuTestUrl = process.env.NEXT_PUBLIC_INSHIMU_WEBGL_URL || "https://play.unity.com/en/games/2f23ea58-737e-44ed-92eb-d069243fa586/inshimu-guns-and-puzzles"
+  const clonesIncUrl = "https://geco-games-studios-ltd.itch.io/clones-inc"
   const inshimuDiscordUrl = process.env.NEXT_PUBLIC_INSHIMU_DISCORD_URL || "https://discord.com/invite/gecogamesstudios"
 
   return (
     <div className="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <HomeSlider testUrl={inshimuTestUrl} discordUrl={inshimuDiscordUrl} />
+      <HomeSlider clonesIncUrl={clonesIncUrl} discordUrl={inshimuDiscordUrl} />
 
-      <section id="inshimu" aria-labelledby="inshimu-heading" className="bg-emerald-50 px-6 py-20 dark:bg-slate-900 lg:px-8">
+      <section id="clones-inc" aria-labelledby="clones-inc-heading" className="bg-violet-50 px-6 py-20 dark:bg-slate-900 lg:px-8">
         <div className="container mx-auto">
-          <div className="grid overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-2">
+          <div className="grid overflow-hidden rounded-3xl border border-violet-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-2">
             <div className="relative min-h-72 sm:min-h-96">
-              <Image src="/games/inshimu-one.png" alt="Inshimu 1: Guns and Puzzles cover artwork" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-contain p-6" />
+              <Image src="/games/clones-inc.png" alt="Clones Inc title screen featuring pixel-art characters" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
             </div>
             <div className="p-8 sm:p-12">
-              <span className="inline-flex rounded-full bg-emerald-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">Open test · Unity WebGL</span>
-              <h2 id="inshimu-heading" className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">Inshimu</h2>
-              <p className="mt-2 text-xl font-medium text-emerald-700 dark:text-emerald-300">The tales of all seasons</p>
-              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">Discover our casual game with multiple gameplay types and stories. Join our open test in your browser with Unity WebGL and help us shape the experience.</p>
+              <span className="inline-flex rounded-full bg-violet-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-violet-800 dark:bg-violet-900/40 dark:text-violet-300">PC · Play in your browser</span>
+              <h2 id="clones-inc-heading" className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">Clones Inc</h2>
+              <p className="mt-2 text-xl font-medium text-violet-700 dark:text-violet-300">A GECO Games title</p>
+              <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">Play the PC web version of Clones Inc directly in your browser on itch.io.</p>
               <div className="mt-8 flex flex-wrap gap-4">
-                {inshimuTestUrl ? (
-                  <a href={inshimuTestUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800">
-                    <Play aria-hidden="true" className="mr-2 h-4 w-4" /> Play the WebGL test
-                  </a>
-                ) : (
-                  <p className="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">The WebGL test link will be shared here.</p>
-                )}
-                <a href={inshimuDiscordUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold transition hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Share feedback on Discord <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" /></a>
-              </div>
-              <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
-                <h3 className="font-semibold">Spotted an issue or gameplay bug?</h3>
-                <p className="mt-2 leading-7 text-slate-600 dark:text-slate-400">Tell us on Discord what happened, which gameplay type or story you were playing, and how to reproduce it. Include your device, browser, and a screenshot or video if possible. We also welcome your thoughts on the gameplay.</p>
+                <a href={clonesIncUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-800">
+                  <Play aria-hidden="true" className="mr-2 h-4 w-4" /> Play Clones Inc on itch.io
+                </a>
+                <a href={inshimuDiscordUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold transition hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Join our Discord <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" /></a>
               </div>
             </div>
           </div>

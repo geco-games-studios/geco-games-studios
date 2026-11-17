@@ -6,13 +6,13 @@ import Link from "next/link"
 import { Pause, Play } from "lucide-react"
 import styles from "./home-slider.module.css"
 
-export default function HomeSlider({ testUrl, discordUrl }: { testUrl?: string; discordUrl: string }) {
+export default function HomeSlider({ clonesIncUrl, discordUrl }: { clonesIncUrl: string; discordUrl: string }) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const [interacting, setInteracting] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(true)
   const slides = [
-    { title: "Play Inshimu", subtitle: "Open Play test", description: "The tales of all seasons. Multiple gameplay types. Stories to discover.", action: "Play the open test", href: testUrl || "#inshimu", image: "/games/inshimu-one.png", type: "inshimu" },
+    { title: "Play Clones Inc", subtitle: "PC browser game", description: "Meet the clones, gear up, and explore the pixel-art world of Clones Inc.", action: "Play on itch.io", href: clonesIncUrl, image: "/games/clones-inc.png", type: "clonesInc" },
     { title: "Join our Discord server", subtitle: "Find your community", description: "Meet the team, share your feedback, and help shape our next games.", action: "Join now", href: discordUrl, image: null, type: "discord" },
     { title: "Legends of Alkebulan", subtitle: "A new legend is forming", description: "Explore the world, the characters, and the stories of our next adventure.", action: "Read about Legends of Alkebulan", href: "#legends-of-alkebulan", image: "/legends-of-alkebulan-map.jpeg", type: "legends" },
   ]
