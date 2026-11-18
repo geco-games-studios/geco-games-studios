@@ -7,6 +7,15 @@ import { ArrowLeft, Download, Mail, RefreshCw } from "lucide-react"
 import { fetchBlob, fetchJson, postJson } from "@/lib/api"
 import { formatInvoiceAmount } from "@/lib/invoice-types"
 import type { Invoice, InvoicePayment } from "@/lib/invoice-types"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogClose,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 function todayValue() {
   const date = new Date()
@@ -33,6 +42,9 @@ export default function InvoiceDetailPage() {
   const [latestPayment, setLatestPayment] = useState<InvoicePayment | null>(null)
   const [emailingPaymentId, setEmailingPaymentId] = useState<number | null>(null)
   const [invoiceAction, setInvoiceAction] = useState<"download" | "email" | null>(null)
+  const [emailConfirmation, setEmailConfirmation] = useState<
+    { type: "invoice" } | { type: "receipt"; payment: InvoicePayment } | null
+  >(null)
 
   const loadInvoice = useCallback(async (): Promise<boolean> => {
     if (!invoiceId) {
@@ -94,7 +106,7 @@ export default function InvoiceDetailPage() {
     }
   }
 
-  const handleEmailReceipt = async (payment: InvoicePayment) => {
+  const handleEmailReceipt = (payment: InvoicePayment) => {
     const clientEmail = invoice?.client_email?.trim()
     if (!clientEmail) {
       setError("Add a client email to this invoice before emailing a receipt.")
@@ -102,24 +114,7 @@ export default function InvoiceDetailPage() {
       return
     }
 
-    const confirmed = window.confirm(`Email receipt ${payment.receipt_number} to ${clientEmail}?`)
-    if (!confirmed) return
-
-    setEmailingPaymentId(payment.id)
-    setError("")
-    setNotice("")
-    try {
-      const response = await postJson<{ detail?: string }>(
-        `/api/invoices/${encodeURIComponent(invoiceId)}/payments/${encodeURIComponent(String(payment.id))}/email/`,
-        {}
-      )
-      setNotice(response.detail || `Receipt emailed to ${clientEmail}.`)
-    } catch (requestError) {
-      console.error("Failed to email payment receipt:", requestError)
-      setError(requestError instanceof Error ? requestError.message : "Unable to email this receipt.")
-    } finally {
-      setEmailingPaymentId(null)
-    }
+    setEmailConfirmation({ type: "receipt", payment })
   }
 
   const handleDownloadInvoice = async () => {
@@ -148,7 +143,7 @@ export default function InvoiceDetailPage() {
     }
   }
 
-  const handleEmailInvoice = async () => {
+  const handleEmailInvoice = () => {
     const clientEmail = invoice?.client_email?.trim()
     if (!clientEmail) {
       setError("Add a client email to this invoice before emailing it.")
@@ -156,23 +151,47 @@ export default function InvoiceDetailPage() {
       return
     }
 
-    const confirmed = window.confirm(`Email invoice ${invoice?.invoice_number} to ${clientEmail}?`)
-    if (!confirmed) return
+    setEmailConfirmation({ type: "invoice" })
+  }
 
-    setInvoiceAction("email")
+  const handleConfirmEmail = async () => {
+    const confirmation = emailConfirmation
+    if (!confirmation) return
+
+    setEmailConfirmation(null)
     setError("")
     setNotice("")
+
+    if (confirmation.type === "invoice") {
+      setInvoiceAction("email")
+      try {
+        const response = await postJson<{ detail?: string }>(
+          `/api/invoices/${encodeURIComponent(invoiceId)}/email/`,
+          {}
+        )
+        setNotice(response.detail || `Invoice emailed to ${invoice?.client_email?.trim()}.`)
+      } catch (requestError) {
+        console.error("Failed to email invoice:", requestError)
+        setError(requestError instanceof Error ? requestError.message : "Unable to email this invoice.")
+      } finally {
+        setInvoiceAction(null)
+      }
+      return
+    }
+
+    const { payment } = confirmation
+    setEmailingPaymentId(payment.id)
     try {
       const response = await postJson<{ detail?: string }>(
-        `/api/invoices/${encodeURIComponent(invoiceId)}/email/`,
+        `/api/invoices/${encodeURIComponent(invoiceId)}/payments/${encodeURIComponent(String(payment.id))}/email/`,
         {}
       )
-      setNotice(response.detail || `Invoice emailed to ${clientEmail}.`)
+      setNotice(response.detail || `Receipt emailed to ${invoice?.client_email?.trim()}.`)
     } catch (requestError) {
-      console.error("Failed to email invoice:", requestError)
-      setError(requestError instanceof Error ? requestError.message : "Unable to email this invoice.")
+      console.error("Failed to email payment receipt:", requestError)
+      setError(requestError instanceof Error ? requestError.message : "Unable to email this receipt.")
     } finally {
-      setInvoiceAction(null)
+      setEmailingPaymentId(null)
     }
   }
 
@@ -357,6 +376,52 @@ export default function InvoiceDetailPage() {
           </Link>
         </section>
       )}
+
+      <Dialog
+        open={emailConfirmation !== null}
+        onOpenChange={(open) => {
+          if (!open) setEmailConfirmation(null)
+        }}
+      >
+        <DialogContent className="max-w-md gap-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+          <div className="p-6 sm:p-7">
+            <DialogHeader className="text-left">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+                <Mail className="h-5 w-5" />
+              </div>
+              <DialogTitle className="text-xl font-semibold">
+                {emailConfirmation?.type === "receipt" ? "Email this receipt?" : "Email this invoice?"}
+              </DialogTitle>
+              <DialogDescription className="pt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                {emailConfirmation?.type === "receipt"
+                  ? `Receipt ${emailConfirmation.payment.receipt_number} will be sent to`
+                  : `Invoice ${invoice.invoice_number} will be sent to`}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+              {invoice.client_email}
+            </div>
+          </div>
+          <DialogFooter className="flex-row justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-950/50">
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              type="button"
+              onClick={() => void handleConfirmEmail()}
+              className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+            >
+              <Mail className="h-4 w-4" />
+              Send email
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
