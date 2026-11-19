@@ -12,6 +12,7 @@ export default function HomeSlider({ clonesIncUrl, discordUrl }: { clonesIncUrl:
   const [interacting, setInteracting] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(true)
   const slides = [
+    { title: "Inshimu 2", subtitle: "Guns and puzzles", description: "Step into the next Inshimu adventure, where quick action and clever puzzle-solving go hand in hand.", action: "Discover Inshimu 2", href: "/portfolio", image: "/games/inshimu-two.png", type: "inshimu" },
     { title: "Play Clones Inc", subtitle: "PC browser game", description: "Meet the clones, gear up, and explore the pixel-art world of Clones Inc.", action: "Play on itch.io", href: clonesIncUrl, image: "/games/clones-inc.png", type: "clonesInc" },
     { title: "Join our Discord server", subtitle: "Find your community", description: "Meet the team, share your feedback, and help shape our next games.", action: "Join now", href: discordUrl, image: null, type: "discord" },
     { title: "Legends of Alkebulan", subtitle: "A new legend is forming", description: "Explore the world, the characters, and the stories of our next adventure.", action: "Read about Legends of Alkebulan", href: "#legends-of-alkebulan", image: "/legends-of-alkebulan-map.jpeg", type: "legends" },
@@ -28,12 +29,12 @@ export default function HomeSlider({ clonesIncUrl, discordUrl }: { clonesIncUrl:
   useEffect(() => {
     if (paused || interacting || reducedMotion) return
     const timer = window.setInterval(() => {
-      if (!document.hidden) setActive((current) => (current + 1) % 3)
+      if (!document.hidden) setActive((current) => (current + 1) % slides.length)
     }, 7000)
     return () => window.clearInterval(timer)
-  }, [paused, interacting, reducedMotion, active])
+  }, [paused, interacting, reducedMotion, active, slides.length])
 
-  const move = (direction: number) => setActive((current) => (current + direction + 3) % 3)
+  const move = (direction: number) => setActive((current) => (current + direction + slides.length) % slides.length)
   const slide = slides[active]
 
   return (
@@ -62,7 +63,7 @@ export default function HomeSlider({ clonesIncUrl, discordUrl }: { clonesIncUrl:
         </div>
         <div className={styles.topline}><span>GECO GAMES STUDIOS</span><span>GAMES. STORIES. COMMUNITY.</span></div>
         <div className={styles.content} aria-live={paused || reducedMotion ? "polite" : "off"} aria-atomic="true">
-          <span className={styles.counter}>{String(active + 1).padStart(2, "0")} / 03</span>
+          <span className={styles.counter}>{String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span>
           <div key={slide.type} className={styles.copy}>
             <p className={styles.eyebrow}>{slide.subtitle}</p>
             <h1>{slide.title}</h1>

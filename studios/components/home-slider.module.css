@@ -5,6 +5,10 @@
 .clonesInc { background: var(--space-soft, #191451); }
 .clonesInc .artwork { width: 64% !important; left: auto !important; right: 0; object-fit: cover; object-position: center; }
 .clonesInc .visual { background: radial-gradient(ellipse at 75% 45%, rgba(124,77,255,.3), #191451 75%); }
+.inshimu { background: linear-gradient(90deg, #3b2418 0%, #191451 58%); }
+.inshimu .artwork { width: 54% !important; left: auto !important; right: 0; object-fit: cover; object-position: center 42%; }
+.inshimu .visual { background: radial-gradient(ellipse at 78% 46%, rgba(244,174,61,.32), #191451 75%); }
+.inshimu .shade { background: linear-gradient(90deg, rgba(16,13,61,.98), rgba(16,13,61,.78) 38%, rgba(16,13,61,.08) 75%), linear-gradient(0deg, rgba(16,13,61,.78), transparent 65%); }
 .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(16,13,61,.94), rgba(16,13,61,.2) 72%), linear-gradient(0deg, rgba(16,13,61,.85), transparent 65%); }
 .legends .artwork { object-position: center; }
 .topline { position: absolute; inset: 32px 40px auto; display: flex; justify-content: space-between; gap: 20px; font-size: 11px; font-weight: 800; letter-spacing: .22em; color: rgba(255,255,255,.75); }
@@ -52,6 +56,8 @@
   .hero .frame .eyebrow { font-size: 11px; }
   .cta { min-width: 0; max-width: 100%; padding: 14px 16px; font-size: 11px; gap: 16px; }
   .clonesInc .artwork { width: 100% !important; left: 0 !important; object-fit: contain; object-position: center top; padding: 40px 0 170px; opacity: .65; }
+  .inshimu .artwork { width: 100% !important; left: 0 !important; object-fit: cover; object-position: center top; opacity: .72; }
+  .inshimu .shade { background: linear-gradient(0deg, rgba(16,13,61,.98), rgba(16,13,61,.28) 92%); }
   .shade { background: linear-gradient(0deg, rgba(16,13,61,.96), rgba(16,13,61,.1) 95%); }
   .controls { bottom: 40px; right: 20px; gap: 6px; }
   .dots { bottom: 52px; left: 24px; gap: 5px; }
