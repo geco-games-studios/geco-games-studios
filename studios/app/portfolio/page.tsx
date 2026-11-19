@@ -18,6 +18,18 @@ export default function PortfolioPage() {
       ]
     },
     {
+      title: "Inshimu 2: Guns and Puzzles",
+      subtitle: "Action-puzzle sequel",
+      image: "/games/inshimu-two.png",
+      details: "The next Inshimu adventure, combining gun-based action with puzzle-solving.",
+      category: "Action Puzzle Game",
+      features: [
+        "Gun-based action",
+        "Puzzle-solving challenges",
+        "Sequel to Inshimu"
+      ]
+    },
+    {
       title: "Chef Stories",
       subtitle: "Brand-driven mobile game",
       image: "/games/become-a-chef.png",

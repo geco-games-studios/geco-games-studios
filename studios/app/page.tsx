@@ -121,6 +121,9 @@ export default function HomePage() {
               <p className="mt-2 text-xl font-medium text-violet-700 dark:text-violet-300">A GECO Games title</p>
               <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">Play the PC web version of Clones Inc directly in your browser on itch.io.</p>
               <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/games/clones-inc" className="inline-flex items-center justify-center rounded-full border border-violet-300 px-6 py-3 text-sm font-semibold text-violet-800 transition hover:bg-violet-50 dark:border-violet-700 dark:text-violet-200 dark:hover:bg-violet-950/40">
+                  Discover the game
+                </Link>
                 <a href={clonesIncUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-800">
                   <Play aria-hidden="true" className="mr-2 h-4 w-4" /> Play Clones Inc on itch.io
                 </a>
