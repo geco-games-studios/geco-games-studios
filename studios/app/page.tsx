@@ -55,6 +55,11 @@ const portfolio = [
 
 const featuredGames = [
   {
+    title: "Inshimu 2: Guns and Puzzles",
+    image: "/games/inshimu-two.png",
+    description: "An action-puzzle adventure combining fast reactions, clever challenges, and the return of Inshimu.",
+  },
+  {
     title: "Fruit Valley",
     image: "/games/fruit-valley.png",
     description: "A vibrant puzzle game with premium visuals and joyful player loops.",
@@ -274,7 +279,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {featuredGames.map((game) => (
               <div key={game.title} className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
                 <div className="relative h-64 w-full">

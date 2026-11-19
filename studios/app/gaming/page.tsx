@@ -1,21 +1,31 @@
 import Link from "next/link"
+import Image from "next/image"
 
 export default function GamingPage() {
   const games = [
     {
+      title: "Inshimu 2: Guns and Puzzles",
+      category: "Action Puzzle",
+      description: "A fast action-puzzle sequel blending gun-based gameplay with clever puzzle-solving.",
+      image: "/games/inshimu-two.png",
+    },
+    {
       title: "Fruit Valley",
       category: "Puzzle",
       description: "A polished match-3 experience designed for wide audience appeal.",
+      image: "/games/fruit-valley.png",
     },
     {
       title: "Block Cat Fill",
       category: "Puzzle",
       description: "A strategic logic game with charming visuals and clean progression.",
+      image: "/games/block-cat-fill.png",
     },
     {
       title: "Become A Chef",
       category: "Simulation",
       description: "A narrative-driven restaurant simulation with premium art direction.",
+      image: "/games/become-a-chef.png",
     },
   ]
 
@@ -65,12 +75,17 @@ export default function GamingPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Games</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Selected titles from our studio.</h2>
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {games.map((game) => (
-              <div key={game.title} className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{game.category}</p>
-                <h3 className="mt-4 text-2xl font-semibold">{game.title}</h3>
-                <p className="mt-4 text-slate-600 dark:text-slate-400">{game.description}</p>
+              <div key={game.title} className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950">
+                <div className="relative h-64 w-full">
+                  <Image src={game.image} alt={game.title} fill className="object-cover" />
+                </div>
+                <div className="p-8">
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{game.category}</p>
+                  <h3 className="mt-4 text-2xl font-semibold">{game.title}</h3>
+                  <p className="mt-4 text-slate-600 dark:text-slate-400">{game.description}</p>
+                </div>
               </div>
             ))}
           </div>
