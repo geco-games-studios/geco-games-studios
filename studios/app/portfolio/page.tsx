@@ -4,6 +4,19 @@ import Link from "next/link"
 export default function PortfolioPage() {
   const portfolio = [
     {
+      title: "Inshimu",
+      subtitle: "Original action-puzzle adventure",
+      image: "/games/inshimu-one.png",
+      details: "The first Inshimu title, introducing bee-powered action and engaging puzzle challenges.",
+      category: "Action Puzzle Game",
+      features: [
+        "Honey trail gameplay",
+        "Puzzle-solving challenges",
+        "Bee-powered action",
+        "Original Inshimu adventure"
+      ]
+    },
+    {
       title: "Arena Legends",
       subtitle: "Competitive title launch",
       image: "/games/our-last-prayer-arena.png",

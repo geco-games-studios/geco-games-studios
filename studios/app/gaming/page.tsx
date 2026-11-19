@@ -4,6 +4,12 @@ import Image from "next/image"
 export default function GamingPage() {
   const games = [
     {
+      title: "Inshimu",
+      category: "Action Puzzle",
+      description: "The original Inshimu adventure featuring bee-powered action and puzzle challenges.",
+      image: "/games/inshimu-one.png",
+    },
+    {
       title: "Inshimu 2: Guns and Puzzles",
       category: "Action Puzzle",
       description: "A fast action-puzzle sequel blending gun-based gameplay with clever puzzle-solving.",

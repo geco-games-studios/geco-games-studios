@@ -55,6 +55,11 @@ const portfolio = [
 
 const featuredGames = [
   {
+    title: "Inshimu",
+    image: "/games/inshimu-one.png",
+    description: "The original Inshimu adventure that introduced the honey trail, bee gameplay, and puzzle-driven challenges.",
+  },
+  {
     title: "Inshimu 2: Guns and Puzzles",
     image: "/games/inshimu-two.png",
     description: "An action-puzzle adventure combining fast reactions, clever challenges, and the return of Inshimu.",
