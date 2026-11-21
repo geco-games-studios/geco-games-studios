@@ -6,10 +6,10 @@ type TeamMember = { name: string; role: string; initials: string; image?: string
 export default function AboutPage() {
   const team: TeamMember[] = [
     { name: "Luyando Shilukukwa", role: "CEO, Founder, Senior Developer", initials: "LS" },
-    { name: "Bulemu Narco Shilukukwa", role: "CTO, Co-Founder", initials: "BS" },
+    { name: "Bulemu Narco Shilukukwa", role: "CTO, Co-Founder", initials: "BS", image: "/team/bulemu-narco-shilukukwa.jpeg" },
     { name: "Joseph Mwaba", role: "Lead Senior Developer", initials: "JM" },
-    { name: "Maxson Shilukukwa", role: "Business Strategist", initials: "MS" },
-    { name: "Mapalo Kayange", role: "Quality Assurance", initials: "MK" },
+    { name: "Maxson Shilukukwa", role: "Business Strategist", initials: "MS", image: "/team/maxson-shilukukwa.jpeg" },
+    { name: "Mapalo Kayange", role: "Quality Assurance", initials: "MK", image: "/team/mapalo-kayange.jpeg" },
   ]
 
   const milestones = [
