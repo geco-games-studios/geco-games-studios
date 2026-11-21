@@ -152,6 +152,9 @@ body {
 .cosmic-site main p { color: #b8b4d3 !important; }
 .cosmic-site main h1, .cosmic-site main h2, .cosmic-site main h3,
 .cosmic-site main h4, .cosmic-site main strong { color: white; }
+.cosmic-site main [class*="text-slate-700"],
+.cosmic-site main [class*="text-slate-600"],
+.cosmic-site main [class*="text-slate-500"] { color: #d8d5f2 !important; }
 .cosmic-site main [class*="bg-white"],
 .cosmic-site main [class*="bg-slate-50"],
 .cosmic-site main [class*="bg-slate-100"],

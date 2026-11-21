@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowRight, Globe, Layers, Play, Shield, Star, Users } from "lucide-react"
+import { ArrowRight, Globe, Layers, Play, Search, Server, Shield, Star } from "lucide-react"
+import DomainSearch from "@/components/domain-search"
 
 export default function ServicesPage() {
   const services = [
@@ -84,6 +85,26 @@ export default function ServicesPage() {
       ]
     },
     {
+      title: "Web Hosting & Domain Registration",
+      description: "Reliable website hosting and domain registration to help your brand get online and stay reachable.",
+      icon: Server,
+      features: [
+        "Website hosting plans for projects of different sizes",
+        "Domain name search and registration assistance",
+        "Domain renewals and transfer support",
+        "SSL and hosting setup guidance",
+        "Technical support for your online presence",
+        "Hosting and domain services tailored to your needs"
+      ],
+      process: [
+        "Choose a domain",
+        "Select a hosting plan",
+        "Configure your website",
+        "Connect your domain",
+        "Launch and get support"
+      ]
+    },
+    {
       title: "Esports & Events",
       description: "End-to-end esports experiences, event production, and community engagement for competitive brands.",
       icon: Globe,
@@ -122,6 +143,9 @@ export default function ServicesPage() {
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Link href="#services" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                 Explore services
+              </Link>
+              <Link href="#domain-search" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                <Search className="h-4 w-4" /> Search domains
               </Link>
               <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                 Start a project
@@ -189,7 +213,7 @@ export default function ServicesPage() {
                     <service.icon className="mx-auto h-12 w-12 text-violet-600 dark:text-violet-400 mb-4" />
                     <h4 className="text-xl font-semibold mb-2">{service.title}</h4>
                     <p className="text-slate-600 dark:text-slate-400 mb-6">{service.description}</p>
-                    <Link href="#contact" className="inline-flex items-center gap-2 rounded-full bg-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-400">
+                    <Link href={service.title === "Web Hosting & Domain Registration" ? "#domain-search" : "#contact"} className="inline-flex items-center gap-2 rounded-full bg-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-400">
                       Learn more
                       <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -198,6 +222,26 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="domain-search" className="scroll-mt-24 px-6 py-20 lg:px-12">
+        <div className="container mx-auto max-w-6xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-200">
+            Hosting &amp; domains
+          </p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+            Find a name for your next big idea.
+          </h2>
+          <p className="mx-auto mt-5 mb-10 max-w-2xl text-lg leading-8 text-violet-100">
+            Search for a domain and check whether a registration record exists. Our team can help
+            with domain registration and web hosting.
+          </p>
+          <DomainSearch />
+          <p className="mx-auto mt-4 max-w-3xl text-sm leading-6 text-violet-200/80">
+            Availability checks are preliminary and do not reserve a domain. Final availability and
+            pricing are confirmed by the domain registrar.
+          </p>
         </div>
       </section>
 

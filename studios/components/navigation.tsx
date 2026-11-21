@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2, ClipboardList, ShoppingBag } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Repeat2, Gamepad2, Sparkles, ShoppingBag } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { useRouter, usePathname } from "next/navigation"
 import { AUTH_SESSION_CHANGED_EVENT, clearAuthSession, getDashboardPathForUser, getStoredUser, hasValidAuthSession } from "@/lib/auth-session"
@@ -180,9 +180,9 @@ export default function Navigation() {
             <Link
               href="/survey"
               className="hidden h-10 items-center justify-center gap-2 rounded-full border border-cyan-200/30 bg-cyan-300/10 px-4 text-xs font-black uppercase tracking-wider text-cyan-100 transition hover:bg-cyan-300 hover:text-[#17124e] sm:flex"
-              title="Take the anonymous survey"
+              title="Explore Geco Games Studios Artificial Intelligence"
             >
-              <ClipboardList className="h-4 w-4" /> Bunc
+              <Sparkles className="h-4 w-4" /> BUNC
             </Link>
             <Link
               href="/marketplace"
@@ -294,7 +294,7 @@ export default function Navigation() {
             className="flex items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-sm font-black uppercase tracking-wider text-[#17124e] transition hover:bg-cyan-200"
             onClick={() => setIsMenuOpen(false)}
           >
-            <ClipboardList className="h-4 w-4" /> Bunc
+            <Sparkles className="h-4 w-4" /> BUNC
           </Link>
           {navItems.map((item) => {
             const isActive =
