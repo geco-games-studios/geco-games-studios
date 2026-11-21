@@ -3,6 +3,24 @@ import { ArrowRight, Globe, Layers, Play, Search, Server, Shield, Star } from "l
 import DomainSearch from "@/components/domain-search"
 
 export default function ServicesPage() {
+  const vpsPlans = [
+    {
+      name: "VPS Lite",
+      price: 900,
+      features: ["40 GB SSD", "4 GB RAM", "2 Cores", "1 Gbps / Unlimited Traffic", "Selectable Operating System"],
+    },
+    {
+      name: "VPS Lite 2",
+      price: 1000,
+      features: ["100 GB SSD", "4 GB RAM", "2 Cores 13th Gen Processor", "1 Gbps / Unlimited Traffic", "Selectable Operating System"],
+    },
+    {
+      name: "VPS Pro",
+      price: 1550,
+      features: ["200 GB SSD", "8 GB RAM", "4 Cores 13th Gen Processor", "1 Gbps / Unlimited Traffic", "Selectable Operating System"],
+    },
+  ]
+
   const services = [
     {
       title: "Game Development",
@@ -147,6 +165,9 @@ export default function ServicesPage() {
               <Link href="#domain-search" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                 <Search className="h-4 w-4" /> Search domains
               </Link>
+              <Link href="#vps-plans" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                <Server className="h-4 w-4" /> View VPS plans
+              </Link>
               <Link href="#contact" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
                 Start a project
               </Link>
@@ -242,6 +263,45 @@ export default function ServicesPage() {
             Availability checks are preliminary and do not reserve a domain. Final availability and
             pricing are confirmed by the domain registrar.
           </p>
+        </div>
+      </section>
+
+      <section id="vps-plans" className="scroll-mt-24 bg-white px-6 py-20 dark:bg-slate-900 lg:px-12">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-600 dark:text-violet-300">
+              VPS hosting
+            </p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+              Choose the right server for your project.
+            </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
+              Monthly VPS plans with dedicated resources and your choice of operating system.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {vpsPlans.map((plan) => (
+              <article key={plan.name} className="flex flex-col rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center shadow-lg dark:border-slate-800 dark:bg-slate-950">
+                <h3 className="text-2xl font-semibold">{plan.name}</h3>
+                <p className="mt-5 text-sm text-slate-600 dark:text-slate-400">Monthly</p>
+                <p className="mt-1 text-4xl font-bold text-violet-600 dark:text-violet-400">
+                  {plan.price} ZMW
+                </p>
+                <ul className="my-8 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="text-slate-700 dark:text-slate-300">{feature}</li>
+                  ))}
+                </ul>
+                <a
+                  href={`mailto:hello@gecogamesstudios.com?subject=${encodeURIComponent(`VPS plan enquiry: ${plan.name}`)}`}
+                  className="inline-flex items-center justify-center rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-500"
+                >
+                  Enquire about this plan
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
